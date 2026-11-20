@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="김승용님의 부업 6개 영역 통합 대시보드 — 쇼피·스레드/쿠파스/토스·크몽·스톡·블로그·경품설문 실측 현황 (2026-11-20 22:30 KST 기준)">
+<title>부업 통합 대시보드 · 2026-11-20</title>
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('biz-dash-theme'); } catch (e) {}
+    if (!t) {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --radius: 18px;
+    --radius-sm: 12px;
+    --max: 1320px;
+    --font: 'Pretendard Variable', Pretendard, 'Noto Sans KR', 'Noto Sans CJK KR', 'Malgun Gothic', 'Apple SD Gothic Neo',
+            system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --mono: 'SF Mono', 'D2Coding', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  }
+
+  html[data-theme="dark"] {
+    --bg: #070a10;
+    --bg2: #0b101a;
+    --card: #111827;
+    --card2: #151e2f;
+    --line: rgba(255, 255, 255, 0.075);
+    --line2: rgba(255, 255, 255, 0.15);
+    --text: #e9eef7;
+    --text2: #bcc8d9;
+    --muted: #8a98ad;
+    --track: rgba(255, 255, 255, 0.07);
+    --header: rgba(7, 10, 16, 0.9);
+    --shadow: 0 20px 44px -28px rgba(0, 0, 0, 0.95);
+    --accent: #4c8dff;
+    --accent-ink: #8db4ff;
+    --accent2: #7c5cff;
+    --green: #2ed3a0;
+    --amber: #ffbf5e;
+    --red: #ff7b7b;
+    --violet: #b39bff;
+    --cyan: #45cfe4;
+    --glow-a: rgba(76, 141, 255, 0.16);
+    --glow-b: rgba(124, 92, 255, 0.13);
+    --bar-a: #4c8dff;
+    --bar-b: #7c5cff;
+  }
+
+  html[data-theme="light"] {
+    --bg: #f3f6fb;
+    --bg2: #eef2f9;
+    --card: #ffffff;
+    --card2: #f8fafd;
+    --line: rgba(15, 23, 42, 0.09);
+    --line2: rgba(15, 23, 42, 0.18);
+    --text: #0f172a;
+    --text2: #33415a;
+    --muted: #64748b;
+    --track: rgba(15, 23, 42, 0.08);
+    --header: rgba(255, 255, 255, 0.93);
+    --shadow: 0 16px 34px -26px rgba(15, 23, 42, 0.45);
+    --accent: #2b5fd9;
+    --accent-ink: #2452c4;
+    --accent2: #6d4fd6;
+    --green: #0f9d6e;
+    --amber: #b9770a;
+    --red: #d64545;
+    --violet: #6d4fd6;
+    --cyan: #0e8fa6;
+    --glow-a: rgba(76, 141, 255, 0.13);
+    --glow-b: rgba(124, 92, 255, 0.1);
+    --bar-a: #3f7cf0;
+    --bar-b: #6d4fd6;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(1100px 560px at 16% -12%, var(--glow-a), transparent 62%),
+      radial-gradient(900px 500px at 92% -4%, var(--glow-b), transparent 58%);
+  }
+
+  a { color: inherit; text-decoration: none; }
+  h1, h2, h3, p, ul, ol { margin: 0; }
+  ul { padding: 0; list-style: none; }
+  svg { display: block; }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--card); color: var(--text);
+    padding: 10px 16px; border-radius: 10px; z-index: 99;
+  }
+  .skip:focus { left: 12px; top: 12px; }
+
+  /* ---------- header ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--header);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-in {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; flex: none; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 11px;
+    display: grid; place-items: center;
+    background: linear-gradient(140deg, var(--bar-a), var(--bar-b));
+    color: #fff;
+    box-shadow: 0 8px 18px -10px var(--bar-a);
+    flex: none;
+  }
+  .brand-txt { display: flex; flex-direction: column; line-height: 1.2; }
+  .brand-txt b { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
+  .brand-txt span { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
+  .nav {
+    display: flex; align-items: center; gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    flex: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 650;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color .15s ease, background .15s ease;
+  }
+  .nav a:hover { color: var(--text); background: var(--track); }
+  .nav a[aria-current="true"] { color: var(--text); background: var(--track); }
+
+  .top-right { display: flex; align-items: center; gap: 10px; flex: none; }
+  .stamp {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 11.5px; font-weight: 650; color: var(--muted);
+    padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px;
+    white-space: nowrap;
+  }
+  .stamp .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(46, 211, 160, 0.16);
+  }
+  .theme-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 36px; padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line2);
+    background: var(--card2);
+    color: var(--text);
+    font-family: inherit; font-size: 12.5px; font-weight: 700;
+    cursor: pointer;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .theme-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .theme-btn svg { width: 15px; height: 15px; }
+  html[data-theme="dark"] .ico-sun { display: block; }
+  html[data-theme="dark"] .ico-moon { display: none; }
+  html[data-theme="light"] .ico-sun { display: none; }
+  html[data-theme="light"] .ico-moon { display: block; }
+
+  /* ---------- layout ---------- */
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 34px 24px 72px;
+  }
+  section { scroll-margin-top: 78px; }
+  .sec + .sec { margin-top: 46px; }
+
+  .hero { margin-bottom: 22px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11.5px; font-weight: 800; letter-spacing: 0.14em;
+    color: var(--accent-ink); text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .eyebrow::before {
+    content: ""; width: 18px; height: 2px; border-radius: 2px;
+    background: currentColor; opacity: .7;
+  }
+  .hero h1 {
+    font-size: clamp(25px, 3.1vw, 36px);
+    font-weight: 800; letter-spacing: -0.035em; line-height: 1.24;
+  }
+  .hero p { margin-top: 9px; color: var(--muted); font-size: 13.5px; }
+
+  /* ---------- cards ---------- */
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, var(--card2), var(--card));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+  }
+  .card-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .card-h h3 { font-size: 14.5px; font-weight: 750; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+  .card-h .hint { font-size: 11.5px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .card-note {
+    margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line2);
+    font-size: 12px; color: var(--muted);
+  }
+
+  /* ---------- KPI ---------- */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .kpi {
+    position: relative;
+    padding: 18px 18px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--card2), var(--card));
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    min-width: 0;
+  }
+  .kpi::after {
+    content: "";
+    position: absolute; inset: auto 0 0 0; height: 3px;
+    background: var(--k-color, var(--accent));
+    opacity: .85;
+  }
+  .kpi-top { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin-bottom: 10px; }
+  .kpi-ico {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: grid; place-items: center;
+    color: var(--k-color, var(--accent));
+    background: color-mix(in srgb, var(--k-color, var(--accent)) 14%, transparent);
+  }
+  html[data-theme="light"] .kpi-ico { background: rgba(15, 23, 42, 0.05); }
+  .kpi-ico svg { width: 17px; height: 17px; }
+  .kpi-label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: -0.01em; }
+  .kpi-value {
+    font-size: clamp(24px, 2.3vw, 32px);
+    font-weight: 800; letter-spacing: -0.04em; line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+  }
+  .kpi-value small { font-size: 13px; font-weight: 700; color: var(--text2); margin-left: 2px; letter-spacing: 0; }
+  .kpi-sub { margin-top: 7px; font-size: 11.5px; color: var(--muted); line-height: 1.45; }
+
+  /* ---------- badges ---------- */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 9px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 750; letter-spacing: -0.01em;
+    border: 1px solid var(--line2);
+    color: var(--text2); background: var(--track);
+    white-space: nowrap;
+  }
+  .badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex: none; }
+  .b-live { color: var(--green); border-color: rgba(46, 211, 160, 0.34); background: rgba(46, 211, 160, 0.11); }
+  .b-wait { color: var(--amber); border-color: rgba(255, 191, 94, 0.34); background: rgba(255, 191, 94, 0.11); }
+  .b-approve { color: var(--green); border-color: rgba(46, 211, 160, 0.42); background: rgba(46, 211, 160, 0.16); }
+  .b-stop { color: var(--red); border-color: rgba(255, 123, 123, 0.32); background: rgba(255, 123, 123, 0.1); }
+  .b-info { color: var(--accent-ink); border-color: rgba(76, 141, 255, 0.32); background: rgba(76, 141, 255, 0.1); }
+  .b-violet { color: var(--violet); border-color: rgba(179, 155, 255, 0.32); background: rgba(179, 155, 255, 0.11); }
+  .badge.live-dot::before { animation: pulse 2.2s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+    50% { box-shadow: 0 0 0 4px transparent; opacity: .55; }
+  }
+
+  /* ---------- grids ---------- */
+  .grid-2 { display: grid; grid-template-columns: 1.05fr 1fr; gap: 14px; margin-top: 14px; align-items: start; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; align-items: start; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 14px; align-items: start; }
+
+  /* ---------- section head ---------- */
+  .sec-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+    padding-bottom: 14px; margin-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sec-head-l { min-width: 0; }
+  .sec-head h2 {
+    font-size: clamp(19px, 2.1vw, 23px);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1.3;
+  }
+  .sec-head h2 span.num {
+    font-size: 12px; font-weight: 800; color: var(--accent-ink);
+    letter-spacing: 0.1em; margin-right: 8px; vertical-align: 2px;
+  }
+  .sec-sub { margin-top: 5px; font-size: 12.5px; color: var(--muted); }
+  .sec-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .sec-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 34px; padding: 0 13px;
+    border-radius: 10px;
+    border: 1px solid var(--line2);
+    background: var(--card2);
+    color: var(--text);
+    font-size: 12.5px; font-weight: 700;
+    white-space: nowrap;
+    transition: border-color .15s ease, transform .15s ease, background .15s ease;
+  }
+  .btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .btn svg { width: 12px; height: 12px; opacity: .65; }
+  .btn.primary {
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--bar-a), var(--bar-b));
+    color: #fff;
+    box-shadow: 0 10px 22px -14px var(--bar-a);
+  }
+  .btn.primary svg { opacity: .9; }
+
+  /* ---------- stats ---------- */
+  .stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .stat {
+    padding: 13px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--card2);
+    min-width: 0;
+  }
+  .stat .s-label { font-size: 11.5px; font-weight: 650; color: var(--muted); }
+  .stat .s-value {
+    font-size: 20px; font-weight: 800; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums; margin-top: 3px;
+  }
+  .stat .s-value small { font-size: 11.5px; font-weight: 700; color: var(--text2); margin-left: 2px; }
+  .stat .s-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ---------- bars ---------- */
+  .bars { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr) auto;
+    align-items: center; gap: 10px;
+  }
+  .bar-name { font-size: 12.5px; font-weight: 700; color: var(--text2); white-space: nowrap; }
+  .bar-name em { font-style: normal; color: var(--muted); font-weight: 600; font-size: 11px; margin-left: 4px; }
+  .track { height: 9px; background: var(--track); border-radius: 999px; overflow: hidden; }
+  .fill {
+    height: 100%; border-radius: 999px; min-width: 4px;
+    background: linear-gradient(90deg, var(--bar-a), var(--bar-b));
+  }
+  .fill.green { background: linear-gradient(90deg, #17b487, #2ed3a0); }
+  .fill.amber { background: linear-gradient(90deg, #d99526, #ffbf5e); }
+  .fill.dim { background: var(--line2); }
+  .bar-val {
+    text-align: right; font-size: 12.5px; font-weight: 750;
+    font-variant-numeric: tabular-nums; color: var(--text);
+    white-space: nowrap;
+  }
+  .bar-val small { font-weight: 600; color: var(--muted); font-size: 10.5px; }
+
+  /* ---------- timeline / todo ---------- */
+  .tl { display: flex; flex-direction: column; }
+  .tl-item { display: flex; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); }
+  .tl-item:first-child { border-top: 0; padding-top: 2px; }
+  .tl-time {
+    flex: none; font-family: var(--mono); font-size: 11.5px; font-weight: 700;
+    color: var(--accent-ink); background: rgba(76, 141, 255, 0.1);
+    border-radius: 7px; padding: 2px 7px; height: 22px; line-height: 18px;
+  }
+  .tl-body b { display: block; font-size: 13px; font-weight: 750; letter-spacing: -0.02em; }
+  .tl-body span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+  .todo { display: flex; flex-direction: column; }
+  .todo li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 0; border-top: 1px solid var(--line);
+  }
+  .todo li:first-child { border-top: 0; padding-top: 2px; }
+  .tick {
+    flex: none; width: 18px; height: 18px; border-radius: 6px;
+    border: 1.5px solid var(--line2); background: var(--card2);
+    display: grid; place-items: center;
+  }
+  .tick.done {
+    border-color: rgba(46, 211, 160, 0.5);
+    background: rgba(46, 211, 160, 0.14);
+    color: var(--green);
+    font-size: 11px; font-weight: 800; line-height: 1;
+  }
+  .tick.done::after { content: "\2713"; }
+  .todo-body { flex: 1 1 auto; min-width: 0; }
+  .todo-body b { display: block; font-size: 13px; font-weight: 700; letter-spacing: -0.02em; }
+  .todo-body span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+  /* ---------- chips / list ---------- */
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 9px;
+    background: var(--card2); border: 1px solid var(--line);
+    font-size: 12px; font-weight: 650; color: var(--text2);
+  }
+  .chip code {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--accent-ink); background: rgba(76, 141, 255, 0.1);
+    padding: 1px 5px; border-radius: 5px;
+  }
+  .chip .ok { color: var(--green); font-weight: 800; }
+
+  .list { display: flex; flex-direction: column; }
+  .list li {
+    display: flex; align-items: flex-start; gap: 9px;
+    padding: 9px 0; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--text2);
+  }
+  .list li:first-child { border-top: 0; padding-top: 0; }
+  .list li::before {
+    content: ""; flex: none; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--amber); margin-top: 7px;
+  }
+  .list li.done::before { background: var(--green); }
+  .list li b { color: var(--text); font-weight: 700; }
+
+  /* ---------- callout ---------- */
+  .callout {
+    display: flex; gap: 11px; align-items: flex-start;
+    margin-top: 14px; padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 191, 94, 0.28);
+    background: rgba(255, 191, 94, 0.07);
+    font-size: 12.5px; color: var(--text2);
+  }
+  .callout b { color: var(--amber); }
+  .callout svg { flex: none; width: 16px; height: 16px; color: var(--amber); margin-top: 1px; }
+
+  /* ---------- threads rows ---------- */
+  .thread-list { display: flex; flex-direction: column; }
+  .thread-row { padding: 11px 0; border-top: 1px solid var(--line); }
+  .thread-row:first-child { border-top: 0; padding-top: 0; }
+  .thread-top { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+  .t-time {
+    font-family: var(--mono); font-size: 11.5px; font-weight: 700;
+    color: var(--muted); flex: none; width: 42px;
+  }
+  .t-title { font-size: 12.5px; font-weight: 700; color: var(--text); flex: 1 1 auto; min-width: 0; }
+  .t-views {
+    font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums;
+    color: var(--text); flex: none;
+  }
+  .t-views small { font-weight: 600; color: var(--muted); font-size: 10.5px; margin-left: 2px; }
+  .thread-row .track { height: 6px; margin: 7px 0 0 51px; }
+  .thread-row.best .fill { background: linear-gradient(90deg, #17b487, #2ed3a0); }
+  .thread-row.best .t-views { color: var(--green); }
+  .t-meta { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; margin-left: 51px; }
+
+  /* ---------- funnel chain ---------- */
+  .chain { display: flex; align-items: stretch; gap: 8px; }
+  .chain-step {
+    flex: 1 1 0; min-width: 0;
+    padding: 12px 10px; border-radius: var(--radius-sm);
+    background: var(--card2); border: 1px solid var(--line);
+    text-align: center;
+  }
+  .chain-step .cs-v { font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+  .chain-step .cs-l { font-size: 11px; color: var(--muted); font-weight: 650; margin-top: 2px; }
+  .chain-arrow { display: grid; place-items: center; color: var(--muted); flex: none; width: 14px; }
+  .chain-arrow svg { width: 14px; height: 14px; }
+
+  /* ---------- gauge ---------- */
+  .gauge-wrap { position: relative; width: 100%; max-width: 260px; margin: 4px auto 0; }
+  .gauge { width: 100%; height: auto; overflow: visible; }
+  .gauge-track { fill: none; stroke: var(--track); stroke-width: 13; stroke-linecap: round; }
+  .gauge-fill {
+    fill: none; stroke: url(#gaugeGrad); stroke-width: 13; stroke-linecap: round;
+    transition: stroke-dasharray .9s cubic-bezier(.2,.8,.2,1);
+  }
+  .gauge-center {
+    position: absolute; left: 0; right: 0; bottom: 2px;
+    text-align: center;
+  }
+  .gauge-center b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .gauge-center b small { font-size: 13px; font-weight: 700; color: var(--muted); }
+  .gauge-center span { display: block; font-size: 11.5px; color: var(--muted); font-weight: 650; margin-top: 4px; }
+
+  /* ---------- stacked bar ---------- */
+  .stack { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--track); gap: 2px; }
+  .seg { display: block; height: 100%; }
+  .s-review { background: linear-gradient(90deg, #d99526, #ffbf5e); }
+  .s-reject { background: var(--line2); }
+  .s-approve { background: linear-gradient(90deg, #17b487, #2ed3a0); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 11px; font-size: 11.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 8px; height: 8px; border-radius: 3px; display: block; }
+
+  /* ---------- dot matrix ---------- */
+  .dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; width: 216px; max-width: 100%; flex: none; }
+  .dots i {
+    display: block; width: 100%; aspect-ratio: 1 / 1; border-radius: 3px;
+    background: linear-gradient(140deg, #17b487, #2ed3a0);
+    opacity: .9;
+  }
+  .dots i.new { background: linear-gradient(140deg, var(--bar-a), var(--bar-b)); }
+
+  /* ---------- price table ---------- */
+  .price-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .price-table th, .price-table td { text-align: left; padding: 9px 8px; border-top: 1px solid var(--line); }
+  .price-table thead th { border-top: 0; font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: 0.03em; }
+  .price-table td:first-child { font-weight: 750; white-space: nowrap; }
+  .price-table td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 750; white-space: nowrap; }
+  .price-table tbody tr:hover { background: var(--track); }
+
+  /* ---------- footer ---------- */
+  .foot {
+    margin-top: 42px; padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 11.5px;
+    display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center;
+    justify-content: space-between;
+  }
+  .foot b { color: var(--text2); }
+  .legend-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1180px) {
+    .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .kpi-grid .kpi:nth-child(4), .kpi-grid .kpi:nth-child(5) { grid-column: span 1; }
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 960px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .topbar-in { padding: 10px 16px; gap: 10px; }
+    .stamp { display: none; }
+    .wrap { padding: 26px 16px 60px; }
+  }
+
+  @media (max-width: 760px) {
+    section { scroll-margin-top: 122px; }
+    .topbar-in { flex-wrap: wrap; row-gap: 6px; padding-bottom: 8px; }
+    .brand { flex: 1 1 auto; }
+    .nav {
+      order: 3; flex: 1 0 100%;
+      margin: 0; padding-top: 6px;
+      border-top: 1px solid var(--line);
+    }
+    .nav a { padding: 7px 10px; font-size: 13px; }
+    .sec-actions { width: 100%; }
+    .sec-actions .btn { flex: 1 1 calc(50% - 4px); justify-content: center; min-width: 0; padding: 0 8px; }
+    .bar-name { white-space: normal; line-height: 1.25; }
+    .bar-name em { display: none; }
+    .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .kpi-grid .kpi:first-child { grid-column: 1 / -1; }
+    .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .brand-txt span { display: none; }
+    .theme-btn span { display: none; }
+    .theme-btn { width: 36px; padding: 0; justify-content: center; }
+    .sec-head { align-items: flex-start; flex-direction: column; gap: 12px; }
+    .bar-row { grid-template-columns: 78px minmax(0, 1fr) auto; gap: 8px; }
+    .chain-step .cs-v { font-size: 17px; }
+    .hero p { font-size: 12.5px; }
+  }
+
+  @media (max-width: 420px) {
+    body { font-size: 14.5px; }
+    .kpi-value { font-size: 25px; }
+    .t-title { flex-basis: 100%; order: 3; }
+    .thread-row .track, .t-meta { margin-left: 0; }
+    .t-time { width: auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+
+  @media print {
+    body::before { display: none; }
+    .topbar { position: static; }
+    .theme-btn, .btn { display: none; }
+    .card, .kpi { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#overview">본문으로 건너뛰기</a>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M4 19V10M9.5 19V5M15 19v-6M20.5 19V8"/>
+        </svg>
+      </span>
+      <span class="brand-txt">
+        <b>부업 통합 대시보드</b>
+        <span>김승용 · 6개 영역</span>
+      </span>
+    </div>
+
+    <nav class="nav" aria-label="섹션 이동">
+      <a href="#overview">개요</a>
+      <a href="#blog">블로그</a>
+      <a href="#shopee">쇼피</a>
+      <a href="#threads">스레드·쿠파스·토스</a>
+      <a href="#kmong">크몽</a>
+      <a href="#stock">스톡</a>
+      <a href="#survey">경품설문</a>
+    </nav>
+
+    <div class="top-right">
+      <span class="stamp"><i class="dot"></i>실측 11/20 22:30 KST</span>
+      <button class="theme-btn" id="themeBtn" type="button" aria-pressed="true" aria-label="테마 전환">
+        <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4"/>
+        </svg>
+        <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/>
+        </svg>
+        <span>테마</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ================= OVERVIEW ================= -->
+  <section id="overview">
+    <div class="hero">
+      <p class="eyebrow">Overview · 2026-11-20 22:30 KST</p>
+      <h1>6개 부업 영역, 한 화면에서</h1>
+      <p>사이트에서 직접 확인한 실측값만 담았습니다. 집계 주기상 아직 반영되지 않은 항목은 <b>미집계·확인 대기</b>로 표기했습니다.</p>
+    </div>
+
+    <div class="kpi-grid">
+      <article class="kpi" style="--k-color: var(--green)">
+        <div class="kpi-top">
+          <span class="kpi-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="2.5" y="6" width="19" height="13" rx="3"/><path d="M2.5 10.5h19M16 15h2.5"/>
+            </svg>
+          </span>
+          <span class="kpi-label">총 누적 수익</span>
+        </div>
+        <p class="kpi-value" data-count="324">324<small>원</small></p>
+        <p class="kpi-sub">쿠파스 324원 · 쇼피·토스·크몽·스톡 0원</p>
+      </article>
+
+      <article class="kpi" style="--k-color: var(--accent)">
+        <div class="kpi-top">
+          <span class="kpi-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.6"/>
+            </svg>
+          </span>
+          <span class="kpi-label">스레드 30일 조회</span>
+        </div>
+        <p class="kpi-value" data-count="35856">35,856<small>회</small></p>
+        <p class="kpi-sub">전월 대비 <b style="color:var(--green)">+728%</b> · 반응 133 · 팔로워 25명</p>
+      </article>
+
+      <article class="kpi" style="--k-color: var(--violet)">
+        <div class="kpi-top">
+          <span class="kpi-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4.5 7.5h15l-1.2 12H5.7Z"/><path d="M8.8 7.5V6a3.2 3.2 0 0 1 6.4 0v1.5"/>
+            </svg>
+          </span>
+          <span class="kpi-label">쇼피 라이브 상품</span>
+        </div>
+        <p class="kpi-value" data-count="307">307<small>개</small></p>
+        <p class="kpi-sub">8개국 · SG 46개 · 위반 0건</p>
+      </article>
+
+      <article class="kpi" style="--k-color: var(--green)">
+        <div class="kpi-top">
+          <span class="kpi-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3.5 14.6 9l6 .7-4.4 4.1 1.2 5.9L12 16.9 6.6 19.7l1.2-5.9L3.4 9.7 9.4 9Z"/>
+            </svg>
+          </span>
+          <span class="kpi-label">크몽 서비스</span>
+        </div>
+        <p class="kpi-value" data-count="1">1<small>건</small></p>
+        <p class="kpi-sub"><b style="color:var(--green)">승인 16:32 · 수정 완료</b> · #868582 판매중</p>
+      </article>
+
+      <article class="kpi" style="--k-color: var(--amber)">
+        <div class="kpi-top">
+          <span class="kpi-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3.5" y="8" width="17" height="12.5" rx="2.5"/><path d="M3.5 12.5h17M12 8v12.5"/><path d="M12 8S9 3.5 6.8 5.2C4.6 6.9 7 8 12 8Zm0 0s3-4.5 5.2-2.8C19.4 6.9 17 8 12 8Z"/>
+            </svg>
+          </span>
+          <span class="kpi-label">경품 설문 누적</span>
+        </div>
+        <p class="kpi-value" data-count="25">25<small>건</small></p>
+        <p class="kpi-sub"><span class="badge b-live live-dot">진행 중</span> 매일 11:30 자동 · 최단 발표 11/24</p>
+      </article>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>오늘의 핵심 성과 <span class="badge b-info">11/20</span></h3>
+          <span class="hint">실측 4건</span>
+        </div>
+        <div class="tl">
+          <div class="tl-item">
+            <span class="tl-time">16:32</span>
+            <div class="tl-body">
+              <b>크몽 승인 → 후속 수정까지 완료, 판매중</b>
+              <span>39,000 / 99,000 / 199,000원 가격 조정 · 텍스트 썸네일 교체 · 세무 자문 제외 · 상세 이미지·FAQ 보강</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">22:28</span>
+            <div class="tl-body">
+              <b>스레드 오늘 조회 1,413회</b>
+              <span>09:00 G7 커피(B안 무이미지) 831회로 하루 최고 · 좋아요 1 · 외부 댓글 2</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">13:44</span>
+            <div class="tl-body">
+              <b>어도비 스톡 4K 테스트 1건 제출</b>
+              <span>한국형 실사 백자 다기(4K) — 현재 검토 중 2건에 포함</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">22:00</span>
+            <div class="tl-body">
+              <b>쇼피 8개국 무료 부스트 4회 완료</b>
+              <span>09:00 · 13:20 · 17:40 · 22:00 각 40/40건 · 유료광고 0원</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>수익 채널 구성</h3>
+          <span class="hint">확인된 수익만</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <span class="bar-name">쿠파스</span>
+            <div class="track"><div class="fill green" style="width:100%"></div></div>
+            <span class="bar-val">324<small>원</small></span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">쇼피<em>8개국</em></span>
+            <div class="track"><div class="fill dim" style="width:2%"></div></div>
+            <span class="bar-val">0<small>원</small></span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">토스쇼핑</span>
+            <div class="track"><div class="fill dim" style="width:2%"></div></div>
+            <span class="bar-val">0<small>원</small></span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">크몽</span>
+            <div class="track"><div class="fill dim" style="width:2%"></div></div>
+            <span class="bar-val">0<small>원</small></span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">스톡<em>어도비·미리캔버스</em></span>
+            <div class="track"><div class="fill dim" style="width:2%"></div></div>
+            <span class="bar-val">$0.00</span>
+          </div>
+        </div>
+        <p class="card-note">쿠파스 1건(오뚜기 흰밥 10,800원)의 전환 수익이 전체의 100%입니다. 쿠파스 11/20분은 11/21 16:00 이후 반영되고, 쇼피는 오늘(11/20 21:00) 방문·클릭·주문·매출 0건입니다.</p>
+      </article>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>남은 액션 · 우선순위</h3>
+          <span class="hint">5건</span>
+        </div>
+        <ul class="todo">
+          <li>
+            <span class="tick" aria-hidden="true"></span>
+            <div class="todo-body">
+              <b>크몽 후속 수정·판매 개시</b>
+              <span>39,000 / 99,000 / 199,000원 · 텍스트 썸네일·상세 이미지·FAQ까지 반영해 판매중</span>
+            </div>
+            <span class="badge b-approve">판매중</span>
+          </li>
+          <li>
+            <span class="tick" aria-hidden="true"></span>
+            <div class="todo-body">
+              <b>쇼피 Review Prize 세팅</b>
+              <span>100코인 · Follow Prize(S$2)는 11/20 적용 완료, Review만 미적용</span>
+            </div>
+            <span class="badge b-wait">대기</span>
+          </li>
+          <li>
+            <span class="tick" aria-hidden="true"></span>
+            <div class="todo-body">
+              <b>SG 2027 문구 니치 2종 검수</b>
+              <span>아이코닉 데스크 캘린더 $17.90 · 위클리 다이어리 A5 $24.90 — 피비서 검수 대기</span>
+            </div>
+            <span class="badge b-wait">대기</span>
+          </li>
+          <li>
+            <span class="tick" aria-hidden="true"></span>
+            <div class="todo-body">
+              <b>셀러월렛 카카오뱅크 출금계좌</b>
+              <span>쇼피 측 오류로 12/04 재시도 예정 (현재 잔액 $0.00)</span>
+            </div>
+            <span class="badge b-wait">대기</span>
+          </li>
+          <li>
+            <span class="tick" aria-hidden="true"></span>
+            <div class="todo-body">
+              <b>어도비 스톡 검토 2건 결과 확인</b>
+              <span>4K 백자 다기 2256459692 · biz-02-briefcase</span>
+            </div>
+            <span class="badge b-wait">대기</span>
+          </li>
+          <li>
+            <span class="tick" aria-hidden="true"></span>
+            <div class="todo-body">
+              <b>미리캔버스 추가 업로드</b>
+              <span>20건 심사 대기 상태라 추가 업로드 보류</span>
+            </div>
+            <span class="badge b-stop">중단</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>자동화 가동 현황</h3>
+          <span class="hint">사람 손 없이 도는 일</span>
+        </div>
+        <div class="tl">
+          <div class="tl-item">
+            <span class="tl-time">매일</span>
+            <div class="tl-body">
+              <b>경품 설문 자동 응모 · 11:30</b>
+              <span>로그인·본인인증 없이 진행, 마케팅 수신 동의는 선택 칸만 미체크 · 누적 25건</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">매일</span>
+            <div class="tl-body">
+              <b>스레드 발행 7건 (07:15~21:15)</b>
+              <span>무이미지 텍스트형이 노출 우세 · 오늘 합계 1,413회</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">매일</span>
+            <div class="tl-body">
+              <b>쇼피 8개국 무료 부스트 4회</b>
+              <span>09:00 · 13:20 · 17:40 · 22:00 각 40/40건 · 유료광고 0원</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">11/21</span>
+            <div class="tl-body">
+              <b>쿠파스 전일자 집계 반영 16:00</b>
+              <span>11/20분 성과는 11/21 16:00 이후에 확인 가능</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 3.5 21 19.5H3Z"/><path d="M12 9.5v4.2M12 16.6v.6"/>
+          </svg>
+          <p><b>수익 구조 원칙</b> — 쇼피 순마진 12.1~13.9% 구조상 AMS·제휴(수수료 15~20%)는 쓰지 않습니다. 유료 광고는 전 채널 0원 유지.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= SHOPEE ================= -->
+  <section id="blog" class="sec">
+    <div class="sec-head">
+      <div class="sec-head-l">
+        <p class="eyebrow">01 · Naver Blog</p>
+        <h2><span class="num">01</span>네이버 블로그</h2>
+        <p class="sec-sub">sy_global- · 누적 33편 · 평가 91/100점 · 애드포스트 검수중 · 리뷰노트 연동</p>
+        <div class="sec-tags">
+          <span class="badge b-live">33편 발행</span>
+          <span class="badge b-approve">애드포스트 검수중</span>
+          <span class="badge b-live">리뷰노트 연동</span>
+          <span class="badge b-stop">원격 자동화 중단</span>
+        </div>
+      </div>
+      <div class="sec-actions">
+        <a class="btn primary" href="https://blog.naver.com/sy_global-" target="_blank" rel="noopener">블로그 열기
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>블로그 평가</h3>
+          <span class="hint">100점 만점</span>
+        </div>
+        <div class="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 200 118" role="img" aria-label="블로그 평가 91점">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#3f7cf0"/>
+                <stop offset="100%" stop-color="#2ed3a0"/>
+              </linearGradient>
+            </defs>
+            <path class="gauge-track" d="M18 100 A82 82 0 0 1 182 100" pathLength="100"/>
+            <path class="gauge-fill" d="M18 100 A82 82 0 0 1 182 100" pathLength="100" style="stroke-dasharray:91 100"/>
+          </svg>
+          <div class="gauge-center">
+            <b>91<small>점</small></b>
+            <span>검색 유입 · 수익화 착수</span>
+          </div>
+        </div>
+        <div class="stat-row" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:14px">
+          <div class="stat"><p class="s-label">검색 유입</p><p class="s-value">95.1<small>%</small></p></div>
+          <div class="stat"><p class="s-label">평균 체류</p><p class="s-value">2<small>분</small> 44<small>초</small></p></div>
+          <div class="stat"><p class="s-label">누적 글</p><p class="s-value">33<small>편</small></p></div>
+        </div>
+        <p class="card-note">30편 돌파 후 11/20 애드포스트·리뷰노트 연동을 마쳤습니다. 당분간 하루 1~2편(4시간+ 간격)으로 색인 회복에 집중합니다.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>운영 방식</h3>
+          <span class="badge b-stop">자동화 중단</span>
+        </div>
+        <ul class="list">
+          <li><span><b>원격 자동화 중단(11/17)</b> — 네이버 약관상 AI 브라우저 자동화는 영구정지 위험이 있어 임시저장 협업을 전면 중단했습니다.</span></li>
+          <li><span><b>수동 발행 유지</b> — 원고·이미지는 준비하되 게시는 직접 진행합니다.</span></li>
+          <li><span><b>이웃 답글</b> — RSS 원문의 블로그명으로 이웃을 전수 대조해 매칭합니다.</span></li>
+          <li><span><b>내부 링크</b> — 글 하단 '함께 읽으면 좋은 글'은 같은 카테고리 1~2편으로 연결합니다.</span></li>
+        </ul>
+      </article>
+    </div>
+
+    <article class="card" style="margin-top:16px">
+      <div class="card-h">
+        <h3>애드포스트 · 체험단 현황</h3>
+        <span class="badge b-live">11/20 신청·연동 완료</span>
+      </div>
+      <div class="stat-row" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+        <div class="stat">
+          <p class="s-label">네이버 애드포스트</p>
+          <p class="s-value">검수 중</p>
+          <p class="hint" style="margin-top:4px">11/20 가입·미디어 검수 요청 (영업일 최대 5일 · 선호주제 비즈니스/경제/사회)</p>
+        </div>
+        <div class="stat">
+          <p class="s-label">리뷰노트 체험단</p>
+          <p class="s-value">연동 완료</p>
+          <p class="hint" style="margin-top:4px">11/20 블로그 인증 완료 · 아기 동반 고려 배송형 전용(유기종 올리브오일 캡슐 등 선별)</p>
+        </div>
+      </div>
+      <p class="card-note">남은 정리: 블로그 소개글 임시 인증코드(RN65910644) 삭제 및 배송형 캠페인 미션 조건 확인 후 신청.</p>
+    </article>
+  </section>
+
+  <section id="shopee" class="sec">
+    <div class="sec-head">
+      <div class="sec-head-l">
+        <p class="eyebrow">02 · Shopee</p>
+        <h2><span class="num">02</span>쇼피 8개국</h2>
+        <p class="sec-sub">syglobal.sg 외 8개 샵 · 라이브 307개 · 위반 0건 · 오늘 방문·주문 0</p>
+        <div class="sec-tags">
+          <span class="badge b-live live-dot">Live 8개국</span>
+          <span class="badge b-info">상품 307개</span>
+          <span class="badge b-approve">위반 0건</span>
+        </div>
+      </div>
+      <div class="sec-actions">
+        <a class="btn primary" href="https://seller.shopee.sg/" target="_blank" rel="noopener">셀러센터 (SG)
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+        <a class="btn" href="https://shopee.sg/syglobal.sg" target="_blank" rel="noopener">SG 샵 보기
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>국가별 라이브 상품</h3>
+          <span class="hint">8개국 합계 307개</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="bar-name">SG <em>싱가포르</em></span><div class="track"><div class="fill" style="width:92%"></div></div><span class="bar-val">46<small>개</small></span></div>
+          <div class="bar-row"><span class="bar-name">PH <em>필리핀</em></span><div class="track"><div class="fill" style="width:92%"></div></div><span class="bar-val">46<small>개</small></span></div>
+          <div class="bar-row"><span class="bar-name">MY <em>말레이시아</em></span><div class="track"><div class="fill" style="width:94%"></div></div><span class="bar-val">47<small>개</small></span></div>
+          <div class="bar-row"><span class="bar-name">VN <em>베트남</em></span><div class="track"><div class="fill" style="width:84%"></div></div><span class="bar-val">42<small>개</small></span></div>
+          <div class="bar-row"><span class="bar-name">TW <em>대만</em></span><div class="track"><div class="fill" style="width:74%"></div></div><span class="bar-val">37<small>개</small></span></div>
+          <div class="bar-row"><span class="bar-name">TH <em>태국</em></span><div class="track"><div class="fill" style="width:58%"></div></div><span class="bar-val">29<small>개</small></span></div>
+          <div class="bar-row"><span class="bar-name">MX <em>멕시코</em></span><div class="track"><div class="fill" style="width:52%"></div></div><span class="bar-val">26<small>개</small></span></div>
+          <div class="bar-row"><span class="bar-name">BR <em>브라질</em></span><div class="track"><div class="fill" style="width:50%"></div></div><span class="bar-val">25<small>개</small></span></div>
+        </div>
+        <p class="card-note">SG·PH·MY는 <b>11/20 21:00 실측</b>, VN·TW·TH·MX·BR은 11/18 17:09 조회값입니다. 8개국 합계 307개 기준이며 심사중·미게시·위반 0건.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>오늘(11/20) 퍼널 <span class="badge b-wait">주문 0</span></h3>
+          <span class="hint">21:00 실측</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><p class="s-label">방문자</p><p class="s-value">0<small>명</small></p></div>
+          <div class="stat"><p class="s-label">클릭</p><p class="s-value">0<small>건</small></p></div>
+          <div class="stat"><p class="s-label">주문</p><p class="s-value">0<small>건</small></p></div>
+          <div class="stat"><p class="s-label">매출</p><p class="s-value">0<small>원</small></p></div>
+        </div>
+        <p class="card-note">지메일 주문·채팅 알림도 0건. 최근 7일(11/11~17)은 방문 16명 · 클릭 3건 · 주문 0건이었습니다.</p>
+        <div class="callout" style="border-color:rgba(76,141,255,.26);background:rgba(76,141,255,.07)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color:var(--accent-ink)">
+            <circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5l3 1.8"/>
+          </svg>
+          <p><b style="color:var(--accent-ink)">노출 병목</b> — SG L30D 노출이 0~4회에 머물러 있습니다. 상품 수보다 노출이 문제입니다.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>적용 완료 <span class="badge b-approve">승인</span></h3>
+          <span class="hint">SG 샵 기준</span>
+        </div>
+        <div class="chips">
+          <span class="chip"><span class="ok">✓</span> 바우처 3단 <code>SYGLV15</code> 3%</span>
+          <span class="chip"><span class="ok">✓</span> <code>SYGLV25</code> 4%</span>
+          <span class="chip"><span class="ok">✓</span> <code>SYGLV40</code> 5%</span>
+          <span class="chip"><span class="ok">✓</span> Add-on Deal <code>527247748514561</code></span>
+          <span class="chip"><span class="ok">✓</span> Bundle <b>Any 2 Get 3% Off</b></span>
+          <span class="chip"><span class="ok">✓</span> Follow Prize <b>S$2</b> (11/20 적용)</span>
+          <span class="chip"><span class="ok">✓</span> 히어로 5종 영상 업로드 (Extra Excellent)</span>
+          <span class="chip"><span class="ok">✓</span> 전통과자 상세속성 13/16 · Samlip 오타 교정</span>
+          <span class="chip"><span class="ok">✓</span> 무료 부스트 4회 40/40 (09:00·13:20·17:40·22:00)</span>
+        </div>
+        <p class="card-note">바우처 3~5% + 번들 3% + 애드온 5~6%가 한 주문에 겹칠 수 있어, 첫 3~5건 정산 후 <b>SYGLV40 유지 여부</b>를 점검합니다.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>대기 · 예정</h3>
+          <span class="hint">3건</span>
+        </div>
+        <ul class="list">
+          <li><span><b>Review Prize</b> — 100코인 세팅만 미적용 (Follow Prize는 완료)</span></li>
+          <li><span><b>2027 문구 니치</b> — 아이코닉 캘린더·다이어리, 피비서 검수 대기</span></li>
+          <li><span><b>셀러월렛</b> — 카카오뱅크 출금계좌 12/04 재시도 (잔액 $0.00, KYC 통과)</span></li>
+        </ul>
+        <div class="callout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3.5 21 19.5H3Z"/><path d="M12 9.5v4.2M12 16.6v.6"/></svg>
+          <p><b>AMS · 제휴 금지</b> — 순마진 12.1~13.9%에서 수수료 15~20%를 얹으면 적자입니다. <span class="badge b-stop" style="margin-left:4px">중단</span></p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= THREADS / QUPAS / TOSS ================= -->
+  <section id="threads" class="sec">
+    <div class="sec-head">
+      <div class="sec-head-l">
+        <p class="eyebrow">03 · Threads · Qupas · Toss</p>
+        <h2><span class="num">03</span>스레드 · 쿠파스 · 토스</h2>
+        <p class="sec-sub">@18.1q2w3e4r · 30일 조회 35,856회 · 오늘 7건 1,413회</p>
+        <div class="sec-tags">
+          <span class="badge b-live live-dot">매일 7건 발행</span>
+          <span class="badge b-info">30일 +728%</span>
+          <span class="badge b-wait">전환 수익 대기</span>
+        </div>
+      </div>
+      <div class="sec-actions">
+        <a class="btn primary" href="https://www.threads.com/@18.1q2w3e4r" target="_blank" rel="noopener">Threads 프로필
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+        <a class="btn" href="https://partners.coupang.com/" target="_blank" rel="noopener">쿠팡 파트너스
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+        <a class="btn" href="https://sharelink.toss.im/" target="_blank" rel="noopener">토스 쉐어링크
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      <div class="stat"><p class="s-label">30일 조회</p><p class="s-value">35,856<small>회</small></p><p class="s-sub" style="color:var(--green)">+728%</p></div>
+      <div class="stat"><p class="s-label">30일 반응</p><p class="s-value">133<small>건</small></p><p class="s-sub">좋아요·댓글·공유</p></div>
+      <div class="stat"><p class="s-label">팔로워</p><p class="s-value">25<small>명</small></p><p class="s-sub">11/19 24명 → +1</p></div>
+      <div class="stat"><p class="s-label">오늘 발행</p><p class="s-value">7<small>건</small></p><p class="s-sub">07:15 ~ 21:15</p></div>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>오늘 게시 7건 조회 <span class="badge b-info">합계 1,413</span></h3>
+          <span class="hint">11/20 22:28</span>
+        </div>
+        <div class="thread-list">
+          <div class="thread-row best">
+            <div class="thread-top">
+              <span class="t-time">09:00</span>
+              <span class="t-title">G7 커피 <em style="font-style:normal;color:var(--muted)">B안 무이미지 + 첫 댓글 링크</em></span>
+              <span class="t-views">831<small>회</small></span>
+            </div>
+            <div class="track"><div class="fill" style="width:100%"></div></div>
+            <span class="t-meta">오늘 최고 · 좋아요 1 · 외부 댓글 2</span>
+          </div>
+          <div class="thread-row">
+            <div class="thread-top">
+              <span class="t-time">07:15</span>
+              <span class="t-title">커피 할인 총정리</span>
+              <span class="t-views">404<small>회</small></span>
+            </div>
+            <div class="track"><div class="fill" style="width:48.6%"></div></div>
+            <span class="t-meta">프로필 방문 6</span>
+          </div>
+          <div class="thread-row">
+            <div class="thread-top">
+              <span class="t-time">21:15</span>
+              <span class="t-title">구이삼 소곱창 <em style="font-style:normal;color:var(--muted)">B안 무이미지</em></span>
+              <span class="t-views">91<small>회</small></span>
+            </div>
+            <div class="track"><div class="fill" style="width:10.9%"></div></div>
+          </div>
+          <div class="thread-row">
+            <div class="thread-top">
+              <span class="t-time">19:45</span>
+              <span class="t-title">일상글</span>
+              <span class="t-views">50<small>회</small></span>
+            </div>
+            <div class="track"><div class="fill" style="width:6%"></div></div>
+          </div>
+          <div class="thread-row">
+            <div class="thread-top">
+              <span class="t-time">18:15</span>
+              <span class="t-title">족욕기 <em style="font-style:normal;color:var(--muted)">B안 무이미지</em></span>
+              <span class="t-views">27<small>회</small></span>
+            </div>
+            <div class="track"><div class="fill" style="width:3.2%"></div></div>
+          </div>
+          <div class="thread-row">
+            <div class="thread-top">
+              <span class="t-time">12:00</span>
+              <span class="t-title">로지텍 K380S <em style="font-style:normal;color:var(--muted)">A안 본문 링크 + 이미지</em></span>
+              <span class="t-views">6<small>회</small></span>
+            </div>
+            <div class="track"><div class="fill" style="width:0.8%"></div></div>
+          </div>
+          <div class="thread-row">
+            <div class="thread-top">
+              <span class="t-time">15:15</span>
+              <span class="t-title">호텔 베개 <em style="font-style:normal;color:var(--muted)">B안 + 이미지</em></span>
+              <span class="t-views">4<small>회</small></span>
+            </div>
+            <div class="track"><div class="fill" style="width:0.6%"></div></div>
+          </div>
+        </div>
+        <p class="card-note">막대는 조회수 비례. 무이미지 텍스트형이 이미지형보다 노출이 높게 나왔습니다(831 vs 4~6).</p>
+      </article>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <article class="card">
+          <div class="card-h">
+            <h3>쿠파스 <span class="badge b-live">수익 324원</span></h3>
+            <span class="hint">11월 누적 11/17~19</span>
+          </div>
+          <div class="chain">
+            <div class="chain-step"><p class="cs-v">9</p><p class="cs-l">클릭</p></div>
+            <div class="chain-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></div>
+            <div class="chain-step"><p class="cs-v">1</p><p class="cs-l">구매</p></div>
+            <div class="chain-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></div>
+            <div class="chain-step"><p class="cs-v" style="color:var(--green)">324</p><p class="cs-l">원 수익</p></div>
+          </div>
+          <div class="stat-row" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:12px">
+            <div class="stat"><p class="s-label">전환율</p><p class="s-value">11.11<small>%</small></p><p class="s-sub">클릭 9 → 구매 1</p></div>
+            <div class="stat"><p class="s-label">구매 상품</p><p class="s-value" style="font-size:14px">오뚜기 흰밥</p><p class="s-sub">10,800원</p></div>
+          </div>
+          <div class="callout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5l3 1.8"/></svg>
+            <p><b>11/20분은 미집계</b> — 전일자 매일 16시 반영이라 <b>11/21 16:00 이후</b>에 확인됩니다.</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-h">
+            <h3>토스쇼핑 쉐어링크</h3>
+            <span class="hint">11/20 21:29</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat"><p class="s-label">오늘 클릭</p><p class="s-value">0<small>건</small></p></div>
+            <div class="stat"><p class="s-label">11월 누적 클릭</p><p class="s-value">1<small>건</small></p><p class="s-sub">11/19</p></div>
+            <div class="stat"><p class="s-label">판매</p><p class="s-value">0<small>건</small></p></div>
+            <div class="stat"><p class="s-label">수익</p><p class="s-value">0<small>원</small></p></div>
+          </div>
+          <p class="card-note">클릭 1건이 판매로 이어지지 않았습니다. 링크는 <b>sharelink.toss.im</b>에서 생성합니다.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= KMONG ================= -->
+  <section id="kmong" class="sec">
+    <div class="sec-head">
+      <div class="sec-head-l">
+        <p class="eyebrow">04 · Kmong</p>
+        <h2><span class="num">04</span>크몽</h2>
+        <p class="sec-sub">#868582 · IT·프로그래밍 &gt; 엑셀·스프레드시트 · 포트폴리오 #335426</p>
+        <div class="sec-tags">
+          <span class="badge b-approve">승인 11/20 16:32</span>
+          <span class="badge b-live live-dot">판매중</span>
+          <span class="badge b-info">후속 수정 완료</span>
+        </div>
+      </div>
+      <div class="sec-actions">
+        <a class="btn primary" href="https://kmong.com/" target="_blank" rel="noopener">크몽 열기
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>승인 타임라인</h3>
+          <span class="hint">2일 소요</span>
+        </div>
+        <div class="tl">
+          <div class="tl-item">
+            <span class="tl-time">11/18</span>
+            <div class="tl-body">
+              <b>00:11 서비스 제출</b>
+              <span>스마트스토어/쿠팡 정산 엑셀 자동화 마진 계산</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">11/19</span>
+            <div class="tl-body">
+              <b>01:08 심사 결과 메일 없음</b>
+              <span>영업일 2~4일(최대 7일) 예상 구간</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">11/20</span>
+            <div class="tl-body">
+              <b style="color:var(--green)">16:32 심사 승인 완료</b>
+              <span>스마트스토어/쿠팡 정산 엑셀 자동화 마진 계산</span>
+            </div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">11/20</span>
+            <div class="tl-body">
+              <b style="color:var(--green)">오후 후속 수정까지 완료 → 판매중</b>
+              <span>가격·썸네일·범위·상세 이미지·FAQ 반영 후 판매 상태 유지</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>후속 수정 4건 <span class="badge b-approve">완료</span></h3>
+        </div>
+        <ul class="todo">
+          <li><span class="tick done" aria-hidden="true"></span><div class="todo-body"><b>가격 조정 — 39,000원대 진입</b><span>39,000 / 99,000 / 199,000원 · 실제 검색 시세(49,000~299,000원) 하단보다 낮은 진입가</span></div></li>
+          <li><span class="tick done" aria-hidden="true"></span><div class="todo-body"><b>텍스트가 들어간 썸네일로 교체</b><span>기존 카피 없는 썸네일 대체</span></div></li>
+          <li><span class="tick done" aria-hidden="true"></span><div class="todo-body"><b>세무 자문 제외</b><span>단순 집계 시트 제작 범위로 한정</span></div></li>
+          <li><span class="tick done" aria-hidden="true"></span><div class="todo-body"><b>상세 이미지·FAQ 보강</b><span>구매 전 문의를 줄이는 설명 보강</span></div></li>
+        </ul>
+        <p class="card-note">크몽 문안에서 <b>'수수료'는 금칙어</b>라 '판매 비용/요율'로 표기합니다.</p>
+      </article>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>판매 가격 <span class="badge b-live">판매중</span></h3>
+          <span class="hint">11/20 조정 반영</span>
+        </div>
+        <table class="price-table">
+          <thead>
+            <tr><th>패키지</th><th>가격</th><th>비고</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Standard</td><td class="num">39,000원</td><td>—</td></tr>
+            <tr><td>Deluxe</td><td class="num">99,000원</td><td>—</td></tr>
+            <tr><td>Premium</td><td class="num">199,000원</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <p class="card-note">패키지별 작업일·수정 횟수·범위는 가격 조정 후 재확인이 필요해 <b>미집계</b>로 두었습니다. 화상 교육 등 추가 옵션도 재확인 대상입니다.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>경쟁 시장 검증</h3>
+          <span class="hint">11/19 실측</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="bar-name">기성 템플릿</span><div class="track"><div class="fill amber" style="width:22%"></div></div><span class="bar-val">5~19<small>천원</small></span></div>
+          <div class="bar-row"><span class="bar-name">1:1 맞춤</span><div class="track"><div class="fill green" style="width:100%"></div></div><span class="bar-val">4.9~29.9<small>만원</small></span></div>
+        </div>
+        <p class="card-note">기성 템플릿은 5,000~19,000원대에 포화, <b>1:1 맞춤 자동화는 49,000~299,000원대에 틈새</b>가 있습니다. 이번 39,000원은 그 하단보다 낮춘 진입가입니다.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= STOCK ================= -->
+  <section id="stock" class="sec">
+    <div class="sec-head">
+      <div class="sec-head-l">
+        <p class="eyebrow">05 · Adobe Stock · MiriCanvas</p>
+        <h2><span class="num">05</span>스톡 이미지</h2>
+        <p class="sec-sub">어도비 검토 중 2건 · 반려 38건 · 승인 0건 · 미리캔버스 20건 심사 대기</p>
+        <div class="sec-tags">
+          <span class="badge b-wait">검토 중 2건</span>
+          <span class="badge b-stop">반려 38건</span>
+          <span class="badge b-info">승인 0건 · 수입 $0.00</span>
+        </div>
+      </div>
+      <div class="sec-actions">
+        <a class="btn primary" href="https://contributor.stock.adobe.com/kr/" target="_blank" rel="noopener">Adobe Stock 기여자
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+        <a class="btn" href="https://designhub.miricanvas.com/" target="_blank" rel="noopener">디자인허브
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 5h11v11M19 5 6 18"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>어도비 스톡 심사 현황</h3>
+          <span class="hint">11/20 13:44 실측</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><p class="s-label">검토 중</p><p class="s-value" style="color:var(--amber)">2<small>건</small></p></div>
+          <div class="stat"><p class="s-label">반려</p><p class="s-value" style="color:var(--red)">38<small>건</small></p></div>
+          <div class="stat"><p class="s-label">승인</p><p class="s-value">0<small>건</small></p></div>
+          <div class="stat"><p class="s-label">수입</p><p class="s-value">$0.00</p></div>
+        </div>
+        <div class="stack" style="margin-top:14px" aria-label="검토 중 2건, 반려 38건">
+          <span class="seg s-review" style="width:5%"></span>
+          <span class="seg s-reject" style="width:95%"></span>
+        </div>
+        <div class="legend">
+          <span><i class="s-review"></i>검토 중 2</span>
+          <span><i class="s-reject"></i>반려 38</span>
+          <span><i class="s-approve"></i>승인 0</span>
+        </div>
+        <ul class="list" style="margin-top:12px">
+          <li><span><b>4K 한국형 실사 백자 다기</b> — ID <code style="font-family:var(--mono);font-size:11px;color:var(--accent-ink)">2256459692</code> (11/20 제출)</span></li>
+          <li><span><b>biz-02-briefcase</b> — 검토 중</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>미리캔버스 디자인허브</h3>
+          <span class="badge b-stop">추가 업로드 보류</span>
+        </div>
+        <p class="kpi-value" style="font-size:38px;margin-top:4px">20<small>건</small></p>
+        <p class="kpi-sub">심사 대기 중 — 결과가 나오기 전 추가 업로드는 보류합니다.</p>
+        <div class="stack" style="margin-top:16px" aria-label="심사 대기 20건">
+          <span class="seg s-review" style="width:100%"></span>
+        </div>
+        <p class="card-note">어도비 반려 38건의 원인(키워드·구도·유사도)을 먼저 정리한 뒤 다음 배치를 올리는 편이 반려율을 낮춥니다.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= BLOG ================= -->
+  <!-- ================= SURVEY ================= -->
+  <section id="survey" class="sec">
+    <div class="sec-head">
+      <div class="sec-head-l">
+        <p class="eyebrow">06 · Giveaway Surveys</p>
+        <h2><span class="num">06</span>경품 설문 자동 응모</h2>
+        <p class="sec-sub">매일 11:30 자동 · 누적 25건 제출 · 가장 빠른 발표 11/24</p>
+        <div class="sec-tags">
+          <span class="badge b-live live-dot">진행 중 (매일 11:30)</span>
+          <span class="badge b-approve">25건 제출</span>
+          <span class="badge b-info" data-dday="2026-11-24">D-4</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <div class="card-h">
+          <h3>제출 현황</h3>
+          <span class="hint">1차 24건 + 1건</span>
+        </div>
+        <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+          <div class="dots" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i class="new"></i>
+          </div>
+          <div>
+            <p class="kpi-value" data-count="25" style="font-size:34px">25<small>건</small></p>
+            <p class="kpi-sub">전체 제출 완료<br>11/20 농식품정보누리 1건 추가</p>
+          </div>
+        </div>
+        <p class="card-note">모든 응모는 로그인·본인인증 없이 진행하고, 마케팅·광고 수신 동의는 선택 칸만 체크하지 않습니다. 다음 실행 <b>11/21 11:30</b>.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-h">
+          <h3>발표 일정</h3>
+          <span class="hint">확인된 일정만</span>
+        </div>
+        <div class="tl">
+          <div class="tl-item">
+            <span class="tl-time">11/24</span>
+            <div class="tl-body"><b>강원권통일플러스센터 연말 결산 설문</b><span>가장 빠른 발표일</span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">11/25</span>
+            <div class="tl-body"><b>행정안전부 공공 마이데이터 만족도</b><span>모바일 상품권 1만원 상당 300명</span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">11/26</span>
+            <div class="tl-body"><b>대전평생교육진흥원 웹진 · 라이브서울 만족도</b><span>2건 동일 발표일</span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">12/01</span>
+            <div class="tl-body"><b>농식품정보누리 만족도 조사</b><span>홈페이지 당첨자 발표</span></div>
+          </div>
+          <div class="tl-item">
+            <span class="tl-time">12/04</span>
+            <div class="tl-body"><b>국립한글박물관 웹진 퀴즈 2건</b><span>경품 지급 12/4~12/9 · 당첨자 개별 연락</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div>
+      <b>데이터 기준</b> 2026-11-20 22:30 KST · 쇼피 11/20 21:00(최근 7일 11/11~17) · 스레드 11/20 22:28 · 어도비 11/20 13:44 · 토스 11/20 21:29 · 쿠파스 11/17~19 · 크몽 11/20 확정치
+    </div>
+    <div class="legend-badges">
+      <span class="badge b-live">진행 중</span>
+      <span class="badge b-wait">대기</span>
+      <span class="badge b-approve">승인</span>
+      <span class="badge b-stop">중단</span>
+    </div>
+  </footer>
+  <p style="margin-top:14px;font-size:11px;color:var(--muted)">
+    확인되지 않은 수치는 지어내지 않고 <b>'미집계 / 확인 대기'</b>로 표기했습니다. 수익·클릭·조회는 해당 플랫폼에서 직접 확인한 값만 집계했습니다.
+  </p>
+</main>
+
+<script>
+  (function () {
+    "use strict";
+
+    /* ---- theme ---- */
+    var root = document.documentElement;
+    var btn = document.getElementById('themeBtn');
+
+    function syncBtn() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      btn.setAttribute('aria-label', dark ? '라이트 테마로 전환' : '다크 테마로 전환');
+    }
+    syncBtn();
+
+    btn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('biz-dash-theme', next); } catch (e) {}
+      syncBtn();
+    });
+
+    /* ---- number count-up ---- */
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var counters = Array.prototype.slice.call(document.querySelectorAll('[data-count]'));
+
+    function format(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+    function run(el) {
+      var target = parseInt(el.getAttribute('data-count'), 10) || 0;
+      var suffixEl = el.querySelector('small');
+      var suffix = suffixEl ? suffixEl.outerHTML : '';
+      if (reduce || target === 0) {
+        el.innerHTML = format(target) + suffix;
+        return;
+      }
+      var start = null, dur = 780;
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min(1, (ts - start) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.innerHTML = format(target * eased) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.innerHTML = format(target) + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var seen = new WeakSet();
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting && !seen.has(en.target)) {
+            seen.add(en.target);
+            run(en.target);
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.35 });
+      counters.forEach(function (c) { io.observe(c); });
+    } else {
+      counters.forEach(run);
+    }
+
+    /* ---- D-day ---- */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-dday]'), function (el) {
+      var parts = el.getAttribute('data-dday').split('-');
+      var target = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+      var now = new Date();
+      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var diff = Math.round((target - today) / 86400000);
+      el.setAttribute('data-dday-base', el.textContent);
+      if (diff > 0) el.textContent = 'D-' + diff;
+      else if (diff === 0) el.textContent = 'D-DAY';
+      else el.textContent = '발표 지남';
+    });
+
+    /* ---- nav active state ---- */
+    var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+    var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+
+    function setActive(id) {
+      links.forEach(function (a) {
+        a.setAttribute('aria-current', a.getAttribute('href') === '#' + id ? 'true' : 'false');
+      });
+    }
+
+    if ('IntersectionObserver' in window && sections.length) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) setActive(en.target.id);
+        });
+      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+      sections.forEach(function (s) { spy.observe(s); });
+    }
+
+    /* ---- smooth-ish scroll (native) already via CSS; keep focus accessible ---- */
+    links.forEach(function (a) {
+      a.addEventListener('click', function () { setActive(a.getAttribute('href').slice(1)); });
+    });
+  })();
+</script>
+</body>
+</html>
