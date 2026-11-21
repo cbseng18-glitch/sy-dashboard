@@ -616,6 +616,40 @@
     .theme-btn, .btn { display: none; }
     .card, .kpi { box-shadow: none; break-inside: avoid; }
   }
+
+  /* ---- Floating action buttons ---- */
+  .fab-group {
+    position: fixed;
+    right: 16px;
+    bottom: 18px;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .fab-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(19, 25, 34, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #e6edf3;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    transition: transform 0.15s ease, opacity 0.2s ease, background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fab-btn:active { transform: scale(0.92); }
+  .fab-btn:hover { background: rgba(31, 41, 55, 0.96); }
+  .fab-top.is-hidden { opacity: 0; pointer-events: none; transform: translateY(8px); }
+
 </style>
 </head>
 <body>
@@ -1620,7 +1654,34 @@
     links.forEach(function (a) {
       a.addEventListener('click', function () { setActive(a.getAttribute('href').slice(1)); });
     });
+
+    /* ---- Floating buttons: refresh & back-to-top ---- */
+    var btnRefresh = document.getElementById("btn-refresh");
+    var btnTop = document.getElementById("btn-top");
+    if (btnRefresh) {
+      btnRefresh.addEventListener("click", function () {
+        var base = location.href.split("?")[0].split("#")[0];
+        location.replace(base + "?v=" + Date.now());
+      });
+    }
+    if (btnTop) {
+      btnTop.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      var toggleTop = function () {
+        if (window.scrollY > 240) btnTop.classList.remove("is-hidden");
+        else btnTop.classList.add("is-hidden");
+      };
+      window.addEventListener("scroll", toggleTop, { passive: true });
+      toggleTop();
+    }
+
   })();
 </script>
+
+<div class="fab-group" aria-label="빠른 이동">
+  <button type="button" class="fab-btn" id="btn-refresh" title="새로고침" aria-label="새로고침">&#x21bb;</button>
+  <button type="button" class="fab-btn fab-top is-hidden" id="btn-top" title="맨 위로" aria-label="맨 위로">&#x2191;</button>
+</div>
 </body>
 </html>
