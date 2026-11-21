@@ -648,6 +648,7 @@
   }
   .fab-btn:active { transform: scale(0.92); }
   .fab-btn:hover { background: rgba(31, 41, 55, 0.96); }
+  .fab-top.is-hidden { opacity: 0; pointer-events: none; transform: translateY(8px); }
 
 </style>
 </head>
@@ -1555,7 +1556,7 @@
 
 <div class="fab-group" aria-label="빠른 이동">
   <button type="button" class="fab-btn" id="btn-refresh" title="새로고침" aria-label="새로고침">&#x21bb;</button>
-  <button type="button" class="fab-btn fab-top" id="btn-top" title="맨 위로" aria-label="맨 위로">&#x2191;</button>
+  <button type="button" class="fab-btn fab-top" class="fab-btn fab-top is-hidden" id="btn-top" title="맨 위로" aria-label="맨 위로">&#x2191;</button>
 </div>
 <script>
   (function () {
@@ -1671,6 +1672,12 @@
       btnTop.addEventListener("click", function () {
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
+      var toggleTop = function () {
+        if (window.scrollY > 240) btnTop.classList.remove("is-hidden");
+        else btnTop.classList.add("is-hidden");
+      };
+      window.addEventListener("scroll", toggleTop, { passive: true });
+      toggleTop();
 
     }
 
