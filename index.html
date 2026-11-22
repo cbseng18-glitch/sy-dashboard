@@ -650,6 +650,34 @@
   .fab-btn:hover { background: rgba(31, 41, 55, 0.96); }
   .fab-top.is-hidden { opacity: 0; pointer-events: none; transform: translateY(8px); }
 
+  /* ---- 모바일 폭 정리(2026-11-22): 헤더 75% 폭·본문 오른쪽 잘림 방지 ---- */
+  html, body { max-width: 100%; }
+  .topbar { left: 0; right: 0; width: 100%; }
+  .topbar-in, .wrap { width: 100%; }
+
+  .card, .kpi, .stat, .chain-step, .gauge-wrap, section, article { min-width: 0; }
+  .grid-2 > *, .grid-3 > *, .grid-4 > *, .kpi-grid > *, .stat-row > *, .bars > * { min-width: 0; }
+  .card-h h3, .card-h .hint { min-width: 0; }
+  .card-h .hint { white-space: normal; }
+
+  .tl-body, .todo-body, .list li > span, .callout > div, .foot > * { min-width: 0; overflow-wrap: anywhere; }
+  .kpi-value, .s-value, .tl-body b, .tl-body span, .card-note, .sec-sub, .chip, .badge { overflow-wrap: anywhere; }
+
+  img, svg, video, canvas, pre { max-width: 100%; }
+  pre { overflow-x: auto; }
+
+  .table-wrap { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .price-table { max-width: 100%; }
+
+  @media (max-width: 960px) {
+    .grid-2 { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 760px) {
+    .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr); }
+    .price-table td:first-child, .price-table td.num { white-space: normal; }
+  }
+
 </style>
 </head>
 <body>
@@ -1946,16 +1974,18 @@
           <h3>판매 가격 <span class="badge b-live">판매중</span></h3>
           <span class="hint">11/20 19,000원 개편</span>
         </div>
-        <table class="price-table">
-          <thead>
-            <tr><th>구성</th><th>가격</th><th>비고</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>기본 (단일가)</td><td class="num">19,000원</td><td>정산 엑셀 자동화 1회</td></tr>
-            <tr><td>맞춤 옵션</td><td class="num">3종</td><td>필요한 항목만 선택 추가</td></tr>
-            <tr><td>무료 데모</td><td class="num">0원</td><td>구매 전 선시연</td></tr>
-          </tbody>
-        </table>
+        <div class="table-wrap">
+          <table class="price-table">
+            <thead>
+              <tr><th>구성</th><th>가격</th><th>비고</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>기본 (단일가)</td><td class="num">19,000원</td><td>정산 엑셀 자동화 1회</td></tr>
+              <tr><td>맞춤 옵션</td><td class="num">3종</td><td>필요한 항목만 선택 추가</td></tr>
+              <tr><td>무료 데모</td><td class="num">0원</td><td>구매 전 선시연</td></tr>
+            </tbody>
+          </table>
+        </div>
         <p class="card-note">3단 패키지(39,000 / 99,000 / 199,000원)를 19,000원 단일가로 낮추고, 범위 밖 요청은 맞춤 옵션 3종으로 분리했습니다. 옵션별 금액과 작업일은 상세 페이지 기준이며 여기서는 <b>미집계</b>로 둡니다.</p>
       </article>
 
