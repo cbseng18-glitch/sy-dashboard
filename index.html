@@ -898,8 +898,9 @@
   /* 섹션 리드 (한 줄 요약) */
   .sec-lead { margin: 8px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--text2); word-break: keep-all; }
   .sec-lead b { color: var(--text); }
-  .sec-lead .lp { display: inline; }
-  .sec-lead .lp:not(:last-child)::after { content: ' ·'; color: var(--muted); font-weight: 700; margin-left: 1px; }
+  .sec-lead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 12px; }
+  .sec-lead .lp { display: inline-block; }
+  .sec-lead .lp:not(:last-child)::after { content: ''; }
 
   /* 미니 KPI 카드 */
   .mini-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
