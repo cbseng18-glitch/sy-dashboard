@@ -14,6 +14,17 @@
       t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
     }
     document.documentElement.setAttribute('data-theme', t);
+
+    /* 탭 모드: 본문 페인트 전에 켜서 전 섹션이 잠시 보이는 깜박임을 막는다.
+       아래 본문 스크립트가 첫 탭을 활성화하지 못하면 1.5초 뒤 자동 해제(전체 보기). */
+    try {
+      document.documentElement.setAttribute('data-tabs', 'on');
+      window.setTimeout(function () {
+        if (!document.querySelector('main > section.is-active')) {
+          document.documentElement.removeAttribute('data-tabs');
+        }
+      }, 1500);
+    } catch (e) {}
   })();
 </script>
 <style>
@@ -678,6 +689,99 @@
     .price-table td:first-child, .price-table td.num { white-space: normal; }
   }
 
+  /* ===== 탭 네비게이션 (2026-11-23 모바일 탭형 개편) ===== */
+  .nav.tabs { gap: 3px; }
+  .nav.tabs .tab {
+    flex: 0 1 auto;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border-radius: 11px;
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    color: var(--muted);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: color .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .nav.tabs .tab:hover { color: var(--text); background: var(--track); }
+  .nav.tabs .tab[aria-current="true"] {
+    color: #fff;
+    background: linear-gradient(135deg, var(--bar-a), var(--bar-b));
+    box-shadow: 0 10px 22px -14px var(--bar-a);
+  }
+  .nav.tabs .tab .tab-ico { font-size: 14px; line-height: 1; }
+
+  /* 탭 패널 — data-tabs 는 스크립트가 켠다(JS 없으면 전 섹션 표시) */
+  html[data-tabs="on"] main > section { display: none; margin-top: 0 !important; }
+  html[data-tabs="on"] main > section.is-active { display: block; animation: tabIn .2s ease-out both; }
+  @keyframes tabIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  html[data-tabs="on"] main > section > .sec-head:first-child { margin-top: 0; }
+
+  /* 긴 타임라인 접기 */
+  .tl-item.is-collapsed { display: none; }
+  .more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px dashed var(--line2);
+    border-radius: var(--radius-sm);
+    background: var(--card2);
+    color: var(--text2);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .more-btn:hover { border-color: var(--accent); color: var(--text); }
+  .more-btn[hidden] { display: none; }
+  .more-btn b { color: var(--accent-ink); font-variant-numeric: tabular-nums; }
+  .more-btn .more-close { display: none; }
+  .more-btn[aria-expanded="true"] .more-open { display: none; }
+  .more-btn[aria-expanded="true"] .more-close { display: inline-flex; }
+
+  @media (max-width: 760px) {
+    .topbar-in { padding: 8px 12px 0; row-gap: 0; }
+    .nav.tabs {
+      margin: 0 -12px;
+      padding: 7px 8px 8px;
+      gap: 2px;
+      border-top: 1px solid var(--line);
+      scroll-padding-inline: 8px;
+    }
+    .nav.tabs .tab {
+      flex: 1 1 0;
+      flex-direction: column;
+      gap: 2px;
+      padding: 5px 2px 6px;
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 750;
+      letter-spacing: -0.04em;
+    }
+    .nav.tabs .tab .tab-ico { font-size: 16px; line-height: 1.1; }
+    html[data-tabs="on"] section { scroll-margin-top: 104px; }
+    .wrap { padding-top: 18px; }
+    .hero { margin-bottom: 16px; }
+    .hero h1 { font-size: 22px; }
+    .kpi { padding: 15px 15px 14px; }
+    .card { padding: 17px 15px; }
+    .fab-group { right: 12px; bottom: 20px; }
+  }
+
 </style>
 </head>
 <body>
@@ -697,13 +801,13 @@
       </span>
     </div>
 
-    <nav class="nav" aria-label="섹션 이동">
-      <a href="#overview">개요</a>
-      <a href="#blog">블로그</a>
-      <a href="#shopee">쇼피</a>
-      <a href="#threads">스레드·쿠파스·토스</a>
-      <a href="#kmong">크몽</a>
-      <a href="#survey">경품설문</a>
+    <nav class="nav tabs" aria-label="대시보드 탭">
+      <a class="tab" href="#overview" data-tab="overview" aria-current="true"><span class="tab-ico" aria-hidden="true">📊</span>요약</a>
+      <a class="tab" href="#blog" data-tab="blog"><span class="tab-ico" aria-hidden="true">📝</span>블로그</a>
+      <a class="tab" href="#shopee" data-tab="shopee"><span class="tab-ico" aria-hidden="true">🛍️</span>쇼피</a>
+      <a class="tab" href="#threads" data-tab="threads"><span class="tab-ico" aria-hidden="true">🧵</span>스레드</a>
+      <a class="tab" href="#kmong" data-tab="kmong"><span class="tab-ico" aria-hidden="true">💼</span>크몽</a>
+      <a class="tab" href="#survey" data-tab="survey"><span class="tab-ico" aria-hidden="true">🎁</span>설문</a>
     </nav>
 
     <div class="top-right">
@@ -1499,6 +1603,10 @@
             </div>
           </div>
         </div>
+        <button class="more-btn" type="button" data-more="6" aria-expanded="false" hidden>
+          <span class="more-open">나머지 <b class="more-n">0</b>건 더 보기 <span aria-hidden="true">▾</span></span>
+          <span class="more-close">접기 <span aria-hidden="true">▴</span></span>
+        </button>
       </article>
 
       <article class="card">
@@ -2565,28 +2673,104 @@
       else el.textContent = '발표 지남';
     });
 
-    /* ---- nav active state ---- */
-    var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
-    var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+    /* ---- 탭 전환 (2026-11-23 모바일 탭형) ---- */
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.nav.tabs .tab'));
+    var navEl = document.querySelector('.nav.tabs');
+    var panelIds = [];
+    var panels = {};
 
-    function setActive(id) {
-      links.forEach(function (a) {
-        a.setAttribute('aria-current', a.getAttribute('href') === '#' + id ? 'true' : 'false');
+    tabs.forEach(function (a) {
+      var id = a.getAttribute('data-tab') || (a.getAttribute('href') || '').slice(1);
+      var el = id ? document.getElementById(id) : null;
+      if (!el) return;
+      a.setAttribute('data-tab', id);
+      if (panelIds.indexOf(id) < 0) panelIds.push(id);
+      panels[id] = el;
+    });
+
+    var currentTab = null;
+
+    function centerTab(a) {
+      if (!navEl || !a || navEl.scrollWidth <= navEl.clientWidth + 2) return;
+      var nr = navEl.getBoundingClientRect();
+      var ar = a.getBoundingClientRect();
+      var target = navEl.scrollLeft + (ar.left - nr.left) - (navEl.clientWidth - ar.width) / 2;
+      if (target < 0) target = 0;
+      try { navEl.scrollTo({ left: target, behavior: 'smooth' }); }
+      catch (e) { navEl.scrollLeft = target; }
+    }
+
+    function activate(id, scroll) {
+      if (panelIds.indexOf(id) < 0) id = panelIds[0];
+      if (!id) return;
+      currentTab = id;
+      var activeLink = null;
+      tabs.forEach(function (a) {
+        var on = a.getAttribute('data-tab') === id;
+        a.setAttribute('aria-current', on ? 'true' : 'false');
+        if (on) activeLink = a;
       });
+      panelIds.forEach(function (k) {
+        if (k === id) panels[k].classList.add('is-active');
+        else panels[k].classList.remove('is-active');
+      });
+      centerTab(activeLink);
+      if (scroll) window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
-    if ('IntersectionObserver' in window && sections.length) {
-      var spy = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) setActive(en.target.id);
-        });
-      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-      sections.forEach(function (s) { spy.observe(s); });
+    function hashTab() {
+      var h = (location.hash || '').replace(/^#/, '');
+      try { h = decodeURIComponent(h); } catch (e) {}
+      return panelIds.indexOf(h) >= 0 ? h : null;
     }
 
-    /* ---- smooth-ish scroll (native) already via CSS; keep focus accessible ---- */
-    links.forEach(function (a) {
-      a.addEventListener('click', function () { setActive(a.getAttribute('href').slice(1)); });
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a) return;
+      var id = (a.getAttribute('href') || '').slice(1);
+      try { id = decodeURIComponent(id); } catch (err) {}
+      if (panelIds.indexOf(id) < 0) return;
+      e.preventDefault();
+      var wasSame = currentTab === id;
+      activate(id, !wasSame);
+      if (location.hash !== '#' + id) {
+        try { history.pushState(null, '', '#' + id); } catch (err) { location.hash = id; }
+      }
+    });
+
+    window.addEventListener('hashchange', function () {
+      var id = hashTab();
+      if (id) activate(id, false);
+    });
+    window.addEventListener('popstate', function () {
+      var id = hashTab();
+      if (id) activate(id, false);
+    });
+
+    activate(hashTab() || panelIds[0], false);
+
+    /* ---- 긴 타임라인 접기 ---- */
+    Array.prototype.forEach.call(document.querySelectorAll('.more-btn[data-more]'), function (mBtn) {
+      var card = mBtn.closest ? mBtn.closest('article') : null;
+      var list = card ? card.querySelector('.tl') : null;
+      if (!list) return;
+      var items = Array.prototype.slice.call(list.querySelectorAll('.tl-item'));
+      var limit = parseInt(mBtn.getAttribute('data-more'), 10) || 6;
+      if (items.length <= limit + 2) return;
+      items.forEach(function (it, i) { if (i >= limit) it.classList.add('is-collapsed'); });
+      var restEl = mBtn.querySelector('.more-n');
+      if (restEl) restEl.textContent = String(items.length - limit);
+      mBtn.hidden = false;
+      mBtn.setAttribute('aria-expanded', 'false');
+      mBtn.addEventListener('click', function () {
+        var open = mBtn.getAttribute('aria-expanded') === 'true';
+        mBtn.setAttribute('aria-expanded', open ? 'false' : 'true');
+        items.forEach(function (it, i) { if (i >= limit) it.classList.toggle('is-collapsed', open); });
+        if (open && card) {
+          var top = card.getBoundingClientRect().top + window.scrollY - 96;
+          if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'auto' });
+        }
+      });
     });
 
     /* ---- Floating buttons: refresh & back-to-top ---- */
