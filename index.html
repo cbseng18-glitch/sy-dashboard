@@ -2777,6 +2777,7 @@
       if (!list) return;
       var items = Array.prototype.slice.call(list.querySelectorAll('.tl-item'));
       var limit = parseInt(mBtn.getAttribute('data-more'), 10) || 6;
+      if (window.matchMedia && window.matchMedia('(max-width: 760px)').matches && limit > 2) limit = 2;
       if (items.length <= limit + 2) return;
       items.forEach(function (it, i) { if (i >= limit) it.classList.add('is-collapsed'); });
       var restEl = mBtn.querySelector('.more-n');
