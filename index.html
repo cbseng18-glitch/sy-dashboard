@@ -773,13 +773,34 @@
       letter-spacing: -0.04em;
     }
     .nav.tabs .tab .tab-ico { font-size: 16px; line-height: 1.1; }
-    html[data-tabs="on"] section { scroll-margin-top: 104px; }
+    html[data-tabs="on"] section { scroll-margin-top: 118px; }
     .wrap { padding-top: 18px; }
     .hero { margin-bottom: 16px; }
     .hero h1 { font-size: 22px; }
     .kpi { padding: 15px 15px 14px; }
     .card { padding: 17px 15px; }
     .fab-group { right: 12px; bottom: 20px; }
+
+    /* 모바일 요약: KPI 설명을 3줄까지만 → '자세히 보기'로 펼침 */
+    .kpi-sub {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+    .kpi-sub.is-open { display: block; -webkit-line-clamp: unset; overflow: visible; }
+    .kpi-more {
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-top: 9px; padding: 4px 11px;
+      border: 1px solid var(--line2); border-radius: 999px;
+      background: transparent; color: var(--text2);
+      font-family: inherit; font-size: 11px; font-weight: 750;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .kpi-more[aria-expanded="true"] { border-color: var(--accent); color: var(--text); }
+  }
+  @media (min-width: 761px) {
+    .kpi-more { display: none !important; }
   }
 
 </style>
@@ -2772,6 +2793,26 @@
         }
       });
     });
+
+    /* ---- 모바일: KPI 설명 3줄 접기 + 자세히 보기 ---- */
+    (function () {
+      var mq = window.matchMedia ? window.matchMedia('(max-width: 760px)') : null;
+      if (!mq || !mq.matches) return;
+      Array.prototype.forEach.call(document.querySelectorAll('.kpi .kpi-sub'), function (sub) {
+        if (sub.scrollHeight <= sub.clientHeight + 4) return;
+        var more = document.createElement('button');
+        more.type = 'button';
+        more.className = 'kpi-more';
+        more.setAttribute('aria-expanded', 'false');
+        more.textContent = '자세히 보기';
+        more.addEventListener('click', function () {
+          var open = sub.classList.toggle('is-open');
+          more.setAttribute('aria-expanded', open ? 'true' : 'false');
+          more.textContent = open ? '접기' : '자세히 보기';
+        });
+        sub.parentNode.insertBefore(more, sub.nextSibling);
+      });
+    })();
 
     /* ---- Floating buttons: refresh & back-to-top ---- */
     var btnRefresh = document.getElementById("btn-refresh");
