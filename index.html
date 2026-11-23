@@ -803,6 +803,86 @@
     .kpi-more { display: none !important; }
   }
 
+  /* ============================================================
+     가독성 · 정렬 개선 (2026-11-23)
+     ① 한글 어절 단위 줄바꿈 ② 문단 리듬·좌측 정렬
+     ③ 카드 헤더·배지 정렬 ④ 표·수치·리스트 정렬 ⑤ 모바일 재배치
+     ============================================================ */
+
+  /* ① 한글 줄바꿈 — 어절(단어) 중간에서 끊기지 않게 */
+  body, .card, .kpi, .stat, .chain-step, p, li, td, th,
+  .card-note, .sec-sub, .hint, .badge, .chip { word-break: keep-all; overflow-wrap: break-word; }
+  /* URL·코드처럼 띄어쓰기가 없는 긴 문자열은 폭을 넘칠 때만 끊는다 */
+  code, kbd, samp, pre { word-break: normal; overflow-wrap: break-word; }
+
+  /* ② 문단 리듬 — 좌측 정렬 기준 + 균일한 줄간격/여백 */
+  body { text-align: left; }
+  p, li, td, th { line-height: 1.6; }
+  .card-note, .sec-sub { line-height: 1.7; }
+  .tl-body span, .todo-body span { line-height: 1.65; }
+  .card-note { margin-top: 14px; padding-top: 13px; }
+  /* 가운데 정렬을 쓰는 블록은 그대로 유지 */
+  .chain-step, .chain-step p, .gauge-center, .gauge-center b, .gauge-center span { text-align: center; }
+  h1, h2, h3 { text-wrap: balance; }
+  .hero p, .sec-sub, .card-note, .callout p { text-wrap: pretty; }
+
+  /* ③ 카드 헤더 · 배지 — 좁은 화면에서도 제목과 배지가 겹치지 않게 */
+  .card-h { flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 6px; }
+  .card-h h3 { flex: 0 1 auto; flex-wrap: wrap; row-gap: 5px; }
+  .card-h h3 .badge { flex: none; }
+  .card-h .hint { flex: 0 1 auto; margin-left: auto; text-align: right; line-height: 1.45; }
+  .card-h .hint:only-child { margin-left: 0; text-align: left; }
+  .badge { max-width: 100%; }
+
+  /* ④-1 표 — 항목명 좌측, 수치 우측 + 자릿수 고정 */
+  .price-table { font-variant-numeric: tabular-nums; }
+  .price-table th, .price-table td { padding: 10px; vertical-align: middle; }
+  .price-table th:first-child, .price-table td:first-child { padding-left: 2px; text-align: left; }
+  .price-table th:last-child, .price-table td:last-child { padding-right: 2px; }
+  .price-table thead th { padding-bottom: 7px; }
+  .price-table td.num { text-align: right; }
+
+  /* ④-2 리스트 — 불릿·체크 아이콘과 첫 줄 텍스트의 세로 정렬 */
+  .list li { padding: 9px 0; }
+  .list li::before { margin-top: 7.5px; }
+  .list li:first-child { padding-top: 1px; }
+  .todo li { align-items: flex-start; padding: 10px 0; }
+  .todo li:first-child { padding-top: 2px; }
+  .todo .tick { margin-top: 2px; }
+
+  /* ④-3 수치 타일 — 좌측 정렬·자릿수 고정·설명 줄간격 */
+  .stat .s-label, .stat .s-value, .stat .s-sub { text-align: left; }
+  .stat .s-value { font-variant-numeric: tabular-nums; }
+  .stat .s-sub { line-height: 1.5; }
+  .kpi-sub { line-height: 1.55; }
+
+  /* ⑤ 모바일 — 인라인 grid-template-columns 덮어쓰기, 바 행 재배치 */
+  @media (max-width: 760px) {
+    .stat-row { grid-template-columns: repeat(auto-fit, minmax(146px, 1fr)) !important; gap: 8px; }
+    .stat { padding: 12px 12px 11px; }
+
+    .bar-row { grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; row-gap: 5px; align-items: center; }
+    .bar-name { grid-column: 1; grid-row: 1; white-space: normal; }
+    .bar-val { grid-column: 2; grid-row: 1; }
+    .bar-row .track { grid-column: 1 / -1; grid-row: 2; }
+
+    .card-h { align-items: flex-start; }
+    .badge { white-space: normal; }
+    .sec-tags { gap: 6px; }
+    .card-note, .sec-sub { line-height: 1.72; }
+
+    .tl-item { gap: 9px; }
+    .tl-time { min-width: 46px; text-align: center; }
+    .callout { gap: 9px; padding: 11px 12px; }
+    .callout > p, .callout > div { min-width: 0; }
+    .thread-top { row-gap: 4px; }
+  }
+
+  @media (max-width: 400px) {
+    .stat-row { grid-template-columns: repeat(auto-fit, minmax(134px, 1fr)) !important; }
+    .kpi-value { font-size: 24px; }
+  }
+
 </style>
 </head>
 <body>
@@ -2615,7 +2695,7 @@
 
 <div class="fab-group" aria-label="빠른 이동">
   <button type="button" class="fab-btn" id="btn-refresh" title="새로고침" aria-label="새로고침">&#x21bb;</button>
-  <button type="button" class="fab-btn fab-top" class="fab-btn fab-top is-hidden" id="btn-top" title="맨 위로" aria-label="맨 위로">&#x2191;</button>
+  <button type="button" class="fab-btn fab-top is-hidden" id="btn-top" title="맨 위로" aria-label="맨 위로">&#x2191;</button>
 </div>
 <script>
   (function () {
