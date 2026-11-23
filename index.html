@@ -811,7 +811,7 @@
 
   /* ① 한글 줄바꿈 — 어절(단어) 중간에서 끊기지 않게 */
   body, .card, .kpi, .stat, .chain-step, p, li, td, th,
-  .card-note, .sec-sub, .hint, .badge, .chip { word-break: keep-all; overflow-wrap: break-word; }
+  .card-note, .sec-sub, .hint { word-break: keep-all; overflow-wrap: break-word; }
   /* URL·코드처럼 띄어쓰기가 없는 긴 문자열은 폭을 넘칠 때만 끊는다 */
   code, kbd, samp, pre { word-break: normal; overflow-wrap: break-word; }
 
@@ -868,6 +868,9 @@
 
     .card-h { align-items: flex-start; }
     .badge { white-space: normal; }
+    /* 칩은 flex 한 줄에 갇혀 넘치므로 모바일에서는 일반 인라인 흐름으로 (긴 문구도 자연스럽게 줄바꿈) */
+    .chip { display: inline-block; max-width: 100%; }
+    .chip > * { display: inline; }
     .sec-tags { gap: 6px; }
     .card-note, .sec-sub { line-height: 1.72; }
 
