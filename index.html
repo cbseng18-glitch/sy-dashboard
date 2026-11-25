@@ -3141,7 +3141,15 @@
     var currentTab = null;
 
     function centerTab(a) {
-      if (!navEl || !a || navEl.scrollWidth <= navEl.clientWidth + 2) return;
+      if (!navEl || !a) return;
+      /* 활성 탭이 항상 탭 바 안에 보이도록 (2026-11-25) */
+      if (typeof a.scrollIntoView === 'function') {
+        try {
+          a.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          return;
+        } catch (e) { /* 아래 수동 계산으로 대체 */ }
+      }
+      if (navEl.scrollWidth <= navEl.clientWidth + 2) return;
       var nr = navEl.getBoundingClientRect();
       var ar = a.getBoundingClientRect();
       var target = navEl.scrollLeft + (ar.left - nr.left) - (navEl.clientWidth - ar.width) / 2;
@@ -3198,6 +3206,62 @@
     });
 
     activate(hashTab() || panelIds[0], false);
+
+    /* ---- 좌우 스와이프 탭 전환 (2026-11-25) ---- */
+    (function () {
+      var MIN_DX = 60;      /* 최소 수평 이동(px) */
+      var DOM_RATIO = 1.4;  /* 수평이 수직의 1.4배 이상일 때만 */
+      var MAX_MS = 900;     /* 너무 느린 드래그(길게 누른 뒤 끌기) 제외 */
+      var NO_SWIPE = '.table-wrap, .tbl-wrap, table, pre, nav, .nav, .tabs, input, textarea, select, [contenteditable="true"]';
+      var sx = 0, sy = 0, st = 0, tracking = false;
+
+      function insideNoSwipe(el) {
+        if (!el || !el.closest) return false;
+        try { return !!el.closest(NO_SWIPE); } catch (e) { return false; }
+      }
+
+      function onStart(e) {
+        tracking = false;
+        if (!e.touches || e.touches.length !== 1) return;   /* 다중 터치(핀치) 제외 */
+        var t = e.touches[0];
+        sx = t.clientX; sy = t.clientY; st = Date.now();
+        tracking = !insideNoSwipe(e.target);                /* 표·탭바·입력창 내부 제외 */
+      }
+
+      function onMove(e) {
+        if (!tracking) return;
+        if (!e.touches || e.touches.length !== 1) { tracking = false; return; }  /* 핀치로 번지면 취소 */
+        var t = e.touches[0];
+        var dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx) * 1.2) tracking = false; /* 세로 스크롤 */
+      }
+
+      function onEnd(e) {
+        if (!tracking) return;
+        tracking = false;
+        if (e.touches && e.touches.length > 1) return;
+        var t = (e.changedTouches && e.changedTouches[0]) || null;
+        if (!t || !currentTab) return;
+        var dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Date.now() - st > MAX_MS) return;
+        if (Math.abs(dx) < MIN_DX) return;
+        if (Math.abs(dx) <= Math.abs(dy) * DOM_RATIO) return;
+        var i = panelIds.indexOf(currentTab);
+        if (i < 0) return;
+        var next = dx < 0 ? i + 1 : i - 1;   /* 왼쪽으로 밀면 다음 탭, 오른쪽으로 밀면 이전 탭 */
+        if (next < 0 || next >= panelIds.length) return;     /* 끝단에서는 그대로 */
+        var id = panelIds[next];
+        activate(id, true);
+        if (location.hash !== '#' + id) {
+          try { history.replaceState(null, '', '#' + id); } catch (err) { }
+        }
+      }
+
+      document.addEventListener('touchstart', onStart, { passive: true });
+      document.addEventListener('touchmove', onMove, { passive: true });
+      document.addEventListener('touchend', onEnd, { passive: true });
+      document.addEventListener('touchcancel', function () { tracking = false; }, { passive: true });
+    })();
 
     /* ---- 긴 타임라인 접기 ---- */
     Array.prototype.forEach.call(document.querySelectorAll('.more-btn[data-more]'), function (mBtn) {
