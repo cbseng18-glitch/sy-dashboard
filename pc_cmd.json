@@ -1,5 +1,11 @@
 {
-  "id": "cmd_deals_0120",
-  "action": "check_deals",
-  "args": {}
+  "id": "cmd_viral_0121",
+  "action": "fetch_urls",
+  "args": {
+    "urls": [
+      "https://www.ppomppu.co.kr/hot.php",
+      "https://www.clien.net/service/board/park?&od=T33",
+      "https://m.ruliweb.com/best/humor"
+    ]
+  }
 }
