@@ -1,5 +1,5 @@
 {
-  "id": "test_status_0015",
-  "action": "status",
+  "id": "cmd_deals_0120",
+  "action": "check_deals",
   "args": {}
 }
