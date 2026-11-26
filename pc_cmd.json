@@ -1,5 +1,5 @@
 {
-  "id": "init_20261126",
-  "action": "noop",
+  "id": "test_status_2340",
+  "action": "status",
   "args": {}
 }
