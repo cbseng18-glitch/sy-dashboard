@@ -1,13 +1,7 @@
 {
-  "id": "selfupd_qoo10_curl_20261127",
-  "action": "self_update",
+  "id": "check_stats_qoo10_test_20261127",
+  "action": "check_stats",
   "args": {
-    "files": [
-      {
-        "remote": "pc_auto/stats_checker.py",
-        "local": "stats_checker.py"
-      }
-    ],
-    "restart": true
+    "force_report": true
   }
 }
