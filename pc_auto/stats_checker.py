@@ -20,16 +20,27 @@ stats_checker.py — 집 PC(C:\\sy_auto) 통합 경량 조회기
 
 의존성
   Python 3.7+ 표준 라이브러리만 사용. `pip install` 불필요.
+  (선택) `curl_cffi` 가 설치돼 있으면 큐텐 조회에 자동으로 먼저 사용한다.
+
+큐텐 재팬 HTTP 엔진 (v1.1.0)
+  `urllib` 의 TLS 지문 때문에 Akamai 가 523/403 을 돌려주므로, 큐텐만 아래 순서로 시도한다.
+    1) curl_cffi (설치된 경우, Chrome 지문 위장)
+    2) Windows 10/11 기본 내장 `curl.exe` (Schannel TLS — 집 PC에서 Akamai 통과율 높음)
+    3) 기존 urllib (최종 폴백)
+  curl 경로는 `--max-time 15`, `-L` 리다이렉트 추적, UTF-8 본문, `%{http_code}` 상태코드 파싱,
+  헤더 덤프로 charset 확인까지 처리한다. config `qoo10.http_engine` 으로 고정 가능
+  (`auto` 기본 | `curl` | `cffi` | `urllib`).
 
 사용 예
   python stats_checker.py --dry-run        # 네트워크 조회는 하되 저장·전송 안 함(검증용)
   python stats_checker.py                  # 실제 실행(로컬 저장 + config에서 켜면 GitHub 푸시)
   python stats_checker.py --telegram       # 텔레그램 요약까지
-  python stats_checker.py --self-test      # 네트워크 없이 파서·판정 로직 자체 점검
+  python stats_checker.py --self-test      # 네트워크 없이 파서·판정 로직 자체 점검(로컬 목업 서버로 curl 경로까지)
+  python stats_checker.py --fetch-test     # 큐텐 1건으로 사용 가능한 HTTP 엔진 실측(집 PC 확인용)
   python stats_checker.py --print-json     # 감시 스크립트용 결과 JSON 한 줄 출력
 
 토큰·쿠키는 코드에 넣지 않는다. `config.json` 또는 환경변수에서만 읽는다.
-  GITHUB_TOKEN / TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID
+  GITHUB_TOKEN / TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID / SY_CURL_EXE(선택: curl.exe 경로 지정)
 """
 
 from __future__ import print_function
@@ -40,13 +51,16 @@ import datetime
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 KST = datetime.timezone(datetime.timedelta(hours=9))
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 sy_auto-stats-checker/" + VERSION)
@@ -106,6 +120,8 @@ DEFAULT_CONFIG = {
     "qoo10": {
         "enabled": True,
         "timeout": 25,
+        "http_engine": "auto",        # auto | curl | cffi | urllib (auto: curl_cffi→curl.exe→urllib)
+        "curl_timeout": 15,           # curl/curl_cffi --max-time (brief: 15초)
         "url_template": "https://www.qoo10.jp/g/{no}",
         "products": QOO10_PRODUCTS,
     },
@@ -282,6 +298,256 @@ def fetch_html(url, timeout=25, referer=None, log=None, follow_meta=2):
             log.info("meta refresh 따라감: %s" % target)
         res = http_request(target, headers=headers, timeout=timeout, retries=1, log=log)
     return res, (decode_body(res) if res.get("ok") else ""), hops
+
+
+# ---------------------------------------------------------------------------
+# HTTP 대체 엔진 (curl_cffi → Windows curl.exe → urllib)
+# ---------------------------------------------------------------------------
+#   urllib 의 TLS 지문(JA3)은 Akamai 가 523 으로 잘라낸다. 집 PC(Windows)의
+#   내장 curl.exe 는 Schannel TLS 라 지문이 달라 통과하는 경우가 많다.
+
+CURL_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+           "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
+CURL_DEFAULT_TIMEOUT = 15
+_CURL_CACHE = {}
+_CFFI_CACHE = {}  # {loaded: bool, module: module|None}
+
+
+def find_curl_exe(refresh=False):
+    """curl 실행 파일 경로. 없으면 None.
+
+    우선순위: 환경변수 SY_CURL_EXE → Windows System32\\curl.exe → PATH 의 curl(.exe)
+    """
+    if not refresh and "path" in _CURL_CACHE:
+        return _CURL_CACHE["path"]
+    candidates = []
+    env = (os.environ.get("SY_CURL_EXE") or "").strip()
+    if env:
+        candidates.append(env)
+    if os.name == "nt":
+        root = os.environ.get("SystemRoot") or os.environ.get("windir") or "C:\\Windows"
+        candidates.append(os.path.join(root, "System32", "curl.exe"))
+        candidates.append("curl.exe")
+        candidates.append("curl")
+    else:
+        candidates.extend(["/usr/bin/curl", "/usr/local/bin/curl", "/bin/curl", "curl"])
+    found = None
+    for cand in candidates:
+        if not cand:
+            continue
+        looks_like_path = os.path.sep in cand or "/" in cand or "\\" in cand
+        try:
+            if looks_like_path:
+                if os.path.isfile(cand):
+                    found = cand
+                    break
+            else:
+                hit = shutil.which(cand)
+                if hit:
+                    found = hit
+                    break
+        except Exception:
+            continue
+    _CURL_CACHE["path"] = found
+    return found
+
+
+def curl_cffi_module():
+    """설치돼 있으면 curl_cffi.requests 모듈, 없으면 None (결과는 캐시)."""
+    if "module" in _CFFI_CACHE:
+        return _CFFI_CACHE["module"]
+    module = None
+    try:
+        from curl_cffi import requests as _cffi_requests  # noqa: WPS433 (선택 의존성)
+        module = _cffi_requests
+    except Exception:
+        module = None
+    _CFFI_CACHE["module"] = module
+    return module
+
+
+def _http_result(url, fetcher):
+    return {"ok": False, "status": None, "body": b"", "error": "not executed",
+            "content_type": "", "url": url, "fetcher": fetcher}
+
+
+def _default_headers(headers=None):
+    hdrs = {
+        "User-Agent": CURL_UA,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "ja,en;q=0.8,ko;q=0.6",
+    }
+    if headers:
+        hdrs.update({k: v for k, v in headers.items() if v})
+    return hdrs
+
+
+def parse_curl_probe(text):
+    """curl -w "%{http_code}\\t%{url_effective}" 출력 파싱 → (status:int|None, url:str)"""
+    text = (text or "").strip()
+    if not text:
+        return None, ""
+    status, url = None, ""
+    for line in reversed(text.splitlines()):
+        parts = [part.strip() for part in line.split("\t")]
+        for part in parts:
+            if re.match(r"^[1-5][0-9][0-9]$", part):
+                status = int(part)
+                break
+        if status is not None:
+            for part in parts:
+                if re.match(r"^https?://", part):
+                    url = part
+                    break
+            break
+    return status, url
+
+
+def _parse_last_headers(raw):
+    """curl -D 덤프에서 마지막 응답 블록의 헤더값을 dict 로."""
+    if not raw:
+        return {}
+    blocks = re.split(r"\r?\n\r?\n", raw.strip())
+    headers = {}
+    for block in blocks:
+        lines = [line.strip() for line in block.splitlines() if line.strip()]
+        if not any(re.match(r"^HTTP/\d", line) for line in lines):
+            continue
+        current = {}
+        for line in lines:
+            m = re.match(r"^([A-Za-z0-9\-]+):\s*(.*)$", line)
+            if m:
+                current[m.group(1).lower()] = m.group(2)
+        if current:
+            headers = current  # 마지막 응답 블록으로 계속 교체
+    return headers
+
+
+def curl_fetch(url, headers=None, timeout=CURL_DEFAULT_TIMEOUT, log=None,
+               max_bytes=2 * 1024 * 1024, exe=None):
+    """Windows 기본 curl.exe 로 GET. 결과 dict 는 http_request 와 같은 형태."""
+    result = _http_result(url, "curl")
+    exe = exe or find_curl_exe()
+    if not exe or not os.path.isfile(exe):
+        result["error"] = "curl 실행 파일 없음"
+        return result
+    hdrs = _default_headers(headers)
+    max_time = max(5, min(_to_int(timeout, CURL_DEFAULT_TIMEOUT) or CURL_DEFAULT_TIMEOUT, 60))
+    tmpdir = tempfile.mkdtemp(prefix="sy_curl_")
+    body_path = os.path.join(tmpdir, "body.bin")
+    hdr_path = os.path.join(tmpdir, "headers.txt")
+    argv = [exe, "-L", "-sS", "--compressed",
+            "--max-time", str(max_time),
+            "--connect-timeout", str(min(10, max_time)),
+            "--max-redirs", "5",
+            "-A", hdrs["User-Agent"],
+            "-H", "Accept: " + hdrs["Accept"],
+            "-H", "Accept-Language: " + hdrs["Accept-Language"],
+            "-D", hdr_path,
+            "-o", body_path,
+            "-w", "%{http_code}\t%{url_effective}",
+            url]
+    kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.PIPE, "stdin": subprocess.DEVNULL}
+    if os.name == "nt":
+        kwargs["creationflags"] = 0x08000000  # CREATE_NO_WINDOW (콘솔 창 깜박임 방지)
+    try:
+        proc = subprocess.run(argv, timeout=max_time + 15, **kwargs)
+    except subprocess.TimeoutExpired:
+        _rmtree_quiet(tmpdir)
+        result["error"] = "curl 타임아웃(%d초)" % max_time
+        return result
+    except Exception as exc:
+        _rmtree_quiet(tmpdir)
+        result["error"] = "curl 실행 실패: %s: %s" % (type(exc).__name__, exc)
+        return result
+    try:
+        stdout = proc.stdout.decode("utf-8", "replace") if proc.stdout else ""
+        stderr = proc.stderr.decode("utf-8", "replace") if proc.stderr else ""
+        status, final_url = parse_curl_probe(stdout)
+        body = b""
+        try:
+            with open(body_path, "rb") as fp:
+                body = fp.read(max_bytes)
+        except Exception:
+            body = b""
+        content_type = ""
+        try:
+            with open(hdr_path, "r", encoding="utf-8", errors="replace") as fp:
+                content_type = _parse_last_headers(fp.read()).get("content-type", "")
+        except Exception:
+            content_type = ""
+    finally:
+        _rmtree_quiet(tmpdir)
+    result.update({"status": status, "body": body, "content_type": content_type,
+                   "url": final_url or url, "exit_code": proc.returncode})
+    if body:
+        if status and 200 <= status < 400:
+            result["ok"] = True
+            result["error"] = None
+        else:
+            result["error"] = "HTTP %s" % (status if status else "?")
+    else:
+        detail = " ".join(stderr.split())[:200]
+        result["error"] = "curl exit %s%s" % (proc.returncode, (" · " + detail) if detail else "")
+    return result
+
+
+def _rmtree_quiet(path):
+    try:
+        shutil.rmtree(path, ignore_errors=True)
+    except Exception:
+        pass
+
+
+def cffi_fetch(url, headers=None, timeout=CURL_DEFAULT_TIMEOUT, log=None,
+               max_bytes=2 * 1024 * 1024):
+    """curl_cffi(설치 시)로 Chrome 지문 위장 GET."""
+    result = _http_result(url, "cffi")
+    module = curl_cffi_module()
+    if module is None:
+        result["error"] = "curl_cffi 미설치"
+        return result
+    max_time = max(5, min(_to_int(timeout, CURL_DEFAULT_TIMEOUT) or CURL_DEFAULT_TIMEOUT, 60))
+    try:
+        resp = module.get(url, headers=_default_headers(headers), timeout=max_time,
+                          impersonate="chrome", allow_redirects=True)
+        result.update({"status": getattr(resp, "status_code", None),
+                       "body": (resp.content or b"")[:max_bytes],
+                       "content_type": (resp.headers or {}).get("content-type", ""),
+                       "url": getattr(resp, "url", None) or url})
+        status = result["status"]
+        if status and 200 <= status < 400:
+            result["ok"] = True
+            result["error"] = None
+        else:
+            result["error"] = "HTTP %s" % (status if status else "?")
+    except Exception as exc:
+        result["error"] = "%s: %s" % (type(exc).__name__, exc)
+    return result
+
+
+def fetch_with_engine(name, url, headers=None, timeout=CURL_DEFAULT_TIMEOUT, log=None,
+                      max_bytes=2 * 1024 * 1024):
+    if name == "curl":
+        return curl_fetch(url, headers=headers, timeout=timeout, log=log, max_bytes=max_bytes)
+    if name == "cffi":
+        return cffi_fetch(url, headers=headers, timeout=timeout, log=log, max_bytes=max_bytes)
+    # urllib 은 기존 동작 그대로(모듈 UA/헤더 유지) — 최종 폴백이므로 건드리지 않는다.
+    res = http_request(url, headers=headers, timeout=timeout,
+                       retries=0, log=log, max_bytes=max_bytes)
+    res["fetcher"] = "urllib"
+    return res
+
+
+def available_engines():
+    """이 PC에서 실제로 쓸 수 있는 엔진 목록."""
+    have = []
+    if curl_cffi_module() is not None:
+        have.append("cffi")
+    if find_curl_exe():
+        have.append("curl")
+    have.append("urllib")
+    return have
 
 
 def strip_html(raw_html):
@@ -644,6 +910,85 @@ QOO10_BLOCK_MARKERS = [
 QOO10_SOLD_MARKERS = ["販売終了", "販売を終了", "売り切れ", "sold out", "在庫切れ"]
 QOO10_ONSALE_MARKERS = ["販売中", "カートに入れる", "今すぐ購入", "add to cart"]
 
+
+def is_blocked_html(html):
+    low = (html or "").lower()
+    return any(marker in low for marker in QOO10_BLOCK_MARKERS)
+
+
+def qoo10_engine_order(section=None):
+    """큐텐 조회 엔진 순서.
+
+    auto: curl_cffi(설치 시) → Windows curl.exe → urllib
+          (비Windows 는 urllib 먼저, 그래도 막히면 curl 로 한 번 더)
+    """
+    section = section or {}
+    mode = (section.get("http_engine") or "auto").strip().lower()
+    have = available_engines()
+    if mode == "urllib":
+        return ["urllib"]
+    if mode == "curl":
+        return [name for name in ("curl", "urllib") if name in have] or ["urllib"]
+    if mode == "cffi":
+        return [name for name in ("cffi", "urllib") if name in have] or ["urllib"]
+    order = []
+    if "cffi" in have:
+        order.append("cffi")
+    if os.name == "nt" and "curl" in have:
+        order.append("curl")
+    order.append("urllib")
+    if os.name != "nt" and "curl" in have:
+        order.append("curl")
+    return order
+
+
+def fetch_qoo10_page(url, headers=None, timeout=25, log=None, section=None):
+    """큐텐 페이지를 여러 엔진으로 시도해 (결과, html) 을 돌려준다.
+
+    차단 페이지(Akamai 523 등)는 다음 엔진으로 넘어가고, 모두 막히면 마지막 차단
+    응답을 그대로 돌려준다(원인 보고용). 시도 내역은 결과의 `attempts` 에 담긴다.
+    """
+    section = section or {}
+    engine_timeout = _to_int(section.get("curl_timeout"), CURL_DEFAULT_TIMEOUT) or CURL_DEFAULT_TIMEOUT
+    attempts = []
+    blocked = None
+    errors = []
+    for name in qoo10_engine_order(section):
+        try:
+            engine_timeout_now = timeout if name == "urllib" else engine_timeout
+            res = fetch_with_engine(name, url, headers=headers, timeout=engine_timeout_now, log=log)
+        except Exception as exc:  # 엔진 하나가 죽어도 전체를 죽이지 않는다
+            res = _http_result(url, name)
+            res["error"] = "%s: %s" % (type(exc).__name__, exc)
+        body = res.get("body") or b""
+        html = decode_body(res) if body else ""
+        attempts.append({"engine": name, "ok": bool(res.get("ok")),
+                         "status": res.get("status"), "bytes": len(body),
+                         "error": res.get("error")})
+        if body and not is_blocked_html(html):
+            res["attempts"] = attempts
+            res["blocked_page"] = False
+            if log and name != attempts[0]["engine"]:
+                log.info("큐텐 %s 엔진으로 우회 성공 (앞선 시도: %s)" % (
+                    name, ", ".join("%s=%s" % (a["engine"], a["status"]) for a in attempts[:-1])))
+            return res, html
+        if body and is_blocked_html(html):
+            if blocked is None:
+                blocked = (res, html)
+            continue
+        errors.append((res, html))
+    if blocked is not None:
+        blocked[0]["attempts"] = attempts
+        blocked[0]["blocked_page"] = True
+        return blocked
+    if errors:
+        errors[0][0]["attempts"] = attempts
+        return errors[0]
+    res = _http_result(url, None)
+    res["error"] = "시도할 HTTP 엔진 없음"
+    res["attempts"] = attempts
+    return res, ""
+
 LD_JSON_RE = re.compile(
     r"""<script[^>]+type=["']application/ld\+json["'][^>]*>(.*?)</script>""", re.S | re.I)
 META_PRICE_RE = re.compile(
@@ -752,22 +1097,25 @@ def check_qoo10_item(cfg, item, log):
     out = {"no": item["no"], "label": item.get("label") or "", "url": url, "ok": False,
            "status": None, "http_status": None, "page_title": "", "sale_state": "unknown",
            "price": None, "price_source": None, "expect_price": item.get("expect_price"),
-           "price_match": None, "blocked": False, "warnings": []}
-    res = http_request(url, headers={"Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
-                                     "Accept-Language": "ja,en;q=0.8,ko;q=0.6"},
-                       timeout=timeout, retries=1, log=log)
+           "price_match": None, "blocked": False, "warnings": [],
+           "fetcher": None, "fetch_attempts": []}
+    res, html = fetch_qoo10_page(url, headers={"Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
+                                               "Accept-Language": "ja,en;q=0.8,ko;q=0.6"},
+                                 timeout=timeout, log=log, section=section)
     out["http_status"] = res.get("status")
-    if not res.get("ok") and not res.get("body"):
+    out["fetcher"] = res.get("fetcher")
+    out["fetch_attempts"] = res.get("attempts") or []
+    if not res.get("ok") and not html:
         out["status"] = "http_error"
         out["warnings"].append(res.get("error") or "요청 실패")
         return out
-    html = decode_body(res)
-    low = html.lower()
 
-    if any(marker in low for marker in QOO10_BLOCK_MARKERS):
+    if is_blocked_html(html):
         out["status"] = "blocked"
         out["blocked"] = True
-        out["warnings"].append("Qoo10 차단/오류 페이지(Akamai 523 등) — 주거용 IP(집 PC)에서만 정상 조회")
+        tried = ", ".join("%s=%s" % (a["engine"], a["status"]) for a in out["fetch_attempts"])
+        out["warnings"].append("Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: %s · 주거용 IP(집 PC)에서만 정상 조회"
+                               % (tried or "없음"))
         return out
 
     title_match = re.search(r"<title[^>]*>(.*?)</title>", html, re.S | re.I)
@@ -800,15 +1148,17 @@ def check_qoo10_item(cfg, item, log):
 
     out["ok"] = True
     out["status"] = "ok"
-    log.ok("큐텐 %s %s: HTTP %s · %s · %s" % (
+    log.ok("큐텐 %s %s: HTTP %s · %s · %s · %s" % (
         item["no"], out["label"], out["http_status"], out["sale_state"],
-        ("%s엔(%s)" % (out["price"], out["price_source"])) if out["price"] else "가격 미확인"))
+        ("%s엔(%s)" % (out["price"], out["price_source"])) if out["price"] else "가격 미확인",
+        out["fetcher"] or "?"))
     return out
 
 
 def collect_qoo10(cfg, log):
     section = cfg.get("qoo10") or {}
     result = {"enabled": bool(section.get("enabled", True)), "items": [], "warnings": [],
+              "engines": available_engines(), "engine_order": qoo10_engine_order(section),
               "counts": {"total": 0, "ok": 0, "blocked": 0, "price_found": 0,
                          "price_matched": 0, "price_mismatch": 0}}
     if not result["enabled"]:
@@ -828,7 +1178,8 @@ def collect_qoo10(cfg, log):
     result["counts"]["price_mismatch"] = len([i for i in items if i.get("price_match") is False])
     blocked = result["counts"]["blocked"]
     if blocked and blocked == result["counts"]["total"]:
-        result["warnings"].append("큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행")
+        result["warnings"].append("큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행 "
+                                  "(시도 엔진: %s)" % ", ".join(result["engine_order"]))
     return result
 
 
@@ -1401,6 +1752,56 @@ SAMPLE_REALTIME = {
 SAMPLE_CSRF_FAIL = {"code": 403, "message": "csrf validation fail"}
 
 
+def _start_mock_server(routes):
+    """자체점검용 로컬 HTTP 서버.
+
+    실제 qoo10.jp Akamai 처럼 urllib(스크립트 UA) 만 523 으로 끊는 /akamai 경로와
+    리다이렉트(/redir), 523 응답(/blocked)을 제공한다.
+    """
+    import http.server
+    import threading
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
+        def _send(self, status, body, extra=None):
+            payload = (body or "").encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", "text/html; charset=UTF-8")
+            self.send_header("Content-Length", str(len(payload)))
+            for key, value in (extra or {}).items():
+                self.send_header(key, value)
+            self.end_headers()
+            try:
+                self.wfile.write(payload)
+            except Exception:
+                pass
+
+        def do_GET(self):
+            path = urllib.parse.urlsplit(self.path).path
+            ua = self.headers.get("User-Agent", "")
+            if path == "/redir":
+                self._send(302, "", {"Location": "/ok"})
+                return
+            if path == "/akamai":
+                # urllib(스크립트 UA) 은 523, 브라우저 UA(curl) 는 통과 → 우회 재현
+                if "sy_auto-stats-checker" in ua:
+                    self._send(523, "<html><body><h1>523 Error connecting to origin</h1></body></html>")
+                else:
+                    self._send(200, routes["/ok"][1])
+                return
+            status, body = routes.get(path, (404, "<html><body>not found</body></html>"))
+            self._send(status, body)
+
+        def log_message(self, *args):
+            return
+
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=srv.serve_forever, daemon=True)
+    thread.start()
+    return srv, "http://127.0.0.1:%d" % srv.server_address[1]
+
+
 def _self_test(log):
     failures = []
 
@@ -1463,6 +1864,91 @@ def _self_test(log):
     if not any(m in blocked.lower() for m in QOO10_BLOCK_MARKERS):
         failures.append("523 차단 페이지 감지 실패")
 
+    # --- HTTP 엔진(urllib / curl.exe / curl_cffi) : 로컬 목업 서버로 실측 ---
+    #   데이터센터(Linux) IP 는 실제 qoo10.jp 가 막으므로, 같은 현상을 목업으로 재현해
+    #   curl 경로 문법(--max-time/-L/-D/-o/-w 파싱), 523 상태코드, UTF-8 본문,
+    #   차단→다음 엔진 우회, 엔진 실패→urllib 폴백을 전부 검증한다.
+    if parse_curl_probe("200\thttps://www.qoo10.jp/g/1") != (200, "https://www.qoo10.jp/g/1"):
+        failures.append("curl -w 출력 파싱 실패(200/URL)")
+    if parse_curl_probe("523\thttps://www.qoo10.jp/g/1")[0] != 523:
+        failures.append("curl -w 출력 파싱 실패(523)")
+    if parse_curl_probe("curl: (7) Failed to connect") != (None, ""):
+        failures.append("curl 오류 출력을 상태코드로 오판")
+    hdr = _parse_last_headers("HTTP/1.1 301 Moved\r\nLocation: /x\r\n\r\n"
+                              "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n")
+    if hdr.get("content-type") != "text/html; charset=UTF-8":
+        failures.append("curl 헤더 덤프 마지막 블록 파싱 실패: %r" % (hdr,))
+
+    ok_html = ("<html><head><title>テスト商品</title>"
+               "<script type=\"application/ld+json\">{\"@type\":\"Product\",\"offers\":"
+               "{\"price\":\"3280\",\"priceCurrency\":\"JPY\"}}</script></head>"
+               "<body><span class=\"price\">3,280円</span><p>販売中</p></body></html>")
+    akamai_html = "<html><body><h1>523 Error connecting to origin</h1></body></html>"
+    srv = base = None
+    try:
+        srv, base = _start_mock_server({"/ok": (200, ok_html), "/blocked": (523, akamai_html)})
+        r_ok = fetch_with_engine("urllib", base + "/ok", timeout=5)
+        if not r_ok.get("ok") or r_ok.get("status") != 200 or "3,280" not in decode_body(r_ok):
+            failures.append("목업 urllib 조회 실패: %s" % (r_ok.get("error"),))
+        if find_curl_exe():
+            r_curl = fetch_with_engine("curl", base + "/ok", timeout=5)
+            if not (r_curl.get("ok") and r_curl.get("status") == 200
+                    and "販売中" in decode_body(r_curl)):
+                failures.append("목업 curl 조회 실패(본문/UTF-8): %s" % (r_curl.get("error"),))
+            if parse_qoo10_price(decode_body(r_curl))[:1] != [{"price": 3280, "source": "jsonld(JPY)"}]:
+                failures.append("목업 curl 본문에서 가격(3280엔) 추출 실패")
+            r_blk = fetch_with_engine("curl", base + "/blocked", timeout=5)
+            if r_blk.get("status") != 523 or not is_blocked_html(decode_body(r_blk)):
+                failures.append("목업 curl 523 상태코드/본문 파싱 실패: status=%r err=%r"
+                                % (r_blk.get("status"), r_blk.get("error")))
+            r_redir = fetch_with_engine("curl", base + "/redir", timeout=5)
+            if not r_redir.get("ok") or r_redir.get("url", "").endswith("/redir") \
+                    or "3,280" not in decode_body(r_redir):
+                failures.append("목업 curl 리다이렉트(-L) 추적 실패: %r" % (r_redir.get("url"),))
+            # urllib 은 523, curl 은 통과 → 자동 우회 경로
+            res, _html = fetch_qoo10_page(base + "/akamai", timeout=5,
+                                          section={"http_engine": "auto"})
+            tried = [a["engine"] for a in (res.get("attempts") or [])]
+            if not res.get("ok") or res.get("fetcher") not in ("curl", "cffi"):
+                failures.append("차단(Akamai 523) → curl 우회 실패: fetcher=%r tried=%r"
+                                % (res.get("fetcher"), tried))
+            elif os.name != "nt" and "urllib" not in tried:
+                failures.append("차단 시 urllib→curl 순서 기록 실패: %r" % (tried,))
+            # curl 실행파일이 없을 때 → urllib 폴백
+            saved = _CURL_CACHE.get("path", "__none__")
+            _CURL_CACHE["path"] = "/nonexistent/curl.exe"
+            try:
+                res2, _h2 = fetch_qoo10_page(base + "/ok", timeout=5,
+                                            section={"http_engine": "curl"})
+            finally:
+                if saved == "__none__":
+                    _CURL_CACHE.pop("path", None)
+                else:
+                    _CURL_CACHE["path"] = saved
+            if not res2.get("ok") or res2.get("fetcher") != "urllib":
+                failures.append("curl 부재 시 urllib 폴백 실패: fetcher=%r err=%r"
+                                % (res2.get("fetcher"), res2.get("error")))
+            res3, _h3 = fetch_qoo10_page(base + "/blocked", timeout=5,
+                                        section={"http_engine": "auto"})
+            if not is_blocked_html(_h3 or "") or not res3.get("blocked_page"):
+                failures.append("전 엔진 차단 시 차단 페이지 보존 실패(blocked_page 미설정)")
+            if not res3.get("attempts"):
+                failures.append("엔진 시도 내역(attempts) 미기록")
+        else:
+            log.warn("curl 실행 파일이 없어 curl 경로 목업 점검은 건너뜀(urllib 폴백만 확인)")
+            res2, _h2 = fetch_qoo10_page(base + "/ok", timeout=5)
+            if not res2.get("ok"):
+                failures.append("curl 부재 환경에서 urllib 폴백 실패")
+    except Exception as exc:
+        failures.append("HTTP 엔진 목업 점검 예외: %s: %s" % (type(exc).__name__, exc))
+    finally:
+        if srv is not None:
+            try:
+                srv.shutdown()
+                srv.server_close()
+            except Exception:
+                pass
+
     # 키워드·발표 문구
     text = "공지사항\n2026년 모두가 도시농부 만족도 조사 당첨자 발표\n당첨자: 김승용(010-****-8972)\n감사합니다."
     hits = keyword_hits(text, DEFAULT_KEYWORDS)
@@ -1495,8 +1981,39 @@ def _self_test(log):
             log.error("자체점검 실패: %s" % f)
         return 1
     log.ok("자체점검 통과: 쿠키 5형식 · 응답판정 4종 · 슬롯계산 · 큐텐 가격 3종 · 키워드/발표문구 · "
-           "meta refresh · 변화량")
+           "meta refresh · 변화량 · HTTP엔진(curl/urllib/차단우회/폴백)")
     return 0
+
+
+def _fetch_test(url, config_path=None, log=None):
+    """큐텐 URL 1건으로 어떤 HTTP 엔진이 통과하는지 실측(집 PC 확인용)."""
+    log = log or Log()
+    cfg, _cfg_path = load_config(config_path)
+    section = cfg.get("qoo10") or {}
+    log.info("사용 가능 엔진: %s" % ", ".join(available_engines()))
+    log.info("시도 순서: %s" % " → ".join(qoo10_engine_order(section)))
+    log.info("curl 경로: %s" % (find_curl_exe() or "없음"))
+    log.info("curl_cffi: %s" % ("설치됨" if curl_cffi_module() else "미설치"))
+    log.info("대상: %s" % url)
+    res, html = fetch_qoo10_page(url, timeout=_to_int(section.get("timeout"), 25) or 25,
+                                 section=section, log=log)
+    for attempt in res.get("attempts") or []:
+        log.info("  - %s: ok=%s status=%s bytes=%s %s" % (
+            attempt.get("engine"), attempt.get("ok"), attempt.get("status"),
+            attempt.get("bytes"), attempt.get("error") or ""))
+    if res.get("ok") and not res.get("blocked_page"):
+        prices = parse_qoo10_price(html)
+        log.ok("결과: %s 엔진으로 통과 · HTTP %s · %d자 · 가격 %s" % (
+            res.get("fetcher"), res.get("status"), len(html),
+            ("%s엔(%s)" % (prices[0]["price"], prices[0]["source"])) if prices else "미확인"))
+        return 0
+    if res.get("blocked_page"):
+        log.error("결과: 전 엔진 차단(Akamai) — 이 IP/네트워크에서는 조회 불가. "
+                  "집 PC(Wi-Fi 유선/공유기 IP)에서 --fetch-test 로 재확인 필요")
+        return 3
+    log.error("결과: 전 엔진 실패/차단 — %s" % (
+        res.get("error") or (": " + " ".join(strip_html(html).split())[:140])))
+    return 2
 
 
 # ---------------------------------------------------------------------------
@@ -1516,6 +2033,9 @@ def build_parser():
     parser.add_argument("--only", help="쉼표 구분: shopee,qoo10,surveys (기본 전부)")
     parser.add_argument("--print-json", action="store_true", help="결과 요약 JSON을 stdout에 출력")
     parser.add_argument("--self-test", action="store_true", help="네트워크 없이 파서·판정 로직 점검")
+    parser.add_argument("--fetch-test", nargs="?",
+                        const="https://www.qoo10.jp/g/1224104135", metavar="URL",
+                        help="큐텐 URL 1건으로 HTTP 엔진(curl/urllib) 실측 — 집 PC 적용 확인용")
     parser.add_argument("--quiet", action="store_true", help="로그 최소화")
     parser.add_argument("--version", action="version", version="stats_checker " + VERSION)
     return parser
@@ -1531,6 +2051,9 @@ def main(argv=None):
     if args.self_test:
         code = _self_test(Log(quiet=args.quiet))
         return code
+
+    if args.fetch_test:
+        return _fetch_test(args.fetch_test, args.config, Log(quiet=args.quiet))
 
     push = True if args.push_github else (False if args.no_github else None)
     only = [part.strip() for part in args.only.split(",")] if args.only else None
