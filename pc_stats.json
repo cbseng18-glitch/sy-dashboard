@@ -2,7 +2,7 @@
  "schema": "pc_stats/1",
  "generator": "stats_checker.py",
  "version": "1.1.0",
- "generated_at": "2026-11-27T15:50:47+09:00",
+ "generated_at": "2026-11-27T15:53:09+09:00",
  "mode": "live",
  "shopee": {
   "enabled": true,
@@ -26,7 +26,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762247,
+     "server_time": 1795762388,
      "hour_buckets": 15
     },
     "boost": {
@@ -34,7 +34,7 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 996,
+     "cooldown_remaining_seconds": 854,
      "next_free_at": "2026-11-27T16:07:23+09:00",
      "product_ids": [
       "26447109019",
@@ -62,7 +62,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762248,
+     "server_time": 1795762390,
      "hour_buckets": 15
     },
     "boost": {
@@ -70,7 +70,7 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1016,
+     "cooldown_remaining_seconds": 874,
      "next_free_at": "2026-11-27T16:07:44+09:00",
      "product_ids": [
       "56221950415",
@@ -98,7 +98,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762249,
+     "server_time": 1795762391,
      "hour_buckets": 15
     },
     "boost": {
@@ -106,8 +106,8 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1035,
-     "next_free_at": "2026-11-27T16:08:05+09:00",
+     "cooldown_remaining_seconds": 893,
+     "next_free_at": "2026-11-27T16:08:04+09:00",
      "product_ids": [
       "49371618206",
       "53321567573",
@@ -134,7 +134,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762250,
+     "server_time": 1795762392,
      "hour_buckets": 15
     },
     "boost": {
@@ -142,7 +142,7 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1055,
+     "cooldown_remaining_seconds": 913,
      "next_free_at": "2026-11-27T16:08:26+09:00",
      "product_ids": [
       "49071765890",
@@ -170,7 +170,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762251,
+     "server_time": 1795762393,
      "hour_buckets": 14
     },
     "boost": {
@@ -178,7 +178,7 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1075,
+     "cooldown_remaining_seconds": 933,
      "next_free_at": "2026-11-27T16:08:47+09:00",
      "product_ids": [
       "46921634664",
@@ -206,7 +206,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762252,
+     "server_time": 1795762394,
      "hour_buckets": 14
     },
     "boost": {
@@ -214,8 +214,8 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1094,
-     "next_free_at": "2026-11-27T16:09:07+09:00",
+     "cooldown_remaining_seconds": 953,
+     "next_free_at": "2026-11-27T16:09:08+09:00",
      "product_ids": [
       "46271644365",
       "43136730512",
@@ -242,7 +242,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762254,
+     "server_time": 1795762395,
      "hour_buckets": 1,
      "note": "현지 자정 직후(유입 0은 리셋 영향일 수 있음)"
     },
@@ -251,7 +251,7 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1115,
+     "cooldown_remaining_seconds": 974,
      "next_free_at": "2026-11-27T16:09:30+09:00",
      "product_ids": [
       "49672049494",
@@ -279,7 +279,7 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795762255,
+     "server_time": 1795762396,
      "hour_buckets": 4
     },
     "boost": {
@@ -287,7 +287,7 @@
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1135,
+     "cooldown_remaining_seconds": 994,
      "next_free_at": "2026-11-27T16:09:51+09:00",
      "product_ids": [
       "45221609311",
@@ -335,10 +335,17 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "curl",
+    "fetcher": "cffi",
     "fetch_attempts": [
+     {
+      "engine": "cffi",
+      "ok": true,
+      "status": 200,
+      "bytes": 302003,
+      "error": null
+     },
      {
       "engine": "curl",
       "ok": true,
@@ -370,10 +377,17 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "curl",
+    "fetcher": "cffi",
     "fetch_attempts": [
+     {
+      "engine": "cffi",
+      "ok": true,
+      "status": 200,
+      "bytes": 302401,
+      "error": null
+     },
      {
       "engine": "curl",
       "ok": true,
@@ -405,10 +419,17 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "curl",
+    "fetcher": "cffi",
     "fetch_attempts": [
+     {
+      "engine": "cffi",
+      "ok": true,
+      "status": 200,
+      "bytes": 302169,
+      "error": null
+     },
      {
       "engine": "curl",
       "ok": true,
@@ -440,10 +461,17 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "curl",
+    "fetcher": "cffi",
     "fetch_attempts": [
+     {
+      "engine": "cffi",
+      "ok": true,
+      "status": 200,
+      "bytes": 301859,
+      "error": null
+     },
      {
       "engine": "curl",
       "ok": true,
@@ -475,10 +503,17 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "curl",
+    "fetcher": "cffi",
     "fetch_attempts": [
+     {
+      "engine": "cffi",
+      "ok": true,
+      "status": 200,
+      "bytes": 302516,
+      "error": null
+     },
      {
       "engine": "curl",
       "ok": true,
@@ -497,13 +532,15 @@
    }
   ],
   "warnings": [
-   "큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행 (시도 엔진: curl, urllib)"
+   "큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행 (시도 엔진: cffi, curl, urllib)"
   ],
   "engines": [
+   "cffi",
    "curl",
    "urllib"
   ],
   "engine_order": [
+   "cffi",
    "curl",
    "urllib"
   ],
@@ -533,14 +570,14 @@
   "note": "개인정보 보호를 위해 상세 스니펫·대상 URL은 로컬 pc_stats.json 에만 저장"
  },
  "warnings": [
-  "큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행 (시도 엔진: curl, urllib)",
+  "큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행 (시도 엔진: cffi, curl, urllib)",
   "JS 렌더링이라 감시 불가: 비짓부산 홈 (브라우저 확인 필요)"
  ],
  "errors": [],
  "github": null,
  "telegram": null,
  "changes": {
-  "since": "2026-11-27T15:45:19+09:00",
+  "since": "2026-11-27T15:50:47+09:00",
   "regions": {},
   "qoo10": [],
   "watch": [],
@@ -795,7 +832,74 @@
      "slots": "5/5"
     }
    }
+  },
+  {
+   "generated_at": "2026-11-27T15:53:09+09:00",
+   "cookie_state": "ok",
+   "uv": 4,
+   "clicks": 3,
+   "orders": 0,
+   "boost": "40/40",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {
+    "SG": {
+     "uv": 2,
+     "clicks": 3,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TW": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MY": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "PH": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "VN": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TH": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MX": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "BR": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    }
+   }
   }
  ],
- "merged_at": "2026-11-27T15:51:02+09:00"
+ "merged_at": "2026-11-27T15:53:24+09:00"
 }
