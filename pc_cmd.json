@@ -1,5 +1,5 @@
 {
-  "id": "check_stats_cookie_test_20261127",
+  "id": "check_stats_cookie_test2_20261127",
   "action": "check_stats",
   "args": {
     "force_report": true
