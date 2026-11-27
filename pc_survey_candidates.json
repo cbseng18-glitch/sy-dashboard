@@ -1,7 +1,7 @@
 {
  "schema": "pc_survey_candidates/1",
  "collector_version": "1.0.0",
- "generated_at": "2026-11-28T06:17:46+09:00",
+ "generated_at": "2026-11-28T08:18:26+09:00",
  "mode": "live",
  "respondent": {
   "gender": "남성",
@@ -33,18 +33,18 @@
    "ok": true,
    "status": 200,
    "error": null,
-   "items": 3,
+   "items": 4,
    "agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"
   }
  ],
  "counts": {
   "rss_items": 25,
-  "threads_posts": 18,
-  "new_candidates": 0,
-  "candidate": 0,
-  "review": 0,
+  "threads_posts": 19,
+  "new_candidates": 2,
+  "candidate": 1,
+  "review": 1,
   "skip": 0,
-  "duplicates": 43,
+  "duplicates": 42,
   "stale": 0,
   "truncated": 0,
   "sources_ok": 3,
@@ -53,6 +53,40 @@
   "warnings": 0
  },
  "candidates": [
+  {
+   "id": "today-event-news-rss-tag:blogger.com,1999:blog-8236355352112482980.post-8161015242766148641",
+   "status": "candidate",
+   "skip_reason": "",
+   "flags": [
+    "login_not_required"
+   ],
+   "requires_login": false,
+   "source": "today-event-news-rss",
+   "guid": "tag:blogger.com,1999:blog-8236355352112482980.post-8161015242766148641",
+   "title": "2026 패밀리서울 만족도 조사, 모바일 커피 쿠폰 선착순 300명 11월 29일 마감",
+   "url": "https://today-event-news.blogspot.com/2026/11/2026-300-11-29.html",
+   "survey_url": "https://naver.me/5fdtytTM",
+   "other_urls": [
+    "https://naver.me/5fdtytTM",
+    "https://familyseoul.or.kr/node/32010"
+   ],
+   "deadline": "2026-11-29",
+   "deadline_text": "서울 만족도 조사, 모바일 커피 쿠폰 선착순 300명 11월 29일 마감",
+   "prize": "만족도 조사, 모바일 커피 쿠폰 선착순 300명 11월 29일 마감",
+   "published_at": "2026-11-28T07:54:19+09:00",
+   "age_days": 0,
+   "categories": [
+    "경품이벤트",
+    "네이버폼",
+    "서울시가족센터",
+    "설문조사",
+    "패밀리서울"
+   ],
+   "excerpt": "서울시가족센터가 운영하는 서울가족정보 통합 플랫폼 ‘패밀리서울’이 ‘2026 패밀리서울 만족도 조사 이벤트’를 진행하고 있습니다. 패밀리서울 사이트를 둘러본 소감을 묻는 설문에 답하면 선착순 300명에게 모바일 커피 쿠폰을 줍니다. 참여 기간은 2026년 11월 10일부터 11월 29일(일)까지입니다. 패밀리서울은 서울의 가족 관련 정보와 서비스를 한곳에 모은 플랫폼입니다. 이번 조사는 사이트를 이용해 본 시민의 목소리를 듣고, 더 꼭 필요한 정보와 편리한 서비스를 제공하기 위해 마련됐습니다. 설문은 1분 30초면 끝나는 짧은 문항으로, 패밀리서울을 한 번이라도 둘러본 분이라면 누구나 참여할 수 있습니다. 선착순이라 서두르는 것이 좋습니다. 설문에 답하기 전에 사이트를 한 번 둘러보면, 어떤 정보가 도움이 ",
+   "is_duplicate": false,
+   "first_seen_at": "2026-11-28T08:18:26+09:00",
+   "last_seen_at": "2026-11-28T08:18:26+09:00"
+  },
   {
    "id": "threads-threads:공공기관무료이벤트5건직접응모해보고남기는목록1",
    "status": "candidate",
@@ -79,6 +113,39 @@
    "is_duplicate": false,
    "first_seen_at": "2026-11-27T14:13:05+09:00",
    "last_seen_at": "2026-11-27T14:13:05+09:00"
+  },
+  {
+   "id": "threads-threads:DgQv_tAkk0o",
+   "status": "review",
+   "skip_reason": "앱 설치·가입 요구 가능 확인('회원 가입')",
+   "flags": [
+    "login_not_required",
+    "앱_설치·가입_요구_가능"
+   ],
+   "requires_login": false,
+   "source": "threads",
+   "guid": "threads:DgQv_tAkk0o",
+   "title": "1. 한국환경산업기술원 탄소중립포인트 제도 만족도조사 (12/04) https://docs.google.com/forms/d/e/1FAIpQLSdpyO8Bd8uLG6p6Tj1u5m4o02JLQ3n9",
+   "url": "https://www.threads.com/@professional_jung/post/DgQv_tAkk0o",
+   "survey_url": "https://docs.google.com/forms/d/e/1FAIpQLSdpyO8Bd8uLG6p6Tj1u5m4o02JLQ3n9pkFG9ywvPCfIuf6FVg/viewform",
+   "other_urls": [
+    "https://docs.google.com/forms/d/e/1FAIpQLSdpyO8Bd8uLG6p6Tj1u5m4o02JLQ3n9pkFG9ywvPCfIuf6FVg/viewform",
+    "https://campaign.daum-kg.net/seoulconawards/",
+    "https://forms.gle/i7d7yaxJtBTdpyTJ7",
+    "https://form.naver.com/response/HVDrZOdtHpT"
+   ],
+   "deadline": null,
+   "deadline_text": "",
+   "prize": "",
+   "published_at": "2026-11-28T07:26:33+09:00",
+   "age_days": 0,
+   "categories": [
+    "threads"
+   ],
+   "excerpt": "1. 한국환경산업기술원 탄소중립포인트 제도 만족도조사 (12/04) https://docs.google.com/forms/d/e/1FAIpQLSdpyO8Bd8uLG6p6Tj1u5m4o02JLQ3n9pkFG9ywvPCfIuf6FVg/viewform 2. 서울 인플루언서 어워즈 온라인 투표 (12/06) https://campaign.daum-kg.net/seoulconawards/ 3. 광주광역정신건강복지센터 홈페이지 만족도 조사 (12/06) https://forms.gle/i7d7yaxJtBTdpyTJ7 4. 양천TV 양.꼬.치 EP.12 댓글 이벤트 (12/13) https://form.naver.com/response/HVDrZOdtHpT 영상: https://www.youtube.com/watch?v",
+   "is_duplicate": false,
+   "first_seen_at": "2026-11-28T08:18:26+09:00",
+   "last_seen_at": "2026-11-28T08:18:26+09:00"
   }
  ],
  "skipped": [],
@@ -88,6 +155,6 @@
   "usage": "candidates = 중복 제거 후 신규 후보. status=candidate(바로 응모 가능) / review(사람 확인) / skip(skip_reason 참조).",
   "dedupe": "survey_seen.json(본 guid·기사 URL·제목) + known_urls.json(기응모 URL·제목) 대조."
  },
- "merged_at": "2026-11-28T06:17:50+09:00",
+ "merged_at": "2026-11-28T08:18:29+09:00",
  "previous_count": 1
 }
