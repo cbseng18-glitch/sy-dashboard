@@ -1,21 +1,7 @@
 {
-  "id": "selfupd_shopee_stats_20261127",
-  "action": "self_update",
+  "id": "check_stats_cookie_test_20261127",
+  "action": "check_stats",
   "args": {
-    "files": [
-      {
-        "remote": "pc_auto/stats_checker.py",
-        "local": "stats_checker.py"
-      },
-      {
-        "remote": "pc_auto/shopee_booster.py",
-        "local": "shopee_booster.py"
-      },
-      {
-        "remote": "pc_auto/sy_auto_watch.py",
-        "local": "sy_auto_watch.py"
-      }
-    ],
-    "restart": true
+    "force_report": true
   }
 }
