@@ -1,0 +1,65 @@
+{
+ "schema": "pc_survey_candidates/1",
+ "collector_version": "1.0.0",
+ "generated_at": "2026-11-27T12:12:42+09:00",
+ "mode": "live",
+ "respondent": {
+  "gender": "남성",
+  "birth_year": 1983,
+  "age_note": "만 43세(1983년생)",
+  "region": "서울 노원구"
+ },
+ "sources": [
+  {
+   "name": "today-event-news-rss",
+   "url": "https://today-event-news.blogspot.com/feeds/posts/default?alt=rss&max-results=25",
+   "ok": true,
+   "status": 200,
+   "error": null,
+   "items": 25
+  },
+  {
+   "name": "threads:@ddalkkak_event",
+   "url": "https://www.threads.com/@ddalkkak_event",
+   "ok": true,
+   "status": 200,
+   "error": null,
+   "items": 15,
+   "agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"
+  },
+  {
+   "name": "threads:@professional_jung",
+   "url": "https://www.threads.com/@professional_jung",
+   "ok": true,
+   "status": 200,
+   "error": null,
+   "items": 9,
+   "agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"
+  }
+ ],
+ "counts": {
+  "rss_items": 25,
+  "threads_posts": 24,
+  "new_candidates": 0,
+  "candidate": 0,
+  "review": 0,
+  "skip": 0,
+  "duplicates": 49,
+  "stale": 0,
+  "truncated": 0,
+  "sources_ok": 3,
+  "sources_failed": 0,
+  "errors": 0,
+  "warnings": 0
+ },
+ "candidates": [],
+ "skipped": [],
+ "warnings": [],
+ "errors": [],
+ "notes": {
+  "usage": "candidates = 중복 제거 후 신규 후보. status=candidate(바로 응모 가능) / review(사람 확인) / skip(skip_reason 참조).",
+  "dedupe": "survey_seen.json(본 guid·기사 URL·제목) + known_urls.json(기응모 URL·제목) 대조."
+ },
+ "merged_at": "2026-11-27T12:12:47+09:00",
+ "previous_count": 0
+}
