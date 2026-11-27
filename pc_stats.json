@@ -2,7 +2,7 @@
  "schema": "pc_stats/1",
  "generator": "stats_checker.py",
  "version": "1.1.0",
- "generated_at": "2026-11-27T23:54:26+09:00",
+ "generated_at": "2026-11-28T01:55:22+09:00",
  "mode": "live",
  "shopee": {
   "enabled": true,
@@ -18,24 +18,25 @@
     "ok": true,
     "state": "ok",
     "metrics": {
-     "uv": 2,
-     "pv": 6,
-     "product_clicks": 3,
+     "uv": 0,
+     "pv": 0,
+     "product_clicks": 0,
      "orders": 0,
      "units": 0,
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791266,
-     "hour_buckets": 23
+     "server_time": 1795798522,
+     "hour_buckets": 1,
+     "note": "현지 자정 직후(유입 0은 리셋 영향일 수 있음)"
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1680,
-     "next_free_at": "2026-11-28T00:22:26+09:00",
+     "cooldown_remaining_seconds": 8895,
+     "next_free_at": "2026-11-28T04:23:38+09:00",
      "product_ids": [
       "26447109019",
       "57971534333",
@@ -62,16 +63,17 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791267,
-     "hour_buckets": 23
+     "server_time": 1795798523,
+     "hour_buckets": 1,
+     "note": "현지 자정 직후(유입 0은 리셋 영향일 수 있음)"
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1686,
-     "next_free_at": "2026-11-28T00:22:33+09:00",
+     "cooldown_remaining_seconds": 8901,
+     "next_free_at": "2026-11-28T04:23:45+09:00",
      "product_ids": [
       "56221950415",
       "56471987779",
@@ -90,24 +92,25 @@
     "ok": true,
     "state": "ok",
     "metrics": {
-     "uv": 1,
-     "pv": 1,
+     "uv": 0,
+     "pv": 0,
      "product_clicks": 0,
      "orders": 0,
      "units": 0,
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791268,
-     "hour_buckets": 23
+     "server_time": 1795798524,
+     "hour_buckets": 1,
+     "note": "현지 자정 직후(유입 0은 리셋 영향일 수 있음)"
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1691,
-     "next_free_at": "2026-11-28T00:22:40+09:00",
+     "cooldown_remaining_seconds": 8905,
+     "next_free_at": "2026-11-28T04:23:50+09:00",
      "product_ids": [
       "47871640401",
       "47121595505",
@@ -126,24 +129,25 @@
     "ok": true,
     "state": "ok",
     "metrics": {
-     "uv": 1,
-     "pv": 1,
+     "uv": 0,
+     "pv": 0,
      "product_clicks": 0,
      "orders": 0,
      "units": 0,
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791269,
-     "hour_buckets": 23
+     "server_time": 1795798525,
+     "hour_buckets": 1,
+     "note": "현지 자정 직후(유입 0은 리셋 영향일 수 있음)"
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1696,
-     "next_free_at": "2026-11-28T00:22:46+09:00",
+     "cooldown_remaining_seconds": 8911,
+     "next_free_at": "2026-11-28T04:23:57+09:00",
      "product_ids": [
       "51821726804",
       "40486803664",
@@ -162,24 +166,24 @@
     "ok": true,
     "state": "ok",
     "metrics": {
-     "uv": 1,
-     "pv": 1,
-     "product_clicks": 1,
+     "uv": 2,
+     "pv": 5,
+     "product_clicks": 2,
      "orders": 0,
      "units": 0,
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791271,
-     "hour_buckets": 22
+     "server_time": 1795798527,
+     "hour_buckets": 24
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1701,
-     "next_free_at": "2026-11-28T00:22:52+09:00",
+     "cooldown_remaining_seconds": 8917,
+     "next_free_at": "2026-11-28T04:24:05+09:00",
      "product_ids": [
       "45021595956",
       "41536716883",
@@ -206,16 +210,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791272,
-     "hour_buckets": 22
+     "server_time": 1795798528,
+     "hour_buckets": 24
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1707,
-     "next_free_at": "2026-11-28T00:22:59+09:00",
+     "cooldown_remaining_seconds": 8923,
+     "next_free_at": "2026-11-28T04:24:12+09:00",
      "product_ids": [
       "46271644365",
       "43136730512",
@@ -242,16 +246,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791273,
-     "hour_buckets": 9
+     "server_time": 1795798530,
+     "hour_buckets": 11
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1714,
-     "next_free_at": "2026-11-28T00:23:08+09:00",
+     "cooldown_remaining_seconds": 8929,
+     "next_free_at": "2026-11-28T04:24:20+09:00",
      "product_ids": [
       "49672049494",
       "44486736281",
@@ -278,16 +282,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795791275,
-     "hour_buckets": 12
+     "server_time": 1795798531,
+     "hour_buckets": 14
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1722,
-     "next_free_at": "2026-11-28T00:23:18+09:00",
+     "cooldown_remaining_seconds": 8936,
+     "next_free_at": "2026-11-28T04:24:29+09:00",
      "product_ids": [
       "45221609311",
       "44921615563",
@@ -302,9 +306,9 @@
   "totals": {
    "regions_ok": 8,
    "regions_total": 8,
-   "uv": 5,
-   "pv": 9,
-   "product_clicks": 4,
+   "uv": 2,
+   "pv": 5,
+   "product_clicks": 2,
    "orders": 0,
    "units": 0,
    "buyers": 0,
@@ -342,21 +346,21 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302266,
+      "bytes": 302226,
       "error": null
      },
      {
       "engine": "curl",
       "ok": true,
       "status": 200,
-      "bytes": 1241,
+      "bytes": 1240,
       "error": null
      },
      {
       "engine": "urllib",
       "ok": true,
       "status": 200,
-      "bytes": 1241,
+      "bytes": 1240,
       "error": null
      }
     ]
@@ -384,21 +388,21 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302412,
+      "bytes": 302372,
       "error": null
      },
      {
       "engine": "curl",
       "ok": true,
       "status": 200,
-      "bytes": 1241,
+      "bytes": 1240,
       "error": null
      },
      {
       "engine": "urllib",
       "ok": true,
       "status": 200,
-      "bytes": 1241,
+      "bytes": 1240,
       "error": null
      }
     ]
@@ -426,7 +430,7 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302180,
+      "bytes": 302140,
       "error": null
      },
      {
@@ -440,7 +444,7 @@
       "engine": "urllib",
       "ok": true,
       "status": 200,
-      "bytes": 1240,
+      "bytes": 1241,
       "error": null
      }
     ]
@@ -468,14 +472,14 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 301870,
+      "bytes": 301830,
       "error": null
      },
      {
       "engine": "curl",
       "ok": true,
       "status": 200,
-      "bytes": 1241,
+      "bytes": 1240,
       "error": null
      },
      {
@@ -510,21 +514,21 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302527,
+      "bytes": 302487,
       "error": null
      },
      {
       "engine": "curl",
       "ok": true,
       "status": 200,
-      "bytes": 1241,
+      "bytes": 1240,
       "error": null
      },
      {
       "engine": "urllib",
       "ok": true,
       "status": 200,
-      "bytes": 1240,
+      "bytes": 1241,
       "error": null
      }
     ]
@@ -576,11 +580,30 @@
  "github": null,
  "telegram": null,
  "changes": {
-  "since": "2026-11-27T21:54:12+09:00",
-  "regions": {},
+  "since": "2026-11-27T23:54:26+09:00",
+  "regions": {
+   "SG": {
+    "uv": -2,
+    "pv": -6,
+    "product_clicks": -3
+   },
+   "MY": {
+    "uv": -1,
+    "pv": -1
+   },
+   "PH": {
+    "uv": -1,
+    "pv": -1
+   },
+   "VN": {
+    "uv": 1,
+    "pv": 4,
+    "product_clicks": 1
+   }
+  },
   "qoo10": [],
   "watch": [],
-  "has_changes": false
+  "has_changes": true
  },
  "counts": {
   "shopee_regions_ok": 8,
@@ -1166,7 +1189,74 @@
      "slots": "5/5"
     }
    }
+  },
+  {
+   "generated_at": "2026-11-28T01:55:22+09:00",
+   "cookie_state": "ok",
+   "uv": 2,
+   "clicks": 2,
+   "orders": 0,
+   "boost": "40/40",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {
+    "SG": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TW": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MY": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "PH": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "VN": {
+     "uv": 2,
+     "clicks": 2,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TH": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MX": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "BR": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    }
+   }
   }
  ],
- "merged_at": "2026-11-27T23:54:43+09:00"
+ "merged_at": "2026-11-28T01:55:39+09:00"
 }
