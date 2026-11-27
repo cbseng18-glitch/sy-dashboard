@@ -1,7 +1,7 @@
 {
  "schema": "pc_survey_candidates/1",
  "collector_version": "1.0.0",
- "generated_at": "2026-11-27T16:13:09+09:00",
+ "generated_at": "2026-11-27T18:14:02+09:00",
  "mode": "live",
  "respondent": {
   "gender": "남성",
@@ -33,18 +33,18 @@
    "ok": true,
    "status": 200,
    "error": null,
-   "items": 10,
+   "items": 4,
    "agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"
   }
  ],
  "counts": {
   "rss_items": 25,
-  "threads_posts": 25,
+  "threads_posts": 19,
   "new_candidates": 0,
   "candidate": 0,
   "review": 0,
   "skip": 0,
-  "duplicates": 50,
+  "duplicates": 44,
   "stale": 0,
   "truncated": 0,
   "sources_ok": 3,
@@ -88,6 +88,6 @@
   "usage": "candidates = 중복 제거 후 신규 후보. status=candidate(바로 응모 가능) / review(사람 확인) / skip(skip_reason 참조).",
   "dedupe": "survey_seen.json(본 guid·기사 URL·제목) + known_urls.json(기응모 URL·제목) 대조."
  },
- "merged_at": "2026-11-27T16:13:13+09:00",
+ "merged_at": "2026-11-27T18:14:05+09:00",
  "previous_count": 1
 }
