@@ -1,11 +1,43 @@
 {
-  "id": "cmd_viral_0121",
-  "action": "fetch_urls",
+  "id": "shorts_cartax_20261127_01",
+  "action": "make_shorts",
   "args": {
-    "urls": [
-      "https://www.ppomppu.co.kr/hot.php",
-      "https://www.clien.net/service/board/park?&od=T33",
-      "https://m.ruliweb.com/best/humor"
+    "filename": "12월자동차세_1600원공제.mp4",
+    "theme": "navy",
+    "brand": "@sy.global",
+    "upload": true,
+    "privacy": "public",
+    "yt_title": "12월 자동차세 1,600원 공제, 11월 30일 마감",
+    "yt_description": "서울시 기준 전자송달과 자동납부를 모두 신청하면 고지서 1장당 1,600원 세액 공제됩니다. (납부기간 12/16~12/31)",
+    "yt_tags": [
+      "자동차세",
+      "자동차세공제",
+      "12월자동차세",
+      "절약",
+      "생활정보"
+    ],
+    "scenes": [
+      {
+        "badge": "12월 자동차세",
+        "title": "1,600원\n그냥 버리지 마세요",
+        "subtitle": "서울 전자송달+자동납부 공제",
+        "narration": "12월 자동차세, 1,600원 그냥 버리지 마세요. 서울은 전자송달과 자동납부를 모두 신청하면 고지서 한 장당 1,600원을 깎아 줍니다.",
+        "motion": "in"
+      },
+      {
+        "badge": "신청 마감 11/30",
+        "title": "11월 30일까지\n신청해야 됩니다",
+        "subtitle": "납부기한이 있는 달의 전달 말일",
+        "narration": "신청은 11월 30일까지입니다. 납부기한이 있는 달의 전달 말일까지 신청해야 그 고지분에 공제가 붙습니다.",
+        "motion": "out"
+      },
+      {
+        "badge": "납부 기간",
+        "title": "12월 16일 ~ 31일\n위택스·ETAX에서",
+        "subtitle": "기한 넘기면 공제액 다시 추징",
+        "narration": "납부는 12월 16일부터 31일까지입니다. 기한을 넘기면 공제받은 금액을 다시 토해내야 하니 자동이체 잔액을 확인하세요.",
+        "motion": "pan"
+      }
     ]
   }
 }
