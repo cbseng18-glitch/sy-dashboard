@@ -1,7 +1,7 @@
 {
  "schema": "pc_survey_candidates/1",
  "collector_version": "1.0.0",
- "generated_at": "2026-11-27T12:12:42+09:00",
+ "generated_at": "2026-11-27T14:13:05+09:00",
  "mode": "live",
  "respondent": {
   "gender": "남성",
@@ -33,15 +33,15 @@
    "ok": true,
    "status": 200,
    "error": null,
-   "items": 9,
+   "items": 10,
    "agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"
   }
  ],
  "counts": {
   "rss_items": 25,
-  "threads_posts": 24,
-  "new_candidates": 0,
-  "candidate": 0,
+  "threads_posts": 25,
+  "new_candidates": 1,
+  "candidate": 1,
   "review": 0,
   "skip": 0,
   "duplicates": 49,
@@ -52,7 +52,35 @@
   "errors": 0,
   "warnings": 0
  },
- "candidates": [],
+ "candidates": [
+  {
+   "id": "threads-threads:공공기관무료이벤트5건직접응모해보고남기는목록1",
+   "status": "candidate",
+   "skip_reason": "",
+   "flags": [
+    "login_not_required"
+   ],
+   "requires_login": false,
+   "source": "threads",
+   "guid": "threads:공공기관무료이벤트5건직접응모해보고남기는목록1",
+   "title": "공공기관 무료 이벤트 5건, 직접 응모해보고 남기는 목록 ▸ 11/30 마감 · 제주관광빅데이터플랫폼 2차 만족도 조사 — 네이버페이 1만원 100명 ▸ 11/30 마감 · 연제구청 유튜브 구독 이",
+   "url": "https://www.threads.com/@professional_jung",
+   "survey_url": "",
+   "other_urls": [],
+   "deadline": "2026-12-18",
+   "deadline_text": "무료 이벤트 5건, 직접 응모해보고 남기는 목록 ▸ 11/30 마감",
+   "prize": "건강 궁금증 톡」 — 커피 2만원권 50명",
+   "published_at": null,
+   "age_days": null,
+   "categories": [
+    "threads"
+   ],
+   "excerpt": "공공기관 무료 이벤트 5건, 직접 응모해보고 남기는 목록 ▸ 11/30 마감 · 제주관광빅데이터플랫폼 2차 만족도 조사 — 네이버페이 1만원 100명 ▸ 11/30 마감 · 연제구청 유튜브 구독 이벤트 — 다이소 1만원권 100명 ▸ 12/06 마감 · 원자력안전정보공유포털 콘텐츠 접촉 경험 설문 — 올리브영 1만원 100명 ▸ 12/09 마감 · 질병관리청 「건강 궁금증 톡」 — 커피 2만원권 50명 ▸ 12/18 마감 · 국회예산정책처 예산춘추 84호 퀴즈 — 문화상품권 3만원 · 정답 적어 메일로 보내면 됨(재정퀴즈 3문항 + 초성퀴즈)",
+   "is_duplicate": false,
+   "first_seen_at": "2026-11-27T14:13:05+09:00",
+   "last_seen_at": "2026-11-27T14:13:05+09:00"
+  }
+ ],
  "skipped": [],
  "warnings": [],
  "errors": [],
@@ -60,6 +88,6 @@
   "usage": "candidates = 중복 제거 후 신규 후보. status=candidate(바로 응모 가능) / review(사람 확인) / skip(skip_reason 참조).",
   "dedupe": "survey_seen.json(본 guid·기사 URL·제목) + known_urls.json(기응모 URL·제목) 대조."
  },
- "merged_at": "2026-11-27T12:12:47+09:00",
+ "merged_at": "2026-11-27T14:13:09+09:00",
  "previous_count": 0
 }
