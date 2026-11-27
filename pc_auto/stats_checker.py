@@ -450,8 +450,20 @@ def curl_fetch(url, headers=None, timeout=CURL_DEFAULT_TIMEOUT, log=None,
     kwargs = {"stdout": subprocess.PIPE, "stderr": subprocess.PIPE, "stdin": subprocess.DEVNULL}
     if os.name == "nt":
         kwargs["creationflags"] = 0x08000000  # CREATE_NO_WINDOW (콘솔 창 깜박임 방지)
+
+    def _invoke(extra_flags=()):
+        cmd = [exe] + list(extra_flags) + argv[1:]
+        return subprocess.run(cmd, timeout=max_time + 15, **kwargs)
+
     try:
-        proc = subprocess.run(argv, timeout=max_time + 15, **kwargs)
+        proc = _invoke()
+        err_text = (proc.stderr or b"").decode("utf-8", "replace")
+        # Windows Schannel 의 CRL(폐기목록) 조회 실패로 정상 인증서도 거절되는 경우가 있다.
+        # 인증서 검증은 그대로 두고 폐기목록 확인만 생략해 한 번 재시도한다(--ssl-no-revoke).
+        if proc.returncode == 60 and "revok" in err_text.lower():
+            if log:
+                log.warn("curl 인증서 폐기목록(CRL) 조회 실패 → --ssl-no-revoke 로 재시도: %s" % url)
+            proc = _invoke(("--ssl-no-revoke",))
     except subprocess.TimeoutExpired:
         _rmtree_quiet(tmpdir)
         result["error"] = "curl 타임아웃(%d초)" % max_time
