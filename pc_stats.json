@@ -1,0 +1,183 @@
+{
+ "schema": "pc_stats/1",
+ "generator": "stats_checker.py",
+ "version": "1.0.0",
+ "generated_at": "2026-11-27T14:10:56+09:00",
+ "mode": "live",
+ "shopee": {
+  "enabled": true,
+  "cookie_state": "cookie_missing",
+  "cookie_error": "파일 없음: C:\\sy_auto\\shopee_cookies.json",
+  "cookie_saved_at": null,
+  "regions": [],
+  "totals": {},
+  "warnings": [
+   "쿠키 파일 없음/비어 있음 → 쇼피 조회 건너뜀(파일 없음: C:\\sy_auto\\shopee_cookies.json)"
+  ],
+  "errors": []
+ },
+ "qoo10": {
+  "enabled": true,
+  "items": [
+   {
+    "no": "1224104135",
+    "label": "1호 다꾸세트",
+    "url": "https://www.qoo10.jp/g/1224104135",
+    "ok": false,
+    "status": "blocked",
+    "http_status": 200,
+    "page_title": "",
+    "sale_state": "unknown",
+    "price": null,
+    "price_source": null,
+    "expect_price": 3280,
+    "price_match": null,
+    "blocked": true,
+    "warnings": [
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 주거용 IP(집 PC)에서만 정상 조회"
+    ]
+   },
+   {
+    "no": "1224104228",
+    "label": "2호 산리오세트",
+    "url": "https://www.qoo10.jp/g/1224104228",
+    "ok": false,
+    "status": "blocked",
+    "http_status": 200,
+    "page_title": "",
+    "sale_state": "unknown",
+    "price": null,
+    "price_source": null,
+    "expect_price": 2980,
+    "price_match": null,
+    "blocked": true,
+    "warnings": [
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 주거용 IP(집 PC)에서만 정상 조회"
+    ]
+   },
+   {
+    "no": "1224104377",
+    "label": "3호 K-POP 키트",
+    "url": "https://www.qoo10.jp/g/1224104377",
+    "ok": false,
+    "status": "blocked",
+    "http_status": 200,
+    "page_title": "",
+    "sale_state": "unknown",
+    "price": null,
+    "price_source": null,
+    "expect_price": 2980,
+    "price_match": null,
+    "blocked": true,
+    "warnings": [
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 주거용 IP(집 PC)에서만 정상 조회"
+    ]
+   },
+   {
+    "no": "1224104455",
+    "label": "4호 스터디세트",
+    "url": "https://www.qoo10.jp/g/1224104455",
+    "ok": false,
+    "status": "blocked",
+    "http_status": 200,
+    "page_title": "",
+    "sale_state": "unknown",
+    "price": null,
+    "price_source": null,
+    "expect_price": 3280,
+    "price_match": null,
+    "blocked": true,
+    "warnings": [
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 주거용 IP(집 PC)에서만 정상 조회"
+    ]
+   },
+   {
+    "no": "1224104483",
+    "label": "5호 폰꾸세트",
+    "url": "https://www.qoo10.jp/g/1224104483",
+    "ok": false,
+    "status": "blocked",
+    "http_status": 200,
+    "page_title": "",
+    "sale_state": "unknown",
+    "price": null,
+    "price_source": null,
+    "expect_price": 3480,
+    "price_match": null,
+    "blocked": true,
+    "warnings": [
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 주거용 IP(집 PC)에서만 정상 조회"
+    ]
+   }
+  ],
+  "warnings": [
+   "큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행"
+  ],
+  "counts": {
+   "total": 5,
+   "ok": 0,
+   "blocked": 5,
+   "price_found": 0,
+   "price_matched": 0,
+   "price_mismatch": 0
+  }
+ },
+ "survey_watch": {
+  "enabled": true,
+  "counts": {
+   "targets": 3,
+   "ok": 2,
+   "js_rendered": 1,
+   "name_mentioned": 0,
+   "due": 0
+  },
+  "due_count": 0,
+  "due_dates": [],
+  "alerts_count": 1,
+  "high_alerts": 0,
+  "targets_checked": 3,
+  "note": "개인정보 보호를 위해 상세 스니펫·대상 URL은 로컬 pc_stats.json 에만 저장"
+ },
+ "warnings": [
+  "쿠키 파일 없음/비어 있음 → 쇼피 조회 건너뜀(파일 없음: C:\\sy_auto\\shopee_cookies.json)",
+  "큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행",
+  "JS 렌더링이라 감시 불가: 비짓부산 홈 (브라우저 확인 필요)"
+ ],
+ "errors": [],
+ "github": null,
+ "telegram": null,
+ "changes": null,
+ "counts": {
+  "shopee_regions_ok": 0,
+  "shopee_cookie_state": "cookie_missing",
+  "qoo10_ok": 0,
+  "qoo10_price_mismatch": 0,
+  "watch_due": 0,
+  "watch_alerts": 1,
+  "watch_new_alerts": 1,
+  "errors": 0,
+  "warnings": 3
+ },
+ "redacted": true,
+ "snapshots": [
+  {
+   "generated_at": "2026-11-27T14:10:56+09:00",
+   "cookie_state": "cookie_missing",
+   "uv": null,
+   "clicks": null,
+   "orders": null,
+   "boost": "None/None",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {}
+  }
+ ],
+ "merged_at": "2026-11-27T14:11:00+09:00"
+}
