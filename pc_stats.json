@@ -2,7 +2,7 @@
  "schema": "pc_stats/1",
  "generator": "stats_checker.py",
  "version": "1.1.0",
- "generated_at": "2026-11-27T17:53:11+09:00",
+ "generated_at": "2026-11-27T19:54:11+09:00",
  "mode": "live",
  "shopee": {
   "enabled": true,
@@ -26,15 +26,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769591,
-     "hour_buckets": 17
+     "server_time": 1795776850,
+     "hour_buckets": 19
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8901,
+     "cooldown_remaining_seconds": 1641,
      "next_free_at": "2026-11-27T20:21:33+09:00",
      "product_ids": [
       "26447109019",
@@ -62,15 +62,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769592,
-     "hour_buckets": 17
+     "server_time": 1795776852,
+     "hour_buckets": 19
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8906,
+     "cooldown_remaining_seconds": 1646,
      "next_free_at": "2026-11-27T20:21:39+09:00",
      "product_ids": [
       "56221950415",
@@ -98,15 +98,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769593,
-     "hour_buckets": 17
+     "server_time": 1795776853,
+     "hour_buckets": 19
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8912,
+     "cooldown_remaining_seconds": 1652,
      "next_free_at": "2026-11-27T20:21:46+09:00",
      "product_ids": [
       "47871640401",
@@ -134,16 +134,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769594,
-     "hour_buckets": 17
+     "server_time": 1795776854,
+     "hour_buckets": 19
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8917,
-     "next_free_at": "2026-11-27T20:21:52+09:00",
+     "cooldown_remaining_seconds": 1658,
+     "next_free_at": "2026-11-27T20:21:53+09:00",
      "product_ids": [
       "51821726804",
       "40486803664",
@@ -162,24 +162,24 @@
     "ok": true,
     "state": "ok",
     "metrics": {
-     "uv": 0,
-     "pv": 0,
-     "product_clicks": 0,
+     "uv": 1,
+     "pv": 1,
+     "product_clicks": 1,
      "orders": 0,
      "units": 0,
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769595,
-     "hour_buckets": 16
+     "server_time": 1795776855,
+     "hour_buckets": 18
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8923,
-     "next_free_at": "2026-11-27T20:21:59+09:00",
+     "cooldown_remaining_seconds": 1663,
+     "next_free_at": "2026-11-27T20:22:00+09:00",
      "product_ids": [
       "45021595956",
       "41536716883",
@@ -206,15 +206,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769597,
-     "hour_buckets": 16
+     "server_time": 1795776856,
+     "hour_buckets": 18
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8930,
+     "cooldown_remaining_seconds": 1670,
      "next_free_at": "2026-11-27T20:22:08+09:00",
      "product_ids": [
       "46271644365",
@@ -242,15 +242,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769598,
-     "hour_buckets": 3
+     "server_time": 1795776858,
+     "hour_buckets": 5
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8936,
+     "cooldown_remaining_seconds": 1676,
      "next_free_at": "2026-11-27T20:22:16+09:00",
      "product_ids": [
       "49672049494",
@@ -278,15 +278,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795769600,
-     "hour_buckets": 6
+     "server_time": 1795776860,
+     "hour_buckets": 8
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8942,
+     "cooldown_remaining_seconds": 1682,
      "next_free_at": "2026-11-27T20:22:24+09:00",
      "product_ids": [
       "45221609311",
@@ -302,9 +302,9 @@
   "totals": {
    "regions_ok": 8,
    "regions_total": 8,
-   "uv": 4,
-   "pv": 8,
-   "product_clicks": 3,
+   "uv": 5,
+   "pv": 9,
+   "product_clicks": 4,
    "orders": 0,
    "units": 0,
    "buyers": 0,
@@ -384,7 +384,7 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302401,
+      "bytes": 302149,
       "error": null
      },
      {
@@ -426,7 +426,7 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302169,
+      "bytes": 301917,
       "error": null
      },
      {
@@ -576,11 +576,35 @@
  "github": null,
  "telegram": null,
  "changes": {
-  "since": "2026-11-27T15:53:09+09:00",
-  "regions": {},
+  "since": "2026-11-27T17:53:11+09:00",
+  "regions": {
+   "VN": {
+    "uv": 1,
+    "pv": 1,
+    "product_clicks": 1
+   }
+  },
   "qoo10": [],
-  "watch": [],
-  "has_changes": false
+  "watch": [
+   {
+    "target": "모두가 도시농부(모두농)",
+    "new_hits": [
+     {
+      "keyword": "당첨자",
+      "snippet": "공지사항 [안내] Any-ID(정부 통합인증) 도입에 따른 로그인 이용 안내 (11.4~) 2026-10-19 공지사항 더보기 이벤트/행사 [당첨자 발표] 2026년 모두가 도시농부 홈페이지 만족도 조사 이벤트 당첨 발표 2026-11-27 이벤트/행사 더보기 자료실 2025년 도시농업 교육인력"
+     },
+     {
+      "keyword": "당첨",
+      "snippet": "그인 이용 안내 (11.4~) 2026-10-19 공지사항 더보기 이벤트/행사 [당첨자 발표] 2026년 모두가 도시농부 홈페이지 만족도 조사 이벤트 당첨 발표 2026-11-27 이벤트/행사 더보기 자료실 2025년 도시농업 교육인력 양성지원사업 우수사례집 2025-12-31 자료실 더보기 도"
+     },
+     {
+      "keyword": "발표",
+      "snippet": "이용 안내 (11.4~) 2026-10-19 공지사항 더보기 이벤트/행사 [당첨자 발표] 2026년 모두가 도시농부 홈페이지 만족도 조사 이벤트 당첨 발표 2026-11-27 이벤트/행사 더보기 자료실 2025년 도시농업 교육인력 양성지원사업 우수사례집 2025-12-31 자료실 더보기 도시농업"
+     }
+    ]
+   }
+  ],
+  "has_changes": true
  },
  "counts": {
   "shopee_regions_ok": 8,
@@ -589,7 +613,7 @@
   "qoo10_price_mismatch": 0,
   "watch_due": 0,
   "watch_alerts": 1,
-  "watch_new_alerts": 0,
+  "watch_new_alerts": 1,
   "errors": 0,
   "warnings": 2
  },
@@ -965,7 +989,74 @@
      "slots": "5/5"
     }
    }
+  },
+  {
+   "generated_at": "2026-11-27T19:54:11+09:00",
+   "cookie_state": "ok",
+   "uv": 5,
+   "clicks": 4,
+   "orders": 0,
+   "boost": "40/40",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {
+    "SG": {
+     "uv": 2,
+     "clicks": 3,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TW": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MY": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "PH": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "VN": {
+     "uv": 1,
+     "clicks": 1,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TH": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MX": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "BR": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    }
+   }
   }
  ],
- "merged_at": "2026-11-27T17:53:28+09:00"
+ "merged_at": "2026-11-27T19:54:29+09:00"
 }
