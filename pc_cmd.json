@@ -1,13 +1,7 @@
 {
-  "id": "selfupd_restart_cffi_20261127",
-  "action": "self_update",
+  "id": "check_stats_cffi_test2_20261127",
+  "action": "check_stats",
   "args": {
-    "files": [
-      {
-        "remote": "pc_auto/stats_checker.py",
-        "local": "stats_checker.py"
-      }
-    ],
-    "restart": true
+    "force_report": true
   }
 }
