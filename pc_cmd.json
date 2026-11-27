@@ -1,32 +1,5 @@
 {
-  "id": "shorts_healthcheck_20261127",
-  "action": "make_shorts",
-  "args": {
-    "title": "국가건강검진 12월31일 마감",
-    "yt_title": "올해 국가건강검진 12월 31일 마감! 놓치면 생기는 불이익 #Shorts",
-    "yt_description": "2026년 짝수/대상자 국가건강검진 12월 31일 마감 전 꼭 확인하세요.\n\n#국가건강검진 #건강검진 #연말필수 #Shorts",
-    "yt_tags": "국가건강검진,건강검진마감,연말,생활정보,Shorts",
-    "upload": true,
-    "privacy": "public",
-    "scenes": [
-      {
-        "title": "건강검진\n12월 31일 마감",
-        "subtitle": "미루면 올해 혜택 사라져요",
-        "narration": "올해 국가건강검진 대상자인데 아직 안 받으셨나요? 12월 31일이 지나면 올해 무료 검진 혜택이 그대로 사라집니다.",
-        "accent": "red"
-      },
-      {
-        "title": "직장인 미수검 시\n과태료 대상",
-        "subtitle": "근로자 본인 최대 15만 원 주의",
-        "narration": "특히 직장인은 정당한 사유 없이 계속 미수검하면 과태료 대상이 될 수 있으니 연말 몰리기 전에 예약하는 게 좋습니다.",
-        "accent": "amber"
-      },
-      {
-        "title": "지금 1분 확인\n건강보험공단 앱",
-        "subtitle": "올해 대상자·가까운 병원 바로 조회",
-        "narration": "국민건강보험 앱이나 더건강보험에서 내가 올해 대상자인지, 토요일 검진 가능한 병원이 어디인지 지금 1분 만에 확인해 보세요.",
-        "accent": "teal"
-      }
-    ]
-  }
+  "id": "run_boost_first_live_20261127",
+  "action": "run_boost",
+  "args": {}
 }
