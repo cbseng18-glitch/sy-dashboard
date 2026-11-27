@@ -1,13 +1,21 @@
 {
-  "id": "selfupd_yt_break_20261127",
+  "id": "selfupd_shopee_stats_20261127",
   "action": "self_update",
   "args": {
     "files": [
       {
-        "remote": "pc_auto/shorts_factory/youtube_upload.py",
-        "local": "shorts_factory/youtube_upload.py"
+        "remote": "pc_auto/stats_checker.py",
+        "local": "stats_checker.py"
+      },
+      {
+        "remote": "pc_auto/shopee_booster.py",
+        "local": "shopee_booster.py"
+      },
+      {
+        "remote": "pc_auto/sy_auto_watch.py",
+        "local": "sy_auto_watch.py"
       }
     ],
-    "restart": false
+    "restart": true
   }
 }
