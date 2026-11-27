@@ -2,7 +2,7 @@
  "schema": "pc_stats/1",
  "generator": "stats_checker.py",
  "version": "1.0.0",
- "generated_at": "2026-11-27T14:10:56+09:00",
+ "generated_at": "2026-11-27T15:34:37+09:00",
  "mode": "live",
  "shopee": {
   "enabled": true,
@@ -146,7 +146,13 @@
  "errors": [],
  "github": null,
  "telegram": null,
- "changes": null,
+ "changes": {
+  "since": "2026-11-27T14:10:56+09:00",
+  "regions": {},
+  "qoo10": [],
+  "watch": [],
+  "has_changes": false
+ },
  "counts": {
   "shopee_regions_ok": 0,
   "shopee_cookie_state": "cookie_missing",
@@ -154,7 +160,7 @@
   "qoo10_price_mismatch": 0,
   "watch_due": 0,
   "watch_alerts": 1,
-  "watch_new_alerts": 1,
+  "watch_new_alerts": 0,
   "errors": 0,
   "warnings": 3
  },
@@ -177,7 +183,25 @@
    },
    "alerts": 0,
    "regions": {}
+  },
+  {
+   "generated_at": "2026-11-27T15:34:37+09:00",
+   "cookie_state": "cookie_missing",
+   "uv": null,
+   "clicks": null,
+   "orders": null,
+   "boost": "None/None",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {}
   }
  ],
- "merged_at": "2026-11-27T14:11:00+09:00"
+ "merged_at": "2026-11-27T15:34:41+09:00"
 }
