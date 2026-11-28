@@ -1,12 +1,12 @@
 {
  "self_update": {
-  "ok": false,
-  "updated": [],
-  "failed": [
-   "pc_auto/sy_auto_watch.py → 저장 실패 FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\sy_auto\\\\pc_auto\\\\sy_auto_watch.py.new'"
+  "ok": true,
+  "updated": [
+   "sy_auto_watch.py (180771B)"
   ],
-  "restart_planned": false,
-  "at": "2026-11-28T20:52:59+09:00"
+  "failed": [],
+  "restart_planned": true,
+  "at": "2026-11-28T20:54:03+09:00"
  },
  "make_shorts": {
   "ok": true,
