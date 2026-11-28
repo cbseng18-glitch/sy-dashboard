@@ -1080,7 +1080,8 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
                 lines.append(f"✅ [유튜브 업로드 완료 ({source})] {url}")
                 lines.append(f"• 제목: {yt_title[:80]}")
                 lines.append(f"• 공개: {privacy} · 소요 {u_elapsed}초")
-                result.update({"uploaded": True, "url": url, "upload_privacy": privacy})
+                result.update({"uploaded": True, "url": url, "upload_privacy": privacy,
+                               "yt_lang": yt_lang, "yt_title": yt_title})
             else:
                 tail = [x for x in (uerr or uout or "").splitlines() if x.strip()][-4:]
                 head = ("업로드 시간초과 " + str(up_timeout) + "초" if utimed
@@ -1093,6 +1094,9 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
     msg = "\n".join(lines)
     log(msg)
     send_telegram(cfg, msg)
+    # 어떤 보이스로 나레이션을 만들었는지(일본어 자동 선택 확인용)를 결과에 남긴다
+    result["voices"] = sorted(set(re.findall(r"\[나레이션\] (\S+)", out or "")))
+    result["stdout_tail"] = [x.strip()[:160] for x in (out or "").splitlines() if x.strip()][-6:]
     result["source"] = source
     _report_pc_result(cfg, "make_shorts", result)
     return result
