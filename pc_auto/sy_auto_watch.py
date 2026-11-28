@@ -3074,6 +3074,10 @@ def _toss_product_rows(js) -> list:
     rows = []
     success = (js or {}).get("success") if isinstance(js, dict) else {}
     sections = (success or {}).get("sections") or []
+    if not sections and isinstance(success, dict) and isinstance(success.get("items"), list):
+        sections = [{"section": str(success.get("section") or success.get("sectionCode") or "SECTION"), "items": success.get("items")}]
+    elif not sections and isinstance(success, list):
+        sections = [{"section": "SECTION", "items": success}]
     for sec in sections:
         if not isinstance(sec, dict):
             continue
@@ -3081,7 +3085,7 @@ def _toss_product_rows(js) -> list:
         for it in (sec.get("items") or []):
             if not isinstance(it, dict):
                 continue
-            taca = it.get("taca") or {}
+            taca = it.get("taca") or it
             pv = taca.get("productView") or {}
             if not isinstance(pv, dict) or not pv.get("productId"):
                 continue
