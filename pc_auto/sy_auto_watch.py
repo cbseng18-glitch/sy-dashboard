@@ -1092,6 +1092,17 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
                     lines.append("• " + "\n• ".join(t.strip()[:150] for t in tail))
                 result.update({"uploaded": False, "upload_error": head})
 
+    # ---- 인스타 릴스 교차 발행(플래그·설정·공개 URL 이 모두 있을 때만 · 기본 드라이런)
+    ig_res = _maybe_cross_post_instagram(cfg, args, result, source=source)
+    if ig_res is not None:
+        result["instagram"] = ig_res
+        if ig_res.get("ok") and not ig_res.get("dry_run"):
+            lines.append(f"• 인스타 릴스 발행: {ig_res.get('media_id')}")
+        elif ig_res.get("dry_run"):
+            lines.append("• 인스타: 드라이런(검증만) — ig_confirm=true 로 실제 발행")
+        else:
+            lines.append(f"• 인스타 생략: {ig_res.get('skipped') or ig_res.get('error')}")
+
     msg = "\n".join(lines)
     log(msg)
     send_telegram(cfg, msg)
@@ -1101,6 +1112,821 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
     result["source"] = source
     _report_pc_result(cfg, "make_shorts", result)
     return result
+
+
+# ---------------------------------------------------------------- 지식iN·스레드 후보글 + 무료 Gemini 필터 → pc_targets.json
+#  ★ 흐름: (1) 공개 검색으로 최신 후보 글 수집(로그인·쿠키 없음)
+#          → (2) gemini_config.json 의 api_key 가 있을 때만 무료 Gemini API 로
+#               '진짜 도움이 필요한 글인지' 판별 + 자연스러운 답글·피클 초대 초안 생성
+#          → (3) 저장소 pc_targets.json 푸시.
+#  ★ 키가 없거나 비어 있으면 수집만 하고 조용히 건너뛴다(예외·알림 없음).
+#    키·토큰 원문은 로그에도 저장소에도 남기지 않는다.
+#  ★ 지식iN 은 비로그인 공개 검색(list.naver?sort=date)만 읽는다.
+#    스레드 공개 검색은 클라이언트 렌더링이라, 공식 keyword_search 토큰이 있을 때만 시도한다.
+GEMINI_CONFIG_FILE = BASE_DIR / "gemini_config.json"
+GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta"
+GEMINI_DEFAULT_MODEL = "gemini-2.5-flash"
+TARGETS_PUSH_PATH = "pc_targets.json"
+TARGETS_KEEP_MAX = 60            # pc_targets.json 에 남기는 후보 최대 수(최신 우선 롤링)
+TARGETS_SEEN_MAX = 400           # state.json 에 기억하는 처리 완료 URL 수
+TARGETS_DEFAULT_KIN_QUERIES = [
+    "AI 비서 일정 정리 추천",
+    "환급금 조회 방법",
+    "일정 관리 앱 추천",
+    "정리정돈 앱 추천",
+]
+TARGETS_DEFAULT_THREADS_QUERIES = ["환급금 조회", "일정 정리", "생활 꿀팁"]
+TARGETS_DEFAULT_PERSONA = ("Pickle(피클)은 한국어로 대화하는 개인 AI 비서다. 일정·할일 정리, "
+                           "환급금·행정 서류 확인, 생활 꿀팁을 도와준다.")
+TARGETS_GEMINI_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "items": {
+            "type": "ARRAY",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "index": {"type": "INTEGER"},
+                    "needs_help": {"type": "BOOLEAN"},
+                    "score": {"type": "NUMBER"},
+                    "reason": {"type": "STRING"},
+                    "reply": {"type": "STRING"},
+                    "invite": {"type": "STRING"},
+                },
+                "required": ["index", "needs_help", "score", "reason", "reply"],
+            },
+        }
+    },
+    "required": ["items"],
+}
+
+
+def load_gemini_config() -> dict:
+    """gemini_config.json 로드. 없으면 api_key 빈 템플릿만 만들어 둔다(키는 절대 로그에 안 찍는다)."""
+    template = {
+        "api_key": "",
+        "enabled": True,
+        "model": GEMINI_DEFAULT_MODEL,
+        "max_candidates": 12,
+        "min_score": 0.55,
+        "kin_queries": list(TARGETS_DEFAULT_KIN_QUERIES),
+        "threads_queries": list(TARGETS_DEFAULT_THREADS_QUERIES),
+        "persona": TARGETS_DEFAULT_PERSONA,
+        "_help": ("무료 Gemini API 키를 api_key 에 넣으면 지식iN·스레드 후보 글을 AI 로 걸러 "
+                  "답글·피클 초대 초안까지 만들어 pc_targets.json 으로 올립니다. "
+                  "비워 두면 후보 수집만 하고 푸시하지 않습니다(오류 없음). "
+                  "모델은 model 값(기본 gemini-2.5-flash)을 따릅니다."),
+    }
+    if not GEMINI_CONFIG_FILE.exists():
+        try:
+            GEMINI_CONFIG_FILE.write_text(json.dumps(template, ensure_ascii=False, indent=2),
+                                          encoding="utf-8")
+            log("Gemini 설정 템플릿 생성: %s" % GEMINI_CONFIG_FILE)
+        except Exception as e:
+            log("Gemini 설정 템플릿 생성 실패: %s: %s" % (type(e).__name__, e))
+        return dict(template)
+    try:
+        raw = json.loads(GEMINI_CONFIG_FILE.read_text(encoding="utf-8"))
+    except Exception as e:
+        log("Gemini 설정 해석 실패: %s: %s" % (type(e).__name__, e))
+        return dict(template)
+    out = dict(template)
+    if isinstance(raw, dict):
+        out.update(raw)
+    out["api_key"] = str(out.get("api_key") or "").strip()
+    out["model"] = str(out.get("model") or "").strip() or GEMINI_DEFAULT_MODEL
+    out["enabled"] = bool(out.get("enabled", True))
+    try:
+        out["max_candidates"] = max(1, min(30, int(out.get("max_candidates") or 12)))
+    except Exception:
+        out["max_candidates"] = 12
+    try:
+        out["min_score"] = max(0.0, min(1.0, float(out.get("min_score") or 0.55)))
+    except Exception:
+        out["min_score"] = 0.55
+    for key, default in (("kin_queries", TARGETS_DEFAULT_KIN_QUERIES),
+                         ("threads_queries", TARGETS_DEFAULT_THREADS_QUERIES)):
+        vals = out.get(key)
+        if isinstance(vals, str):
+            vals = [vals]
+        out[key] = [str(v).strip() for v in (vals or []) if str(v).strip()][:8] or list(default)
+    return out
+
+
+def _gemini_ready(gc: dict) -> tuple:
+    """(준비됨, 사유). 키가 비면 False — 예외를 던지지 않는다."""
+    if not isinstance(gc, dict):
+        return False, "gemini_config 없음"
+    if not gc.get("enabled", True):
+        return False, "gemini_config.enabled=false"
+    if not str(gc.get("api_key") or "").strip():
+        return False, "api_key 미설정"
+    return True, ""
+
+
+def _gemini_note() -> str:
+    """상태 보고용 한 줄 — 키 값 자체는 절대 찍지 않는다."""
+    try:
+        ok, why = _gemini_ready(load_gemini_config())
+        return "준비됨" if ok else why
+    except Exception:
+        return "확인 실패"
+
+
+def _strip_tags(text) -> str:
+    s = re.sub(r"<[^>]+>", " ", str(text or ""))
+    return re.sub(r"\s+", " ", html.unescape(s)).strip()
+
+
+def _kin_candidates(query: str, limit: int = 8) -> list:
+    """지식iN 공개 검색(최신순) → 후보 목록. 로그인·쿠키 없이 HTML 만 읽는다."""
+    url = ("https://kin.naver.com/search/list.naver?"
+           + urllib.parse.urlencode({"query": query, "sort": "date"}))
+    req = urllib.request.Request(url, headers={
+        "User-Agent": _BROWSER_UA,
+        "Accept": "text/html,application/xhtml+xml",
+        "Accept-Language": "ko-KR,ko;q=0.9",
+        "Referer": "https://kin.naver.com/",
+    })
+    with urllib.request.urlopen(req, timeout=25) as r:
+        text = r.read(500000).decode("utf-8", "replace")
+    out = []
+    for block in re.findall(r"<li data-nlog-imp-params=.*?</li>", text, re.S):
+        am = re.search(r"<dt>\s*<a href=\"([^\"]+)\"[^>]*>(.*?)</a>", block, re.S)
+        if not am:
+            continue
+        link = html.unescape(am.group(1)).strip()
+        title = _strip_tags(am.group(2))
+        if not link.startswith("http") or not title:
+            continue
+        posted, snippet = "", ""
+        for cls, body in re.findall(r"<dd([^>]*)>(.*?)</dd>", block, re.S):
+            body_txt = _strip_tags(body)
+            if "txt_inline" in cls and not posted:
+                posted = body_txt
+            elif "txt_block" not in cls and not snippet and len(body_txt) > 10:
+                snippet = body_txt
+        dm = re.search(r"docId=(\d+)", link)
+        out.append({
+            "id": "kin-%s" % (dm.group(1) if dm else abs(hash(link)) % 10 ** 9),
+            "source": "kin",
+            "channel": "지식iN",
+            "query": query,
+            "title": title[:160],
+            "snippet": snippet[:400],
+            "url": link,
+            "posted_at": posted,
+        })
+        if len(out) >= limit:
+            break
+    return out
+
+
+def _threads_search_candidates(query: str, token: str = "", limit: int = 8) -> list:
+    """스레드 공개 검색 — 공식 keyword_search 토큰이 있을 때만. 없으면 빈 목록(조용히)."""
+    token = str(token or "").strip()
+    if not token:
+        return []
+    params = urllib.parse.urlencode({
+        "q": query, "search_type": "RECENT", "limit": str(max(1, min(limit, 25))),
+        "fields": "id,text,permalink,timestamp,username",
+    })
+    req = urllib.request.Request(
+        "https://graph.threads.net/v1.0/keyword_search?" + params,
+        headers={"Authorization": "Bearer %s" % token,
+                 "User-Agent": "SY-PC-Watch/1.0", "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=25) as r:
+        res = json.loads(r.read().decode("utf-8", "replace"))
+    out = []
+    for row in (res.get("data") or []):
+        if not isinstance(row, dict):
+            continue
+        text = re.sub(r"\s+", " ", str(row.get("text") or "")).strip()
+        link = str(row.get("permalink") or "").strip()
+        if not text or not link:
+            continue
+        out.append({
+            "id": "th-%s" % str(row.get("id") or abs(hash(link)) % 10 ** 9),
+            "source": "threads",
+            "channel": "스레드",
+            "query": query,
+            "title": text[:120],
+            "snippet": text[:400],
+            "url": link,
+            "posted_at": str(row.get("timestamp") or ""),
+            "author": str(row.get("username") or ""),
+        })
+        if len(out) >= limit:
+            break
+    return out
+
+
+def collect_target_candidates(gc: dict, state: dict) -> tuple:
+    """(후보 리스트, 오류 리스트, 쿼리 요약) — 실패한 소스는 기록만 하고 계속 간다."""
+    candidates, errors, counts = [], [], {}
+    seen = set(str(u) for u in (state.get("targets_seen") or []))
+    for query in (gc.get("kin_queries") or []):
+        try:
+            rows = _kin_candidates(query)
+            fresh = [r for r in rows if r["url"] not in seen]
+            candidates += fresh
+            counts["지식iN"] = counts.get("지식iN", 0) + len(fresh)
+        except Exception as e:
+            errors.append("지식iN '%s' %s: %s" % (query, type(e).__name__, str(e)[:120]))
+    threads_token = ""
+    try:
+        threads_token = str((load_threads_config() or {}).get("access_token") or "").strip()
+    except Exception:
+        threads_token = ""
+    if threads_token:
+        for query in (gc.get("threads_queries") or []):
+            try:
+                rows = _threads_search_candidates(query, threads_token)
+                fresh = [r for r in rows if r["url"] not in seen]
+                candidates += fresh
+                counts["스레드"] = counts.get("스레드", 0) + len(fresh)
+            except Exception as e:
+                errors.append("스레드 '%s' %s: %s" % (
+                    query, type(e).__name__,
+                    _scrub_threads_token(str(e), threads_token)[:120]))
+    else:
+        counts["스레드"] = 0
+    # 같은 URL 중복 제거(쿼리 여러 개가 같은 글을 물어올 수 있다)
+    uniq, seen_urls = [], set()
+    for row in candidates:
+        if row["url"] in seen_urls:
+            continue
+        seen_urls.add(row["url"])
+        uniq.append(row)
+    return uniq[:30], errors, counts
+
+
+def _gemini_generate(gc: dict, prompt: str, timeout: int = 60) -> tuple:
+    """Gemini generateContent 1회 → (응답 텍스트, 오류문자열). 키는 헤더로만 보낸다(URL·로그 노출 없음)."""
+    key = str(gc.get("api_key") or "").strip()
+    if not key:
+        return "", "api_key 미설정"
+    model = str(gc.get("model") or "").strip() or GEMINI_DEFAULT_MODEL
+    body = {
+        "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": 0.4,
+            "maxOutputTokens": 2048,
+            "responseMimeType": "application/json",
+            "responseSchema": TARGETS_GEMINI_SCHEMA,
+        },
+    }
+    req = urllib.request.Request(
+        "%s/models/%s:generateContent" % (GEMINI_API_BASE, urllib.parse.quote(model)),
+        data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+        headers={"Content-Type": "application/json", "x-goog-api-key": key,
+                 "User-Agent": "SY-PC-Watch/1.0"},
+        method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            res = json.loads(r.read().decode("utf-8", "replace"))
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "replace")[:300].replace(key, "<key>")
+        hint = " (무료 할당량 초과 — 잠시 뒤 자동 재시도)" if e.code == 429 else ""
+        return "", "HTTP %s%s: %s" % (e.code, hint, detail)
+    except Exception as e:
+        return "", "%s: %s" % (type(e).__name__, str(e).replace(key, "<key>")[:200])
+    for cand in (res.get("candidates") or []):
+        for part in (((cand or {}).get("content") or {}).get("parts") or []):
+            text = str((part or {}).get("text") or "").strip()
+            if text:
+                return text, ""
+    return "", "응답에 텍스트 없음"
+
+
+def _targets_prompt(gc: dict, candidates: list) -> str:
+    lines = [
+        "너는 한국어 커뮤니티(지식iN·스레드)에서 '지금 실제로 도움이 필요한 글'만 골라 답글을 준비하는 도우미다.",
+        "아래 후보 글 목록을 읽고 각 글마다 판단해 JSON 으로만 답한다.",
+        "",
+        "[판단 기준]",
+        "- 실제 궁금증·고민·요청이 있어 답변이 도움이 되는 글: needs_help=true",
+        "- 광고·홍보·뉴스·단순 잡담·감정 토로·정치/종교 논쟁·연애 상담·의료 진단·법률 판단·투자 권유: false",
+        "- 개인정보를 캐묻거나 사행성·불법·자해·미성년 관련: 반드시 false",
+        "- score: 0.0~1.0 (도움 필요도·답변 가능성). min_score 미만은 false 로 본다.",
+        "- reply: 바로 쓸 수 있는 한국어 답글 초안 2~5문장(500자 이내). 상대를 '님'으로 부르고,",
+        "  아는 척·과장·확정적 의료/법률/투자 조언 금지. 모르면 확인 방법을 알려준다.",
+        "- reply 문단: 줄바꿈 없는 벽돌 문단 금지. 1~2문장마다 빈 줄을 넣어",
+        "  모바일에서 1초 만에 읽히게 쓴다.",
+        "- reply 말투: '~습니다' 설명조·AI 같은 상투어·홍보투 금지. 실제 동네 사장님·직장인이",
+        "  답장 쓰는 짧고 담백한 구어체(~요/~죠/~더라고요).",
+        "- reply 예시:",
+        "  맞아요 그 사이사이 잡무가 진짜 시간 다 뺏죠",
+        "  ",
+        "  저도 답장이랑 정리는 AI 비서한테 넘기고 한숨 돌렸어요. 필요하시면 링크 남겨둘게요",
+        "- invite: 답글 뒤에 붙일 피클(Pickle) 초대 한 줄(선택). 광고 문구처럼 보이지 않게. 없으면 빈 문자열.",
+        "- reason: 판단 이유 한 줄.",
+        "",
+        "[페르소나] " + str(gc.get("persona") or TARGETS_DEFAULT_PERSONA),
+        "",
+        "[후보 글]",
+    ]
+    for idx, c in enumerate(candidates, 1):
+        lines.append("%d. [%s] 제목: %s / 요약: %s / 시각: %s" % (
+            idx, c.get("channel") or c.get("source"),
+            (c.get("title") or "")[:120], (c.get("snippet") or "")[:200],
+            c.get("posted_at") or "-"))
+    lines += ["", 'JSON: {"items":[{"index":1,"needs_help":true,"score":0.8,"reason":"...","reply":"...","invite":"..."}]}']
+    return "\n".join(lines)
+
+
+def _parse_gemini_items(text: str) -> list:
+    """모델 응답 텍스트 → items 리스트. 코드펜스·앞뒤 설명이 섞여도 버틴다."""
+    raw = str(text or "").strip()
+    if not raw:
+        return []
+    raw = re.sub(r"^```(?:json)?|```$", "", raw, flags=re.M).strip()
+    data = None
+    try:
+        data = json.loads(raw)
+    except Exception:
+        m = re.search(r"\{.*\}", raw, re.S)
+        if m:
+            try:
+                data = json.loads(m.group(0))
+            except Exception:
+                data = None
+    if isinstance(data, list):
+        data = {"items": data}
+    if not isinstance(data, dict):
+        return []
+    items = data.get("items")
+    return [i for i in (items or []) if isinstance(i, dict)]
+
+
+def _tidy_reply(text: str) -> str:
+    """답글 초안이 벽돌 문단이 되지 않게 1~2문장마다 빈 줄로 나눈다(모델이 규칙을 놓쳐도 보정)."""
+    s = str(text or "").replace("\r\n", "\n").strip()
+    if not s:
+        return ""
+    s = re.sub(r"[ \t]+", " ", s)
+    paras = [re.sub(r"\s*\n\s*", " ", p).strip() for p in re.split(r"\n\s*\n", s)]
+    paras = [p for p in paras if p]
+    if len(paras) <= 1:
+        sentences = [x.strip() for x in re.findall(r"[^.!?\u3002\u2026\n]+[.!?\u3002\u2026]?", paras[0] if paras else "")
+                     if x.strip()]
+        if len(sentences) >= 3:
+            paras = [" ".join(sentences[i:i + 2]) for i in range(0, len(sentences), 2)]
+    return "\n\n".join(paras)[:600]
+
+
+def filter_targets_with_gemini(gc: dict, candidates: list) -> tuple:
+    """(선별 결과 리스트, 오류문자열). 후보를 max_candidates 로 줄여 1회 호출한다."""
+    if not candidates:
+        return [], ""
+    picked = candidates[:int(gc.get("max_candidates") or 12)]
+    text, err = _gemini_generate(gc, _targets_prompt(gc, picked))
+    if err:
+        return [], err
+    items = _parse_gemini_items(text)
+    if not items:
+        return [], "응답 JSON 해석 실패"
+    min_score = float(gc.get("min_score") or 0.55)
+    out = []
+    for it in items:
+        try:
+            idx = int(it.get("index") or 0) - 1
+        except Exception:
+            continue
+        if not (0 <= idx < len(picked)):
+            continue
+        try:
+            score = float(it.get("score") or 0)
+        except Exception:
+            score = 0.0
+        needs = bool(it.get("needs_help")) and score >= min_score
+        row = dict(picked[idx])
+        row.update({
+            "needs_help": needs,
+            "score": round(max(0.0, min(1.0, score)), 2),
+            "reason": str(it.get("reason") or "")[:200],
+            "reply_draft": _tidy_reply(it.get("reply")) if needs else "",
+            "invite_draft": re.sub(r"\s+", " ", str(it.get("invite") or "")).strip()[:200] if needs else "",
+        })
+        out.append(row)
+    return out, ""
+
+
+def collect_targets(cfg: dict, state: dict, force_report: bool = False) -> dict:
+    """후보 수집 → Gemini 필터 → pc_targets.json 푸시. 키가 없으면 조용히 건너뛴다."""
+    state["last_targets_check"] = time.time()
+    gc = load_gemini_config()
+    candidates, errors, counts = collect_target_candidates(gc, state)
+    ready, why = _gemini_ready(gc)
+    result = {"ok": False, "collected": len(candidates), "counts": counts,
+              "skipped": why, "errors": errors[:4], "kept": 0, "pushed": 0}
+    if not candidates:
+        log("후보글 수집: 신규 후보 없음%s" % (" (수집 오류 %d건)" % len(errors) if errors else ""))
+        state["targets_last_error"] = (errors[0] if errors else "")
+        return result
+    if not ready:
+        log("후보글 수집: 신규 %d건 · Gemini %s → AI 필터·푸시 생략(키 넣으면 자동 시작)" % (
+            len(candidates), why))
+        return result
+
+    kept, ferr = filter_targets_with_gemini(gc, candidates)
+    if ferr:
+        log("후보글 Gemini 필터 실패(이번 회차 생략): %s" % ferr)
+        state["targets_last_error"] = ferr[:300]
+        result["errors"].append("gemini: " + ferr[:160])
+        return result
+
+    keep_rows = [r for r in kept if r.get("needs_help")]
+    keep_rows.sort(key=lambda r: (-float(r.get("score") or 0), r.get("posted_at") or ""))
+    token = _get_github_token(cfg)
+    now = datetime.now(KST)
+    payload_rows = []
+    for row in keep_rows:
+        payload_rows.append({
+            "id": row.get("id"), "source": row.get("source"), "channel": row.get("channel"),
+            "title": row.get("title"), "snippet": row.get("snippet"), "url": row.get("url"),
+            "posted_at": row.get("posted_at"), "query": row.get("query"),
+            "score": row.get("score"), "needs_help": True, "reason": row.get("reason"),
+            "reply_draft": row.get("reply_draft"), "invite_draft": row.get("invite_draft"),
+            "found_at": now.isoformat(timespec="seconds"),
+        })
+    result.update({"ok": True, "kept": len(payload_rows)})
+    if not payload_rows:
+        log("후보글 수집: 신규 %d건 → Gemini 판단 도움 필요 0건(푸시 생략)" % len(candidates))
+        state["targets_last_error"] = ""
+        _mark_targets_seen(state, candidates)
+        return result
+    if not token:
+        log("후보글 푸시 생략: GitHub 토큰 없음")
+        return result
+
+    prev, _sha = _github_get_json(TARGETS_PUSH_PATH, token)
+    merged, seen_urls = [], set()
+    for row in payload_rows + [p for p in (prev.get("candidates") or []) if isinstance(p, dict)]:
+        url = str(row.get("url") or "")
+        if not url or url in seen_urls:
+            continue
+        seen_urls.add(url)
+        merged.append(row)
+    merged = merged[:TARGETS_KEEP_MAX]
+    payload = {
+        "schema": "pc_targets/1",
+        "generator": "sy_auto_watch.py",
+        "generated_at": now.isoformat(timespec="seconds"),
+        "generated_at_kst": now.strftime("%m-%d %H:%M"),
+        "model": gc.get("model"),
+        "counts": {"collected": len(candidates), "kept": len(keep_rows),
+                   "new": len(payload_rows), "total": len(merged)},
+        "sources": counts,
+        "candidates": merged,
+        "errors": errors[:4],
+    }
+    res = _github_put_json(TARGETS_PUSH_PATH, payload,
+                           "chore: 후보글 %d건 AI 필터 갱신" % len(payload_rows), token)
+    result["push"] = res
+    if not res.get("ok"):
+        log("후보글 푸시 실패: %s" % res.get("detail"))
+        state["targets_last_error"] = str(res.get("detail"))[:300]
+        return result
+    result.update({"pushed": len(payload_rows), "commit": res.get("commit")})
+    _mark_targets_seen(state, candidates)
+    state["targets_last_error"] = ""
+    state["last_targets_ok"] = now.isoformat(timespec="seconds")
+    log("후보글 푸시 완료: 신규 %d건 중 도움필요 %d건 → %s" % (
+        len(candidates), len(payload_rows), res.get("commit") or res.get("sha")))
+    if force_report or payload_rows:
+        send_telegram(cfg, _targets_msg(payload))
+    return result
+
+
+def _mark_targets_seen(state: dict, rows: list) -> None:
+    seen = [str(u) for u in (state.get("targets_seen") or [])]
+    for row in rows:
+        url = str(row.get("url") or "")
+        if url and url not in seen:
+            seen.append(url)
+    state["targets_seen"] = seen[-TARGETS_SEEN_MAX:]
+
+
+def _targets_msg(payload: dict) -> str:
+    counts = payload.get("counts") or {}
+    lines = ["🎯 [후보글 · Gemini 필터] pc_targets.json 갱신 (%s KST)" % payload.get("generated_at_kst"),
+             "• 수집 %s → 도움필요 %s · 신규 %s · 누적 %s" % (
+                 counts.get("collected"), counts.get("kept"),
+                 counts.get("new"), counts.get("total"))]
+    for row in (payload.get("candidates") or [])[:3]:
+        lines.append("• [%s] %s (%.2f)" % (
+            row.get("channel") or row.get("source"),
+            str(row.get("title") or "")[:60], float(row.get("score") or 0)))
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------- 인스타(@18.1q2w3e4r) 릴스·피드 교차 발행 틀 (Meta Graph API)
+#  ★ threads_config.json 의 ig_user_id·ig_access_token 이 채워졌을 때만 동작한다.
+#    th_refresh_token(스레드 토큰 연장) 로직과는 분리: load_threads_config() 는 ig_* 키를 읽지도
+#    쓰지도 않고, 이 섹션만 같은 파일에서 ig_* 키만 따로 읽는다.
+#  ★ 미설정·빈 값이면 예외 없이 건너뛴다. 실제 발행은 confirm=true 가 있을 때만 하고 기본은 드라이런.
+#  ★ Meta Graph 는 '공개 URL' 의 영상·이미지만 받는다(집 PC 로컬 mp4 직접 업로드 불가).
+IG_API_VERSION = "v23.0"
+IG_API_BASE_DEFAULT = "https://graph.instagram.com/%s" % IG_API_VERSION
+IG_FB_API_BASE = "https://graph.facebook.com/%s" % IG_API_VERSION
+IG_DEFAULT_WAIT_SECONDS = 180
+IG_POLL_SECONDS = 5
+
+
+def load_instagram_config() -> dict:
+    """threads_config.json 에서 ig_* 키만 따로 읽는다(스레드 설정 로더와 분리)."""
+    out = {"ig_user_id": "", "ig_access_token": "", "ig_api": "instagram",
+           "ig_api_version": "", "ig_api_base": "", "ig_share_to_feed": True}
+    if not THREADS_CONFIG_FILE.exists():
+        return out
+    try:
+        raw = json.loads(THREADS_CONFIG_FILE.read_text(encoding="utf-8"))
+    except Exception as e:
+        log("인스타 설정 읽기 실패(스레드 설정 파일 해석 오류): %s: %s" % (type(e).__name__, e))
+        return out
+    if not isinstance(raw, dict):
+        return out
+    for key in ("ig_user_id", "ig_access_token", "ig_api", "ig_api_version", "ig_api_base"):
+        out[key] = str(raw.get(key) or "").strip()
+    if "ig_share_to_feed" in raw:
+        out["ig_share_to_feed"] = bool(raw.get("ig_share_to_feed"))
+    return out
+
+
+def _ig_ready(ic: dict) -> tuple:
+    """(준비됨, 사유). 값이 비면 False — 예외를 던지지 않는다."""
+    if not isinstance(ic, dict):
+        return False, "설정 없음"
+    if not str(ic.get("ig_user_id") or "").strip():
+        return False, "ig_user_id 미설정"
+    if not str(ic.get("ig_access_token") or "").strip():
+        return False, "ig_access_token 미설정"
+    return True, ""
+
+
+def _ig_note() -> str:
+    """상태 보고용 한 줄 — 토큰 값 자체는 절대 찍지 않는다."""
+    try:
+        ok, why = _ig_ready(load_instagram_config())
+        return "준비됨" if ok else why
+    except Exception:
+        return "확인 실패"
+
+
+def _ig_mask(value, keep: int = 4) -> str:
+    s = str(value or "").strip()
+    if not s:
+        return "미설정"
+    return "설정됨(끝 %s)" % s[-keep:] if len(s) > keep + 4 else "설정됨"
+
+
+def _ig_base(ic: dict) -> str:
+    base = str(ic.get("ig_api_base") or "").strip()
+    if base:
+        return base.rstrip("/")
+    ver = str(ic.get("ig_api_version") or "").strip() or IG_API_VERSION
+    if str(ic.get("ig_api") or "").strip().lower() in ("facebook", "fb", "graph.facebook"):
+        return "https://graph.facebook.com/%s" % ver
+    return "https://graph.instagram.com/%s" % ver
+
+
+def _ig_request(ic: dict, path: str, method: str = "GET",
+                params: dict | None = None, body: dict | None = None,
+                timeout: int = 40) -> dict:
+    """Graph API 1회 호출 → {ok, data|error, code}. 토큰 원문은 로그·오류문에 남기지 않는다."""
+    token = str(ic.get("ig_access_token") or "").strip()
+    if not token:
+        return {"ok": False, "error": "ig_access_token 미설정", "code": 0}
+    url = "%s/%s" % (_ig_base(ic), str(path).lstrip("/"))
+    if params:
+        url += "?" + urllib.parse.urlencode(params)
+    data = json.dumps(body, ensure_ascii=False).encode("utf-8") if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method, headers={
+        "Authorization": "Bearer %s" % token,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": "SY-PC-Watch/1.0",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return {"ok": True, "data": json.loads(r.read().decode("utf-8", "replace")),
+                    "code": getattr(r, "status", 200)}
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "replace")[:300].replace(token, "<token>")
+        return {"ok": False, "error": "HTTP %s: %s" % (e.code, detail), "code": e.code}
+    except Exception as e:
+        return {"ok": False, "error": "%s: %s" % (type(e).__name__, str(e).replace(token, "<token>")[:200]),
+                "code": 0}
+
+
+def ig_create_container(ic: dict, media_type: str = "REELS", video_url: str = "",
+                        image_url: str = "", caption: str = "",
+                        share_to_feed: bool = True, cover_url: str = "",
+                        thumb_offset: int | None = None) -> dict:
+    """미디어 컨테이너 생성(1단계). 반환 {ok, container_id|error}."""
+    uid = str(ic.get("ig_user_id") or "").strip()
+    if not uid:
+        return {"ok": False, "error": "ig_user_id 미설정"}
+    body = {"caption": str(caption or "")[:2200]}
+    if media_type == "REELS":
+        if not str(video_url or "").startswith(("http://", "https://")):
+            return {"ok": False, "error": "REELS 는 공개 video_url 이 필요합니다"}
+        body.update({"media_type": "REELS", "video_url": video_url,
+                     "share_to_feed": bool(share_to_feed)})
+        if cover_url:
+            body["cover_url"] = cover_url
+        if thumb_offset is not None:
+            body["thumb_offset"] = int(thumb_offset)
+    else:
+        if not str(image_url or "").startswith(("http://", "https://")):
+            return {"ok": False, "error": "IMAGE 는 공개 image_url 이 필요합니다"}
+        body.update({"image_url": image_url})
+    res = _ig_request(ic, "%s/media" % uid, "POST", body=body)
+    if not res.get("ok"):
+        return {"ok": False, "error": res.get("error"), "stage": "container"}
+    data = res.get("data") or {}
+    cid = str(data.get("id") or "").strip()
+    if not cid:
+        return {"ok": False, "error": "container id 없음", "stage": "container"}
+    return {"ok": True, "container_id": cid, "stage": "container", "raw": data}
+
+
+def ig_wait_container(ic: dict, container_id: str,
+                      wait_seconds: int = IG_DEFAULT_WAIT_SECONDS) -> dict:
+    """컨테이너 처리 상태 폴링 → {ok, status}. ERROR/FINISHED 즉시 종료."""
+    deadline = time.time() + max(0, int(wait_seconds))
+    status = ""
+    while True:
+        res = _ig_request(ic, str(container_id), "GET", params={"fields": "status_code,status"})
+        if not res.get("ok"):
+            return {"ok": False, "error": res.get("error"), "status": status}
+        data = res.get("data") or {}
+        status = str(data.get("status_code") or data.get("status") or "").upper()
+        if status in ("FINISHED", "ERROR", "EXPIRED"):
+            return {"ok": status == "FINISHED", "status": status,
+                    "error": "" if status == "FINISHED" else "컨테이너 상태 %s" % status}
+        if time.time() >= deadline:
+            return {"ok": False, "status": status or "IN_PROGRESS",
+                    "error": "처리 대기 시간 초과(%s초)" % wait_seconds}
+        time.sleep(IG_POLL_SECONDS)
+
+
+def ig_publish_container(ic: dict, container_id: str) -> dict:
+    """컨테이너 발행(2단계) → {ok, media_id|error}."""
+    uid = str(ic.get("ig_user_id") or "").strip()
+    res = _ig_request(ic, "%s/media_publish" % uid, "POST",
+                      body={"creation_id": container_id})
+    if not res.get("ok"):
+        return {"ok": False, "error": res.get("error"), "stage": "publish"}
+    mid = str((res.get("data") or {}).get("id") or "").strip()
+    if not mid:
+        return {"ok": False, "error": "media id 없음", "stage": "publish"}
+    return {"ok": True, "media_id": mid, "stage": "publish"}
+
+
+def publish_instagram_reel(cfg: dict, ic: dict | None = None, video_url: str = "",
+                           caption: str = "", share_to_feed: bool = True,
+                           dry_run: bool = True, wait_seconds: int = IG_DEFAULT_WAIT_SECONDS,
+                           cover_url: str = "", thumb_offset: int | None = None) -> dict:
+    """한국어 쇼츠(공개 URL)를 인스타 릴스로 발행하는 틀: 컨테이너 생성 → 상태 대기 → 발행."""
+    ic = ic if isinstance(ic, dict) else load_instagram_config()
+    ready, why = _ig_ready(ic)
+    if not ready:
+        log("인스타 릴스 발행 생략: %s" % why)
+        return {"ok": False, "skipped": why}
+    if not str(video_url or "").startswith(("http://", "https://")):
+        log("인스타 릴스 발행 생략: 공개 video_url 없음")
+        return {"ok": False, "skipped": "공개 video_url 없음"}
+    if dry_run:
+        log("인스타 릴스 드라이런(검증만): %s" % str(video_url)[:80])
+        return {"ok": True, "dry_run": True, "stage": "validate",
+                "video_url": video_url, "caption_len": len(str(caption or ""))}
+    made = ig_create_container(ic, "REELS", video_url=video_url, caption=caption,
+                               share_to_feed=share_to_feed, cover_url=cover_url,
+                               thumb_offset=thumb_offset)
+    if not made.get("ok"):
+        return {"ok": False, "stage": made.get("stage"), "error": made.get("error")}
+    wait = ig_wait_container(ic, made["container_id"], wait_seconds)
+    if not wait.get("ok"):
+        return {"ok": False, "stage": "status", "container_id": made["container_id"],
+                "error": wait.get("error"), "status": wait.get("status")}
+    pub = ig_publish_container(ic, made["container_id"])
+    if not pub.get("ok"):
+        return {"ok": False, "stage": pub.get("stage"), "container_id": made["container_id"],
+                "error": pub.get("error")}
+    log("인스타 릴스 발행 완료: media %s" % pub.get("media_id"))
+    return {"ok": True, "media_id": pub.get("media_id"),
+            "container_id": made["container_id"], "stage": "published"}
+
+
+def publish_instagram_image(cfg: dict, ic: dict | None = None, image_url: str = "",
+                            caption: str = "", dry_run: bool = True,
+                            wait_seconds: int = 60) -> dict:
+    """공개 이미지를 인스타 피드로 발행하는 틀(릴스와 같은 컨테이너 흐름)."""
+    ic = ic if isinstance(ic, dict) else load_instagram_config()
+    ready, why = _ig_ready(ic)
+    if not ready:
+        log("인스타 피드 발행 생략: %s" % why)
+        return {"ok": False, "skipped": why}
+    if not str(image_url or "").startswith(("http://", "https://")):
+        return {"ok": False, "skipped": "공개 image_url 없음"}
+    if dry_run:
+        return {"ok": True, "dry_run": True, "stage": "validate", "image_url": image_url}
+    made = ig_create_container(ic, "IMAGE", image_url=image_url, caption=caption)
+    if not made.get("ok"):
+        return {"ok": False, "stage": made.get("stage"), "error": made.get("error")}
+    wait = ig_wait_container(ic, made["container_id"], wait_seconds)
+    if not wait.get("ok"):
+        return {"ok": False, "stage": "status", "container_id": made["container_id"],
+                "error": wait.get("error"), "status": wait.get("status")}
+    pub = ig_publish_container(ic, made["container_id"])
+    if not pub.get("ok"):
+        return {"ok": False, "stage": pub.get("stage"), "error": pub.get("error")}
+    return {"ok": True, "media_id": pub.get("media_id"), "stage": "published"}
+
+
+def instagram_status_msg(cfg: dict) -> str:
+    ic = load_instagram_config()
+    ready, why = _ig_ready(ic)
+    kin = "준비됨" if ready else why
+    return ("📸 [인스타 교차 발행 설정]\n"
+            "• ig_user_id: %s\n"
+            "• ig_access_token: %s\n"
+            "• API: %s\n"
+            "• 상태: %s\n"
+            "• 릴스·피드는 공개 URL 만 발행됩니다(로컬 mp4 직접 업로드 불가)\n"
+            "• 설정 위치: %s 의 ig_user_id · ig_access_token" % (
+                _ig_mask(ic.get("ig_user_id")), _ig_mask(ic.get("ig_access_token")),
+                _ig_base(ic), kin, THREADS_CONFIG_FILE))
+
+
+def instagram_publish(cfg: dict, args: dict, source: str = "원격") -> dict:
+    """원격·텔레그램 명령용 발행 진입점. confirm 이 없으면 드라이런(검증만)이다."""
+    args = args or {}
+    ic = load_instagram_config()
+    ready, why = _ig_ready(ic)
+    if not ready:
+        msg = ("📸 [인스타 발행 생략] %s\n• threads_config.json 에 ig_user_id·ig_access_token 을 "
+               "넣으면 바로 동작합니다." % why)
+        log(msg.replace("\n", " "))
+        send_telegram(cfg, msg)
+        return {"ok": False, "skipped": why}
+    caption = str(args.get("caption") or args.get("ig_caption") or "").strip()
+    confirm = str(args.get("confirm") or "").strip().lower() in ("1", "true", "yes", "y", "on")
+    try:
+        wait_seconds = int(args.get("wait_seconds") or IG_DEFAULT_WAIT_SECONDS)
+    except Exception:
+        wait_seconds = IG_DEFAULT_WAIT_SECONDS
+    video_url = str(args.get("video_url") or args.get("reel_url") or "").strip()
+    image_url = str(args.get("image_url") or "").strip()
+    if video_url:
+        res = publish_instagram_reel(cfg, ic, video_url, caption,
+                                     share_to_feed=bool(args.get("share_to_feed", ic.get("ig_share_to_feed", True))),
+                                     dry_run=not confirm, wait_seconds=wait_seconds)
+        kind = "릴스"
+    elif image_url:
+        res = publish_instagram_image(cfg, ic, image_url, caption,
+                                      dry_run=not confirm, wait_seconds=min(wait_seconds, 120))
+        kind = "피드"
+    else:
+        send_telegram(cfg, "📸 [인스타 발행] video_url 또는 image_url 이 필요합니다(공개 URL).")
+        return {"ok": False, "error": "url 없음"}
+    res.update({"kind": kind, "source": source})
+    lines = ["📸 [인스타 %s %s (%s)]" % (kind, "발행" if res.get("ok") and not res.get("dry_run") else "결과", source)]
+    if res.get("dry_run"):
+        lines.append("• 드라이런(검증만) — 실제 발행하려면 confirm=true")
+    if res.get("media_id"):
+        lines.append("• media_id: %s" % res.get("media_id"))
+    if res.get("error") or res.get("skipped"):
+        lines.append("• 사유: %s" % (res.get("error") or res.get("skipped")))
+    send_telegram(cfg, "\n".join(lines))
+    if res.get("ok") and not res.get("dry_run"):
+        state = load_state()
+        state["last_ig_publish"] = datetime.now(KST).isoformat(timespec="seconds")
+        save_state(state)
+    _report_pc_result(cfg, "instagram_publish", res)
+    return res
+
+
+def _maybe_cross_post_instagram(cfg: dict, args: dict, result: dict,
+                                source: str = "원격") -> dict | None:
+    """쇼츠 생성 뒤 인스타 릴스 교차 발행(플래그·설정·공개 URL 이 모두 있을 때만)."""
+    flag = str(args.get("instagram") or "").strip().lower()
+    if flag not in ("1", "true", "yes", "y", "on"):
+        return None
+    ic = load_instagram_config()
+    ready, why = _ig_ready(ic)
+    if not ready:
+        log("인스타 교차 발행 생략: %s" % why)
+        return {"ok": False, "skipped": why}
+    video_url = str(args.get("ig_video_url") or args.get("video_url") or "").strip()
+    if not video_url:
+        log("인스타 교차 발행 생략: 공개 영상 URL(args.ig_video_url) 없음")
+        return {"ok": False, "skipped": "공개 영상 URL 없음"}
+    caption = str(args.get("ig_caption") or args.get("caption") or "").strip()
+    confirm = str(args.get("ig_confirm") or "").strip().lower() in ("1", "true", "yes", "y", "on")
+    return publish_instagram_reel(cfg, ic, video_url, caption, dry_run=not confirm)
 
 
 # ---------------------------------------------------------------- 자기 업데이트 (GitHub → 집 PC 파일 교체)
@@ -4011,7 +4837,10 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
             f"위험 {_qoo10_alert_count(state, cfg)}종 · {_ago(state.get('last_qoo10_daiso_check'))}\n"
             f"• 대시보드 푸시: {_ago(state.get('last_dash_push'))}\n"            f"• 네이버 카페 인기글: {_ago(state.get('last_cafe_check'))}"
             f" · 자동 {'/'.join(f'{h:02d}:{m:02d}' for h, m in CAFE_SLOTS)} KST\n"
-            f"• 토스 쉐어링크: {_toss_state_note()}"
+            f"• 토스 쉐어링크: {_toss_state_note()}\n"
+            f"• 지식iN·스레드 후보글: {_ago(state.get('last_targets_check'))} · "
+            f"누적 {len(state.get('targets_seen') or [])}건 · Gemini {_gemini_note()}\n"
+            f"• 인스타 교차발행: {_ig_note()}"
         )
         send_telegram(cfg, msg)
     elif action == "check_daiso":
@@ -4089,6 +4918,23 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
         except Exception as e:      # 토스 오류가 본 감시 루프를 죽이지 않게
             log(f"토스 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
             send_telegram(cfg, f"🔗 [토스 {action} 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
+    elif action in ("collect_targets", "targets"):
+        try:
+            collect_targets(cfg, state, force_report=True)
+        except Exception as e:      # 후보글 오류가 본 감시 루프를 죽이지 않게
+            log(f"후보글 수집 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+            send_telegram(cfg, f"🎯 [후보글 수집 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
+    elif action in ("ig_health", "instagram_health"):
+        try:
+            send_telegram(cfg, instagram_status_msg(cfg))
+        except Exception as e:
+            log(f"인스타 상태 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+    elif action in ("ig_publish", "instagram_publish"):
+        try:
+            instagram_publish(cfg, args, source=source)
+        except Exception as e:      # 발행 오류가 본 감시 루프를 죽이지 않게
+            log(f"인스타 발행 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+            send_telegram(cfg, f"📸 [인스타 발행 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
     elif action == "fetch_urls":
         urls = (args.get("urls") or [])[:15]
         lines = [f"• {check_url_alive(str(u))} | {u}" for u in urls]
@@ -4269,6 +5115,29 @@ def check_telegram_cmds(cfg: dict, state: dict) -> None:
                     make_shorts(cfg, data, source="텔레그램")
                 except Exception as e:
                     log(f"쇼츠 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+            elif text.startswith("/타겟수집"):
+                handle_action(cfg, state, "collect_targets", source="텔레그램")
+            elif text.startswith("/인스타발행"):
+                body = text[len("/인스타발행"):].strip()
+                iargs = {}
+                if body.startswith("{"):
+                    try:
+                        iargs = json.loads(body)
+                    except Exception as e:
+                        send_telegram(cfg, f"📸 [인스타발행] JSON 해석 실패: {e}")
+                        continue
+                elif body:
+                    parts = body.split()
+                    iargs = {"video_url": parts[0]}
+                    if len(parts) > 1:
+                        iargs["caption"] = " ".join(parts[1:])
+                if not isinstance(iargs, dict) or not (iargs.get("video_url") or iargs.get("image_url")):
+                    send_telegram(cfg, "📸 [인스타발행 사용법]\n/인스타발행 {\"video_url\":\"https://...mp4\","
+                                       "\"caption\":\"문구\",\"confirm\":true}")
+                    continue
+                handle_action(cfg, state, "instagram_publish", iargs, source="텔레그램")
+            elif text.startswith("/인스타"):
+                handle_action(cfg, state, "instagram_health", source="텔레그램")
             elif text.startswith("/업데이트"):
                 body = text[len("/업데이트"):].strip()
                 data = {}
@@ -4302,9 +5171,10 @@ def main() -> None:
     toss_sec = max(1800, int(cfg.get("toss_interval_minutes", 180)) * 60)
     blog_sec = max(600, int(cfg.get("blog_rss_interval_minutes", 15)) * 60)
     threads_sec = max(900, int(cfg.get("threads_interval_minutes", 15)) * 60)
+    targets_sec = max(1800, int(cfg.get("targets_interval_minutes", 180)) * 60)
     poll_sec = max(20, int(cfg.get("remote_poll_seconds", 60)))
 
-    log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+블로그 RSS·스레드 공개수집+토스 쉐어링크+네이버카페 인기글(08:30/14:30)+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
+    log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+블로그 RSS·스레드 공개수집+토스 쉐어링크+네이버카페 인기글(08:30/14:30)+지식iN·Gemini 후보글+인스타 릴스·피드 교차발행(틀)+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
 
     first_cycle = True
     while True:
@@ -4373,6 +5243,14 @@ def main() -> None:
                 refresh_threads_stats(cfg, state)
             except Exception as e:
                 log(f"스레드 수집 오류(본 루프 계속): {type(e).__name__}: {e}")
+
+        # 🎯 지식iN·스레드 후보글 → Gemini 필터 → pc_targets.json
+        #   gemini_config.json 의 api_key 가 없으면 수집만 하고 조용히 건너뛴다(알림 없음).
+        if now - state.get("last_targets_check", 0) >= targets_sec:
+            try:
+                collect_targets(cfg, state)
+            except Exception as e:
+                log(f"후보글 수집 오류(본 루프 계속): {type(e).__name__}: {e}")
 
         # 토스 쉐어링크 실적 → toss_stats.json 조용히 갱신(설정 없으면 알림 없이 건너뜀)
         #   대시보드 푸시·통합조회보다 먼저 돌려야 같은 회차 푸시에 최신 toss 값이 실린다.
