@@ -100,7 +100,7 @@ DEFAULT_DAISO_ITEMS = {
     "1051898": "메이크업 브러시 6종",
     "1037681": "내열 유리빨대 세트",
     "1075340": "말랑자석 한글놀이",
-    "10290951": "[큐텐1호] A5 6공 스티커·포토카드 바인더 20포켓",
+    "1085452": "[큐텐1호] 지퍼형 포토카드 바인더(핑크) · 구 6공 바인더 대체",
     "1053549": "[큐텐1호] 폴꾸 투명 탑로더 10개입",
     "10374041": "[큐텐1호] 폴꾸 데코 스티커 2매입 A",
     "10374042": "[큐텐1호] 폴꾸 데코 스티커 2매입 B",
@@ -112,11 +112,11 @@ DEFAULT_DAISO_ITEMS = {
     "1036822": "[큐텐2호] 마이멜로디 점착메모 70매입",
     "10363832": "[큐텐2호] 마이멜로디 캐릭터 볼펜 0.5mm 핑크",
     "1035676": "[큐텐2호] 헬로키티 납작 자수 동전 지갑",
-    "1072876": "[큐텐3호] 키링 사각 파우치",
+    "1078193": "[큐텐3호] 퀼팅 키링 파우치 · 구 사각 파우치 대체",
     "1058005": "[큐텐3호] T형 카드 스탠드",
     "1073176": "[큐텐3호] 비즈 키링 리본",
     "1075138": "[큐텐3호] 썸머글로시 해파리 비즈 키링",
-    "1066705": "[큐텐3호] 미니 사각 체크 파우치",
+    "1056955": "[큐텐3호] 볼륨 조임 미니 파우치(블랙) · 구 체크 파우치 대체",
     "1074817": "[큐텐4호] 모트모트 스프링 스터디 플래너 브라운",
     "1055253": "[큐텐4호] 학습용 버튼 타이머(4기능, 무음)",
     "1013422": "[큐텐4호] 파스텔 형광펜 3개입",
@@ -127,6 +127,44 @@ DEFAULT_DAISO_ITEMS = {
     "1062445": "[큐텐5호] 접착식 아크릴 팝핑거(강아지)",
     "1069124": "[큐텐5호] 퀼팅 모바일 파우치"
 }
+
+# ---------------------------------------------------------------- 큐텐 재팬 1~5호 다이소 구성품 (최우선 09:30 경보)
+# 2026-11-28 거래처(인1) 확인 기준 구성. 괄호 안은 구성 번호.
+#  · 1호 다꾸·트레카 5종 → 1085452(지퍼형 포토카드 바인더, 구 10290951 대체)
+#  · 3호 K-POP 6종     → 1078193(퀼팅 키링 파우치, 구 1072876) · 1056955(볼륨 조임 미니 파우치, 구 1066705)
+QOO10_DAISO_ITEMS = {
+    "1085452": ("1호", "지퍼형 포토카드 바인더(핑크) ①"),
+    "1053549": ("1호", "폴꾸 투명 탑로더 10개입 ②"),
+    "10374041": ("1호", "폴꾸 데코 스티커 2매입 A ③"),
+    "10374042": ("1호·3호", "폴꾸 데코 스티커 2매입 B ③"),
+    "1078815": ("1호", "마스킹테이프 3개입 ⑤"),
+    "1035718": ("2호", "헬로키티 떼어쓰는 마스킹테이프 200매입 ①"),
+    "1046024": ("2호", "헬로키티 에폭시 스티커 1매입 ②"),
+    "1035717": ("2호", "헬로키티 투명 스티커 3매입 ③"),
+    "1036198": ("2호", "마이멜로디 유포지 스티커 3매입 ④"),
+    "1036822": ("2호", "마이멜로디 점착메모 70매입 ⑥"),
+    "10363832": ("2호", "마이멜로디 캐릭터 볼펜 0.5mm 핑크 ⑦"),
+    "1035676": ("2호", "헬로키티 납작 자수 동전 지갑 ⑧"),
+    "1078193": ("3호", "퀼팅 키링 파우치 ①"),
+    "1058005": ("3호", "T형 카드 스탠드 ②"),
+    "1073176": ("3호", "비즈 키링 리본 ③"),
+    "1075138": ("3호", "썸머글로시 해파리 비즈 키링 ④"),
+    "1056955": ("3호", "볼륨 조임 미니 파우치(블랙) ⑥"),
+    "1074817": ("4호", "모트모트 스프링 스터디 플래너 브라운 ①"),
+    "1055253": ("4호", "학습용 버튼 타이머 4기능 ②"),
+    "1013422": ("4호", "파스텔 형광펜 3개입 ③"),
+    "1079748": ("4호", "모트모트 데일리 체크 점착 메모지 60매입 ④"),
+    "1068539": ("5호", "맥세이프 호환 스탠드 카드 지갑 아이보리 ①"),
+    "1049373": ("5호", "실리콘 스마트폰 스트랩 하트 ②"),
+    "1083290": ("5호", "서머 비즈 스트랩 키링 ③"),
+    "1062445": ("5호", "접착식 아크릴 팝핑거(강아지) ④"),
+    "1069124": ("5호", "퀼팅 모바일 파우치 ⑤"),
+}
+
+# 2026-11-28 품절 대체로 더 이상 쓰지 않는 품번 — config.json 에 남아 있어도 감시에서 뺀다.
+RETIRED_DAISO_ITEMS = {"10290951", "1072876", "1066705"}
+QOO10_DAISO_MIN_QTY = 50          # 이 수량 미만이면 '재고 부족' 경보
+
 DAISO_STORES_10KM = ["71773", "70461", "40870", "10366", "71944", "11226", "70240", "10979", "10217", "71813", "10533", "10830", "11195", "70351", "11263", "10254", "11104", "10627", "41184", "10099", "10973", "10818", "10299", "10416", "11175", "10519", "10955", "71684", "71161", "10992", "10594", "10792", "71766", "40782", "10590", "10970", "10637", "10355", "41106", "10522", "11194", "41235", "10054", "10659", "10295", "10518", "10868", "10940", "10175", "10619", "10645", "10999", "10805", "10875", "10286", "10683", "10543", "11097", "71587", "10921", "71792", "11260", "10584", "71816", "10965", "41429", "40978", "41278", "70226"]
 ZEROED_ITEMS = set(["1064378", "1044243", "10290961"])
 
@@ -186,10 +224,19 @@ def load_config() -> dict:
     cfg.setdefault("survey_push_github", None)
     cfg.setdefault("survey_import_history", [])
     cfg.setdefault("survey_import_seen", [])
-    # 57종 전체 동기화 보장
+    # 57종 전체 동기화 보장 — 아래 순서로 합친다.
+    #  ① 기본 57종  ② 옛 품번 제거(2026-11-28 큐텐 대체분)  ③ 큐텐 1~5호 구성품 필수 포함  ④ config.json 사용자 추가분
     merged = dict(DEFAULT_DAISO_ITEMS)
+    for old in RETIRED_DAISO_ITEMS:
+        merged.pop(old, None)
+    merged.update(dict(QOO10_DAISO_ITEMS))
     merged.update(cfg.get("daiso_items") or {})
+    for old in RETIRED_DAISO_ITEMS:
+        merged.pop(old, None)
     cfg["daiso_items"] = merged
+    cfg.setdefault("qoo10_daiso_min_qty", QOO10_DAISO_MIN_QTY)
+    cfg.setdefault("qoo10_daiso_interval_minutes", 60)
+    cfg.setdefault("dashboard_push_minutes", 60)
     return cfg
 
 
@@ -224,6 +271,13 @@ def load_state() -> dict:
             d.setdefault("last_stats_report", 0)
             d.setdefault("last_stats_cookie_alert", 0)
             d.setdefault("last_boost_cookie_alert", 0)
+            d.setdefault("qoo10_daiso_qty", {})
+            d.setdefault("qoo10_daiso_alert_sig", "")
+            d.setdefault("last_qoo10_daiso_check", 0)
+            d.setdefault("last_qoo10_daiso_day", "")
+            d.setdefault("last_dash_push", 0)
+            d.setdefault("last_dash_fail_alert", 0)
+            d.setdefault("dash_sig", "")
             return d
         except Exception:
             pass
@@ -245,6 +299,13 @@ def load_state() -> dict:
         "last_stats_report": 0,
         "last_stats_cookie_alert": 0,
         "last_boost_cookie_alert": 0,
+        "qoo10_daiso_qty": {},
+        "qoo10_daiso_alert_sig": "",
+        "last_qoo10_daiso_check": 0,
+        "last_qoo10_daiso_day": "",
+        "last_dash_push": 0,
+        "last_dash_fail_alert": 0,
+        "dash_sig": "",
     }
 
 
@@ -1329,6 +1390,408 @@ def check_daiso_full_offline(cfg: dict, state: dict, force_report: bool = False)
             send_telegram(cfg, f"📦 [다이소 57종 온+오프 10km 전수 점검] 69개 매장 확인 완료 — 신규 품절/재입고 없음")
 
 
+# ---------------------------------------------------------------- 큐텐 1~5호 다이소 최우선 점검 (09:30)
+# 57종 전체 점검과 별도로, 큐텐 구성품 품번만 먼저 훑어 완전품절/재고 50개 미만이면 단독 경보.
+def _daiso_online_qty(pd_no: str):
+    """다이소몰 상품 상세 API → (재고수량, 오류문자열). 실패하면 (None, 사유)."""
+    try:
+        body = json.dumps({"pdNo": str(pd_no)}).encode("utf-8")
+        req = urllib.request.Request(
+            DAISO_DETAIL_URL,
+            data=body,
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=15) as r:
+            res = json.loads(r.read().decode("utf-8", "replace"))
+        return int((res.get("data") or {}).get("stckQy") or 0), ""
+    except Exception as e:
+        return None, f"{type(e).__name__}: {e}"
+
+
+def _qoo10_alert_count(state: dict, cfg: dict) -> int:
+    """현재 상태 기준 큐텐 1~5호 위험(완전품절·재고 50개 미만) 품번 수."""
+    threshold = int(cfg.get("qoo10_daiso_min_qty") or QOO10_DAISO_MIN_QTY)
+    n = 0
+    for q in (state.get("qoo10_daiso_qty") or {}).values():
+        if isinstance(q, int) and q < threshold:
+            n += 1
+    return n
+
+
+def check_qoo10_daiso(cfg: dict, state: dict, force_report: bool = False) -> dict:
+    """큐텐 재팬 1~5호 다이소 구성품만 먼저 점검 → 완전품절·재고 50개 미만 단독 경보.
+
+    force_report=True(매일 09:30 회차·/큐텐재고 명령)면 상태가 그대로여도 1회 요약을 보낸다.
+    """
+    threshold = int(cfg.get("qoo10_daiso_min_qty") or QOO10_DAISO_MIN_QTY)
+    prev = state.get("qoo10_daiso_qty")
+    if not isinstance(prev, dict):
+        prev = {}
+    qty_now, errors = {}, []
+    danger, low, recovered = [], [], []
+
+    for code, (set_no, name) in QOO10_DAISO_ITEMS.items():
+        qty, err = _daiso_online_qty(code)
+        if qty is None:
+            errors.append(f"{set_no} {name}({code}) 조회 실패: {err}")
+            continue
+        qty_now[code] = qty
+        if qty <= 0:
+            danger.append((code, set_no, name, qty))
+        elif qty < threshold:
+            low.append((code, set_no, name, qty))
+        old = prev.get(code)
+        if isinstance(old, int) and old <= 0 and qty > 0:
+            recovered.append((code, set_no, name, qty))
+        time.sleep(0.15)
+
+    state["qoo10_daiso_qty"] = qty_now
+    state["last_qoo10_daiso_check"] = time.time()
+
+    problems = danger + low
+    sig = ";".join(f"{c}:{'out' if q <= 0 else 'low'}" for c, s, n, q in sorted(problems))
+    log("큐텐 1~5호 다이소 점검: %d/%d종 · 완전품절 %d · %d개 미만 %d · 회복 %d · 조회실패 %d" % (
+        len(qty_now), len(QOO10_DAISO_ITEMS), len(danger), threshold, len(low),
+        len(recovered), len(errors)))
+
+    if not problems:
+        state["qoo10_daiso_alert_sig"] = ""
+        if recovered:
+            lines = [f"🟢 [큐텐 1~5호 재입고] {len(recovered)}종"]
+            for code, set_no, name, qty in recovered:
+                lines.append(f"• {set_no} {name} ({code}) → {qty:,}개")
+            send_telegram(cfg, "\n".join(lines))
+        if force_report:
+            send_telegram(cfg, "🟠 [큐텐 1~5호 다이소 최우선 점검] %d종 모두 재고 %,d개 이상 — 경보 없음"
+                               % (len(qty_now), threshold))
+        return {"ok": True, "checked": len(qty_now), "danger": 0, "low": 0}
+
+    if not force_report and sig == str(state.get("qoo10_daiso_alert_sig") or ""):
+        log("큐텐 1~5호 경보 상태 변동 없음 → 텔레그램 생략")
+        return {"ok": True, "checked": len(qty_now), "danger": len(danger), "low": len(low), "silent": True}
+
+    state["qoo10_daiso_alert_sig"] = sig
+    head = "🚨 [큐텐 1~5호 다이소 품절 경보]"
+    if force_report:
+        head += " 09:30 최우선 점검"
+    lines = [head]
+    if danger:
+        lines.append(f"■ 완전품절 {len(danger)}종")
+        for code, set_no, name, qty in danger:
+            lines.append(f"• {set_no} {name} ({code}) → 0개")
+    if low:
+        lines.append(f"■ 재고 {threshold:,}개 미만 {len(low)}종")
+        for code, set_no, name, qty in low:
+            lines.append(f"• {set_no} {name} ({code}) → {qty:,}개")
+    lines.append("• 큐텐 상품 재고는 5개뿐입니다. 매장 확보·대체 품번 검토가 필요합니다")
+    if errors:
+        lines.append(f"• 조회 실패 {len(errors)}종: " + errors[0][:80])
+    msg = "\n".join(lines)
+    log(msg.replace("\n", " | "))
+    send_telegram(cfg, msg)
+    return {"ok": True, "checked": len(qty_now), "danger": len(danger), "low": len(low)}
+
+
+# ---------------------------------------------------------------- 대시보드 수치 직접 푸시
+# 2026-11-28 지시: 집 PC가 모은 수치를 sy-dashboard 에 직접 올린다.
+# 절대 원칙 — index.html·전략·메모 영역은 건드리지 않는다. pc_stats.json 의 "dashboard" 키만
+#   GET(sha) → 우리 키만 덮어쓰기 → PUT. SHA 충돌(409/422)이면 한 번 다시 읽어 재시도.
+DASH_LOCAL_FILE = BASE_DIR / "pc_dashboard.json"
+DASH_REMOTE_PATH = "pc_stats.json"
+DASH_PUSH_MIN_GAP = 6 * 3600        # 내용이 같으면 6시간에 1회만 커밋(커밋 폭주 방지)
+
+
+def _read_json_file(path, default=None):
+    """로컬 JSON 읽기 — 없거나 깨졌으면 default."""
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+
+def _first_json(paths):
+    """여러 후보 중 처음으로 쓸 만한 dict."""
+    for p in paths:
+        d = _read_json_file(p)
+        if isinstance(d, dict) and d:
+            return d
+    return {}
+
+
+def _pc_shopee_block(stats: dict) -> dict:
+    shopee = (stats.get("shopee") or {}) if isinstance(stats, dict) else {}
+    regions = []
+    for r in (shopee.get("regions") or []):
+        if not isinstance(r, dict):
+            continue
+        m = r.get("metrics") or {}
+        regions.append({
+            "region": r.get("region"),
+            "ok": bool(r.get("ok")),
+            "uv": int(m.get("uv") or 0),
+            "pv": int(m.get("pv") or 0),
+            "clicks": int(m.get("product_clicks") or 0),
+            "orders": int(m.get("orders") or 0),
+            "units": int(m.get("units") or 0),
+            "sales": m.get("sales") or 0,
+        })
+    t = shopee.get("totals") or {}
+    return {
+        "source_at": stats.get("generated_at") or stats.get("merged_at") or "",
+        "cookie_state": shopee.get("cookie_state") or "",
+        "regions_ok": int(t.get("regions_ok") or len([x for x in regions if x["ok"]])),
+        "regions_total": int(t.get("regions_total") or len(regions)),
+        "uv": int(t.get("uv") or sum(x["uv"] for x in regions)),
+        "pv": int(t.get("pv") or sum(x["pv"] for x in regions)),
+        "clicks": int(t.get("product_clicks") or sum(x["clicks"] for x in regions)),
+        "orders": int(t.get("orders") or sum(x["orders"] for x in regions)),
+        "units": int(t.get("units") or sum(x["units"] for x in regions)),
+        "sales": t.get("sales_sum") or 0,
+        "regions": regions,
+    }
+
+
+def build_dashboard_payload(cfg: dict, state: dict) -> dict:
+    """집 PC가 모은 수치를 대시보드 바인딩용 JSON 한 덩어리로 만든다(개인정보·토큰 미포함)."""
+    stats = _first_json([BASE_DIR / "pc_stats.json", STATS_STATE_FILE])
+    boost = _first_json([BASE_DIR / "pc_boost.json", BOOST_LAST_FILE])
+    survey = _read_json_file(BASE_DIR / "pc_survey_candidates.json", {}) or {}
+    toss = _read_json_file(BASE_DIR / "toss_stats.json", {}) or {}
+    yt = _read_json_file(BASE_DIR / "pc_youtube.json", {}) or {}
+    threshold = int(cfg.get("qoo10_daiso_min_qty", QOO10_DAISO_MIN_QTY) or QOO10_DAISO_MIN_QTY)
+
+    qty = state.get("qoo10_daiso_qty") or {}
+    danger, low = [], []
+    for code, raw_q in qty.items():
+        info = QOO10_DAISO_ITEMS.get(code)
+        if not info:
+            continue
+        try:
+            n = int(raw_q)
+        except Exception:
+            continue
+        row = {"code": code, "set": info[0], "name": info[1], "qty": n}
+        if n <= 0:
+            danger.append(row)
+        elif n < threshold:
+            low.append(row)
+    danger.sort(key=lambda x: (x["set"], x["code"]))
+    low.sort(key=lambda x: x["qty"])
+
+    stock = state.get("daiso_stock") or {}
+    in_stock = sum(1 for v in stock.values() if isinstance(v, int) and v > 0)
+
+    bt = boost.get("totals") or {}
+    next_free = ""
+    for r in (boost.get("regions") or []):
+        nf = ((r.get("slots") or {}).get("next_free_at") if isinstance(r, dict) else "") or ""
+        if nf and str(nf) > next_free:
+            next_free = str(nf)
+
+    sc = survey.get("counts") or {}
+    now = datetime.now(KST)
+    payload = {
+        "schema": "pc_dashboard/1",
+        "generator": "sy_auto_watch.py",
+        "filled_at": now.isoformat(timespec="seconds"),
+        "filled_at_kst": now.strftime("%m-%d %H:%M"),
+        "shopee": _pc_shopee_block(stats),
+        "boost": {
+            "source_at": boost.get("generated_at") or "",
+            "regions_ok": int(bt.get("regions_ok") or 0),
+            "regions_total": int(bt.get("regions_total") or 0),
+            "boosted": int(bt.get("boosted") or 0),
+            "planned": int(bt.get("planned") or 0),
+            "free_slots": int(bt.get("free_slots") or 0),
+            "failed": int(bt.get("failed") or 0),
+            "cost_krw": 0,
+            "next_free_at": next_free,
+        },
+        "survey": {
+            "source_at": survey.get("generated_at") or "",
+            "new_candidates": int(sc.get("new_candidates") or 0),
+            "candidates": int(sc.get("candidate") or 0),
+            "review": int(sc.get("review") or 0),
+            "duplicates": int(sc.get("duplicates") or 0),
+            "candidates_total": len(survey.get("candidates") or []),
+            "sources_ok": int(sc.get("sources_ok") or 0),
+            "sources_failed": int(sc.get("sources_failed") or 0),
+        },
+        "qoo10": {
+            "threshold": threshold,
+            "checked_at": (datetime.fromtimestamp(float(state.get("last_qoo10_daiso_check") or 0), KST)
+                           .strftime("%m-%d %H:%M") if state.get("last_qoo10_daiso_check") else ""),
+            "checked": len(qty),
+            "alert_count": len(danger) + len(low),
+            "danger": danger,
+            "low": low,
+        },
+        "daiso": {
+            "total": len(stock),
+            "in_stock": in_stock,
+            "offline_date": state.get("last_full_offline_date") or "",
+        },
+        "toss": {
+            "source_at": toss.get("fetched_at") or "",
+            "from": toss.get("from") or "",
+            "to": toss.get("to") or "",
+            "month_clicks": int(toss.get("clickCount") or 0),
+            "month_sold": int(toss.get("soldQuantity") or 0),
+            "month_sales_krw": int(toss.get("salesAmount") or 0),
+            "expected_krw": int(toss.get("expectedCommissionAmount") or 0),
+        },
+        "youtube": ({
+            "source_at": yt.get("generated_at") or "",
+            "videos": int(yt.get("videos") or 0),
+            "views": yt.get("views"),
+            "subscribers": yt.get("subscribers"),
+        } if yt else None),
+    }
+    return payload
+
+
+def _github_get_json(path: str, token: str) -> tuple:
+    """공개 저장소의 JSON 1개를 읽어 (dict, sha) 로 돌려준다. 실패는 ({}, "")."""
+    api = "https://api.github.com/repos/%s/contents/%s?ref=%s" % (
+        GITHUB_REPO, urllib.parse.quote(path), GITHUB_BRANCH)
+    try:
+        req = urllib.request.Request(api, headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "SY-PC-Watch/1.0",
+        })
+        with urllib.request.urlopen(req, timeout=20) as r:
+            res = json.loads(r.read().decode("utf-8", "replace"))
+        data = json.loads(base64.b64decode(res["content"]).decode("utf-8")) if res.get("content") else {}
+        return (data if isinstance(data, dict) else {}), str(res.get("sha") or "")
+    except Exception:
+        return {}, ""
+
+
+def _github_put_json(path: str, payload_obj: dict, message: str, token: str) -> dict:
+    """지정한 JSON 파일 하나만 GET(sha)→병합→PUT. 다른 파일·index.html 은 건드리지 않는다."""
+    api = "https://api.github.com/repos/%s/contents/%s" % (GITHUB_REPO, urllib.parse.quote(path))
+    base_headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "SY-PC-Watch/1.0",
+    }
+    for attempt in (0, 1):
+        sha, remote = "", {}
+        try:
+            req = urllib.request.Request(f"{api}?ref={GITHUB_BRANCH}", headers=base_headers)
+            with urllib.request.urlopen(req, timeout=20) as r:
+                res = json.loads(r.read().decode("utf-8", "replace"))
+            sha = str(res.get("sha") or "")
+            if res.get("content"):
+                try:
+                    remote = json.loads(base64.b64decode(res["content"]).decode("utf-8"))
+                except Exception:
+                    remote = {}
+        except urllib.error.HTTPError as e:
+            if e.code != 404:
+                return {"ok": False, "detail": f"조회 HTTP {e.code}"}
+        except Exception as e:
+            return {"ok": False, "detail": f"조회 {type(e).__name__}: {e}"}
+        if not isinstance(remote, dict):
+            remote = {}
+        merged = dict(remote)
+        merged.update(payload_obj)          # 우리 키만 덮어쓴다(나머지 필드는 그대로 보존)
+        body = {
+            "message": message,
+            "content": base64.b64encode(
+                json.dumps(merged, ensure_ascii=False, indent=1).encode("utf-8")).decode("ascii"),
+            "branch": GITHUB_BRANCH,
+        }
+        if sha:
+            body["sha"] = sha
+        req = urllib.request.Request(
+            api, data=json.dumps(body).encode("utf-8"),
+            headers={**base_headers, "Content-Type": "application/json"}, method="PUT")
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                out = json.loads(r.read().decode("utf-8", "replace"))
+            return {"ok": True,
+                    "sha": str((out.get("content") or {}).get("sha") or "")[:8],
+                    "commit": str((out.get("commit") or {}).get("sha") or "")[:8]}
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", "replace")[:200]
+            if e.code in (409, 422) and attempt == 0:
+                log(f"GitHub PUT 충돌({e.code}) → 최신파일 다시 읽고 재시도: {path}")
+                time.sleep(1.5)
+                continue
+            return {"ok": False, "detail": f"PUT HTTP {e.code}: {detail}"}
+        except Exception as e:
+            return {"ok": False, "detail": f"PUT {type(e).__name__}: {e}"}
+    return {"ok": False, "detail": "SHA 충돌 재시도 실패"}
+
+
+def _dash_msg(payload: dict, res: dict) -> str:
+    sh = payload.get("shopee") or {}
+    bo = payload.get("boost") or {}
+    su = payload.get("survey") or {}
+    q10 = payload.get("qoo10") or {}
+    lines = [f"📊 [대시보드 수치 푸시] pc_stats.json dashboard 갱신 ({payload.get('filled_at_kst')} KST)"]
+    lines.append(f"• 쇼피 {sh.get('regions_ok')}/{sh.get('regions_total')}국 · 방문 {sh.get('uv')} · PV {sh.get('pv')} · 클릭 {sh.get('clicks')} · 주문 {sh.get('orders')}")
+    lines.append(f"• 부스트 {bo.get('boosted')}/{bo.get('planned')} · 실패 {bo.get('failed')} · 0원")
+    lines.append(f"• 설문 후보 신규 {su.get('new_candidates')} · 중복 {su.get('duplicates')}")
+    lines.append(f"• 큐텐 1~5호 위험 {q10.get('alert_count')}종(완전품절 {len(q10.get('danger') or [])})")
+    if res.get("commit") or res.get("sha"):
+        lines.append(f"• 커밋 {res.get('commit') or res.get('sha')}")
+    return "\n".join(lines)
+
+
+def push_dashboard(cfg: dict, state: dict, force: bool = False, source: str = "자동") -> dict:
+    """집 PC 수치를 pc_stats.json 의 dashboard 키로 올린다(수치 동일하면 6시간에 1회만)."""
+    token = _get_github_token(cfg)
+    if not token:
+        log("대시보드 푸시 생략: GitHub 토큰 없음")
+        if force:
+            send_telegram(cfg, "📊 [대시보드 푸시] GitHub 토큰이 없어 올리지 못했습니다\n"
+                               "• config.json 의 github_token 또는 survey_config.json github.token 확인")
+        return {"ok": False, "error": "토큰 없음"}
+
+    payload = build_dashboard_payload(cfg, state)
+    try:
+        DASH_LOCAL_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:
+        log(f"pc_dashboard.json 저장 실패: {e}")
+
+    sig_src = {k: v for k, v in payload.items() if k not in ("filled_at", "filled_at_kst")}
+    sig = json.dumps(sig_src, ensure_ascii=False, sort_keys=True)
+    gap = time.time() - float(state.get("last_dash_push", 0) or 0)
+    if (not force) and state.get("dash_sig") == sig and gap < DASH_PUSH_MIN_GAP:
+        # stats_checker 가 pc_stats.json 을 새로 올리면 dashboard 키가 사라진다 → 그때는 다시 박는다
+        remote, _ = _github_get_json(DASH_REMOTE_PATH, token)
+        if isinstance(remote.get("dashboard"), dict):
+            log("대시보드 푸시 생략: 수치 변동 없음(최근 푸시 6시간 이내 · 원격 dashboard 키 유지)")
+            return {"ok": True, "skipped": True}
+        log("원격 pc_stats.json 에 dashboard 키가 없음 → 생성 푸시")
+
+    res = _github_put_json(DASH_REMOTE_PATH, {"dashboard": payload},
+                           f"pc: dashboard numbers {payload['filled_at_kst']} KST ({source})", token)
+    if res.get("ok"):
+        state["last_dash_push"] = time.time()
+        state["dash_sig"] = sig
+        log("대시보드 푸시 완료: pc_stats.json dashboard 갱신 (commit %s)"
+            % (res.get("commit") or res.get("sha") or "?"))
+        if force:
+            send_telegram(cfg, _dash_msg(payload, res))
+        return res
+
+    log(f"대시보드 푸시 실패: {res.get('detail')}")
+    prev_fail = float(state.get("last_dash_fail_alert", 0) or 0)
+    if force or (time.time() - prev_fail) >= 6 * 3600:
+        state["last_dash_fail_alert"] = time.time()
+        send_telegram(cfg, "📊 [대시보드 푸시] 실패 — %s" % _tg_clean(str(res.get("detail")), cfg)[:200])
+    return res
+
+
 # ---------------------------------------------------------------- 설문·퀴즈·특가 레이더 본체
 _BROWSER_UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -1942,6 +2405,12 @@ TOSS_TOKEN_URL = "https://oauth2.cert.toss.im/token"
 TOSS_API_BASE = "https://sharelink.toss.im/openapi"
 TOSS_SCOPE = "sharelink:read sharelink:write"
 TOSS_TOKEN_MARGIN = 300                                # 만료 5분 전에 미리 재발급
+TOSS_STATS_FILE = BASE_DIR / "toss_stats.json"          # /performance 마지막 집계(대시보드 바인딩용)
+TOSS_PRODUCTS_FILE = BASE_DIR / "toss_products.json"    # 상품 조회·할인율 결과
+TOSS_COOKIE_FILE = BASE_DIR / "toss_cookies.json"       # 내부 curation API 용 로그인 쿠키(선택)
+TOSS_INTERNAL_BASE = "https://sharelink.toss.im"
+TOSS_CURATION_SECTIONS = ("TODAY_DEAL", "BEST_SELLING", "TRENDING", "CATEGORY_BEST",
+                          "MOST_ISSUED", "GOOD_PRICE", "HIGH_CONVERSION")
 IP_LOOKUP_URLS = [
     "https://api.ipify.org",
     "https://checkip.amazonaws.com",
@@ -2264,6 +2733,12 @@ def cmd_toss_stats(cfg: dict, args: dict | None = None, source: str = "원격") 
     send_telegram(cfg, "\n".join(lines))
     result = {"ok": True, "from": str(d_from), "to": str(d_to)}
     result.update(total)
+    try:
+        TOSS_STATS_FILE.write_text(json.dumps(
+            {"fetched_at": datetime.now(KST).isoformat(timespec="seconds"), **result},
+            ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:
+        log(f"toss_stats.json 저장 실패: {e}")
     return result
 
 
@@ -2319,6 +2794,273 @@ def cmd_toss_link(cfg: dict, args: dict | None = None, source: str = "원격") -
             "taca_item_id": issues}
 
 
+def _toss_cookie_header():
+    """toss_cookies.json → (Cookie 헤더 문자열, 상태). 여러 형식을 받아준다."""
+    if not TOSS_COOKIE_FILE.exists():
+        return "", "missing"
+    raw = _read_json_file(TOSS_COOKIE_FILE, None)
+    if raw is None:
+        return "", "invalid"
+    if isinstance(raw, str):
+        return raw.strip(), "ok" if raw.strip() else "invalid"
+    if isinstance(raw, dict):
+        if raw.get("cookie"):
+            return str(raw["cookie"]).strip(), "ok"
+        src = raw.get("cookies") if isinstance(raw.get("cookies"), (dict, list)) else raw
+        pairs = []
+        if isinstance(src, dict):
+            for k, v in src.items():
+                if k and v is not None:
+                    pairs.append(f"{k}={v}")
+        elif isinstance(src, list):
+            for it in src:
+                if isinstance(it, dict) and it.get("name"):
+                    pairs.append(f"{it['name']}={it.get('value', '')}")
+        return ("; ".join(pairs), "ok") if pairs else ("", "invalid")
+    return "", "invalid"
+
+
+def _toss_internal_get(path: str, params: dict | None = None, cookies: str = "", timeout: int = 25):
+    """토스 내부(비공식) JSON API 1회 조회 → (json, http_code, 오류문자열)."""
+    url = TOSS_INTERNAL_BASE + path
+    if params:
+        url += "?" + urllib.parse.urlencode(params)
+    headers = {
+        "Accept": "application/json",
+        "Accept-Language": "ko-KR,ko;q=0.9",
+        "User-Agent": _BROWSER_UA,
+        "Referer": TOSS_INTERNAL_BASE + "/shopping/sharelink",
+    }
+    if cookies:
+        headers["Cookie"] = cookies
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=timeout) as r:
+            code = r.status
+            raw = r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        code = e.code
+        raw = e.read().decode("utf-8", "replace")
+    except Exception as e:
+        return None, 0, f"{type(e).__name__}: {e}"
+    try:
+        return (json.loads(raw) if raw.strip() else {}), code, ""
+    except Exception:
+        return {"_raw": raw[:200]}, code, "JSON 아님"
+
+
+def _toss_product_rows(js) -> list:
+    """curation 응답 → 상품 행 목록. item.accessToken 같은 비밀값은 읽지도 저장하지도 않는다."""
+    rows = []
+    success = (js or {}).get("success") if isinstance(js, dict) else {}
+    sections = (success or {}).get("sections") or []
+    for sec in sections:
+        if not isinstance(sec, dict):
+            continue
+        sec_name = str(sec.get("section") or sec.get("sectionCode") or sec.get("name") or "")
+        for it in (sec.get("items") or []):
+            if not isinstance(it, dict):
+                continue
+            taca = it.get("taca") or {}
+            pv = taca.get("productView") or {}
+            if not isinstance(pv, dict) or not pv.get("productId"):
+                continue
+            avail = it.get("linkIssueAvailability") or {}
+            extra = taca.get("extraAttributes") or {}
+            try:
+                disc = float(pv.get("discountRate") or 0)
+            except Exception:
+                disc = 0.0
+            try:
+                price = int(pv.get("displayPrice") or 0)
+            except Exception:
+                price = 0
+            try:
+                orig = int(pv.get("originalPrice") or 0)
+            except Exception:
+                orig = 0
+            rows.append({
+                "section": sec_name,
+                "taca_item_id": pv.get("productId"),
+                "name": str(pv.get("displayName") or "")[:70],
+                "price": price,
+                "original_price": orig,
+                "discount_rate": disc,
+                "review_count": int(pv.get("reviewCount") or 0),
+                "review_score": pv.get("reviewScore"),
+                "sold_out": bool(pv.get("isSoldOut")),
+                "status": pv.get("status"),
+                "lowest_30d": bool((taca.get("displayContext") or {}).get("isLowestPriceIn30Days")),
+                "today_deal": bool(it.get("todayDeal")),
+                "link_available": (avail.get("available") if isinstance(avail, dict) else None),
+                "link_reason": (avail.get("reason") if isinstance(avail, dict) else None),
+                "categories": [str((c or {}).get("name") or c)[:20]
+                               for c in (extra.get("categories") or [])][:3],
+            })
+    return rows
+
+
+def cmd_toss_products(cfg: dict, args: dict | None = None, source: str = "원격") -> dict:
+    """토스 쉐어링크 상품 조회·할인율 확인.
+
+    공식 상품 Open API(/openapi/products/*)는 첫 매출 전까지 SHARELINK_OPENAPI_PARTNER_NOT_AUTHORIZED 로
+    막혀 있어, toss_cookies.json 이 있으면 내부 curation API 로 조회하고 없으면 그 상태를 그대로 알린다.
+      · 전체: GET /api-public/v3/shopping/sharelink/curation-sections?surface=BEST_RANKING&size=40
+      · 섹션: GET /api-public/v3/shopping/sharelink/curation-sections/{SECTION}/items?tabCode=..&size=..&nextCursor=..
+    """
+    args = args or {}
+    section = str(args.get("section") or "TODAY_DEAL").upper().strip()
+    want_all = section in ("ALL", "전체")
+    if not want_all and section not in TOSS_CURATION_SECTIONS:
+        send_telegram(cfg, "🛒 [토스 상품 조회] SECTION 값이 올바르지 않습니다: %s\n• 가능: %s, ALL"
+                           % (section, ", ".join(TOSS_CURATION_SECTIONS)))
+        return {"ok": False, "error": "bad section"}
+    tab_code = str(args.get("tab_code") or args.get("tabCode") or "").strip()
+    try:
+        size = max(1, min(40, int(args.get("size") or 20)))
+    except Exception:
+        size = 20
+    try:
+        limit = max(1, min(20, int(args.get("limit") or 8)))
+    except Exception:
+        limit = 8
+    try:
+        min_disc = float(args.get("min_discount") or 0)
+    except Exception:
+        min_disc = 0.0
+    max_price = args.get("max_price")
+    keyword = str(args.get("keyword") or "").strip()
+
+    cookies, ck_state = _toss_cookie_header()
+    rows, code, err, pages = [], 0, "", 0
+    cursor = ""
+    while pages < 3:
+        if want_all and pages == 0:
+            js, code, err = _toss_internal_get(
+                "/api-public/v3/shopping/sharelink/curation-sections",
+                {"surface": "BEST_RANKING", "size": size}, cookies)
+        else:
+            params = {"size": size}
+            if tab_code:
+                params["tabCode"] = tab_code
+            if cursor:
+                params["nextCursor"] = cursor
+            sec_path = "TODAY_DEAL" if want_all else section
+            js, code, err = _toss_internal_get(
+                f"/api-public/v3/shopping/sharelink/curation-sections/{sec_path}/items", params, cookies)
+        if err or not js or code >= 400:
+            break
+        rows.extend(_toss_product_rows(js))
+        pages += 1
+        cursor = str(((js.get("success") or {}).get("nextCursor")) or "")
+        if want_all or not cursor:
+            break
+        time.sleep(0.2)
+
+    if code >= 400 or not rows:
+        lines = [f"🛒 [토스 상품 조회] 실패 (HTTP {code or '?'} · {source})"]
+        if "AUTH_EXPIRED" in err or code == 401:
+            lines.append("• 사유: 로그인 쿠키가 없거나 만료됐습니다(AUTH_EXPIRED)")
+            lines.append("• 집 PC의 toss_cookies.json 에 sharelink.toss.im 로그인 쿠키를 넣어 주세요")
+        elif "PARTNER_NOT_AUTHORIZED" in err:
+            lines.append("• 사유: 공식 상품 API 는 첫 매출 전까지 막혀 있습니다(PARTNER_NOT_AUTHORIZED)")
+            lines.append("• toss_cookies.json 을 넣으면 내부 curation API 로 조회합니다")
+        else:
+            lines.append(f"• 사유: {err or '상품이 없습니다'}")
+        send_telegram(cfg, "\n".join(lines))
+        log(f"토스 상품 조회 실패: HTTP {code} {err} (쿠키 {ck_state})")
+        return {"ok": False, "http": code, "error": err, "cookie_state": ck_state}
+
+    def _num(v):
+        try:
+            return float(v)
+        except Exception:
+            return 0.0
+
+    cand = [r for r in rows if not r["sold_out"] and _num(r["discount_rate"]) >= min_disc]
+    if max_price not in (None, ""):
+        cand = [r for r in cand if _num(r["price"]) <= _num(max_price)]
+    if keyword:
+        cand = [r for r in cand if keyword in r["name"]]
+    linkable = [r for r in cand if r["link_available"] is not False]
+    linkable.sort(key=lambda r: (_num(r["discount_rate"]), _num(r["review_count"])), reverse=True)
+    top = linkable[:limit]
+
+    payload = {
+        "schema": "toss_products/1",
+        "fetched_at": datetime.now(KST).isoformat(timespec="seconds"),
+        "section": ("ALL" if want_all else section),
+        "tab_code": tab_code,
+        "cookie_state": ck_state,
+        "count": len(rows),
+        "candidates": len(cand),
+        "linkable": len(linkable),
+        "items": top,
+    }
+    try:
+        TOSS_PRODUCTS_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:
+        log(f"toss_products.json 저장 실패: {e}")
+
+    lines = [f"🛒 [토스 상품 조회] {('전체' if want_all else section)} · {len(rows)}건 중 {len(linkable)}건 발급가능 ({source})"]
+    for r in top:
+        lines.append(f"• {r['name'][:32]} · {r['discount_rate']:.0f}%↓ {r['price']:,}원"
+                     f"(정가 {r['original_price']:,}) · 리뷰 {r['review_count']:,}"
+                     + (" · 30일 최저" if r["lowest_30d"] else ""))
+        lines.append(f"   ↳ 발급: {r['taca_item_id']}")
+    if not top:
+        lines.append("• 조건에 맞는 상품이 없습니다(품절·할인율 조건 확인)")
+    lines.append("• 쉐어링크 발급: /토스링크 {tacaItemId} [subTagId]")
+    send_telegram(cfg, "\n".join(lines))
+    log("토스 상품 조회: %d건 · 조건충족 %d · 발급가능 %d (쿠키 %s)"
+        % (len(rows), len(cand), len(linkable), ck_state))
+    return {"ok": True, "count": len(rows), "candidates": len(cand),
+            "items": len(top), "cookie_state": ck_state}
+
+
+def cmd_toss_settlements(cfg: dict, args: dict | None = None, source: str = "원격") -> dict:
+    """GET /openapi/settlements/{YYYY-MM} — 정산 내역(기본: 이번 달)."""
+    args = args or {}
+    month = str(args.get("month") or "").strip()
+    if not re.fullmatch(r"\d{4}-\d{2}", month):
+        month = datetime.now(KST).strftime("%Y-%m")
+    tc = _toss_ready(cfg)
+    if tc is None:
+        return {"ok": False, "error": "설정 미완료"}
+    js, code, err = _toss_call(cfg, tc, f"/settlements/{month}")
+    ok = isinstance(js, dict) and js.get("resultType") == "SUCCESS"
+    if not ok:
+        msg = (f"💰 [토스 정산] {month} 조회 실패 (HTTP {code})\n• 사유: {err or '알 수 없음'}")
+        hint = _toss_err_hint(err)
+        if hint:
+            msg += "\n" + hint
+        send_telegram(cfg, msg)
+        return {"ok": False, "http": code, "error": err}
+    succ = js.get("success") or {}
+    lines = [f"💰 [토스 정산] {month} ({source})"]
+    shown = 0
+    for key in ("settlementAmount", "totalAmount", "commissionAmount", "salesAmount",
+                "settlementDate", "status", "payoutDate"):
+        if isinstance(succ, dict) and key in succ:
+            lines.append(f"• {key}: {succ.get(key)}")
+            shown += 1
+    rows = succ.get("items") if isinstance(succ, dict) else None
+    if isinstance(rows, list):
+        lines.append(f"• 정산 건수: {len(rows)}건")
+        shown += 1
+    if not shown:
+        keys = ", ".join(list(succ.keys())[:8]) if isinstance(succ, dict) else "-"
+        lines.append(f"• 응답 필드: {keys}")
+        lines.append("• 금액 필드를 찾지 못해 원본 구조만 표시합니다(pc_auto/toss_settlements.json 저장)")
+    try:
+        (BASE_DIR / "toss_settlements.json").write_text(
+            json.dumps({"month": month, "fetched_at": datetime.now(KST).isoformat(timespec="seconds"),
+                        "success": succ}, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:
+        log(f"toss_settlements.json 저장 실패: {e}")
+    send_telegram(cfg, "\n".join(lines))
+    return {"ok": True, "month": month}
+
+
 def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None, source: str = "원격") -> None:
     args = args or {}
     if action == "noop":
@@ -2340,6 +3082,9 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
             f"• 쇼피 통합조회: {_ago(state.get('last_stats_check'))} · "
             f"무료부스트: {_ago(state.get('last_boost_check'))} · "
             f"쿠키: {'설정됨' if _shopee_cookie_path() else '없음'}\n"
+            f"• 큐텐 1~5호 다이소: {len(state.get('qoo10_daiso_qty') or {})}종 · "
+            f"위험 {_qoo10_alert_count(state, cfg)}종 · {_ago(state.get('last_qoo10_daiso_check'))}\n"
+            f"• 대시보드 푸시: {_ago(state.get('last_dash_push'))}\n"
             f"• 토스 쉐어링크: {_toss_state_note()}"
         )
         send_telegram(cfg, msg)
@@ -2348,6 +3093,18 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
     elif action == "check_daiso_full":
         check_daiso(cfg, state, force_report=False)
         check_daiso_full_offline(cfg, state, force_report=True)
+    elif action == "check_qoo10_daiso":
+        try:
+            check_qoo10_daiso(cfg, state, force_report=True)
+        except Exception as e:      # 본 감시 루프가 절대 죽지 않게
+            log(f"큐텐 1~5호 점검 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+            send_telegram(cfg, f"📦 [큐텐 1~5호 점검 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
+    elif action == "push_dashboard":
+        try:
+            push_dashboard(cfg, state, force=True, source=source)
+        except Exception as e:
+            log(f"대시보드 푸시 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+            send_telegram(cfg, f"📊 [대시보드 푸시 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
     elif action == "check_deals":
         check_deals(cfg, state, force_report=True)
     elif action == "check_events":
@@ -2389,10 +3146,12 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
         except Exception as e:
             log(f"공인 IP 조회 오류(본 루프 계속): {type(e).__name__}: {e}")
             send_telegram(cfg, f"🌐 [집 PC 공인 IP] 오류 {type(e).__name__}: {_tg_clean(e, cfg)}")
-    elif action in ("toss_health", "toss_stats", "toss_link"):
+    elif action in ("toss_health", "toss_stats", "toss_link", "toss_products", "toss_settlements"):
         handler = {"toss_health": cmd_toss_health,
                    "toss_stats": cmd_toss_stats,
-                   "toss_link": cmd_toss_link}[action]
+                   "toss_link": cmd_toss_link,
+                   "toss_products": cmd_toss_products,
+                   "toss_settlements": cmd_toss_settlements}[action]
         try:
             handler(cfg, args, source=source)
         except Exception as e:      # 토스 오류가 본 감시 루프를 죽이지 않게
@@ -2506,6 +3265,24 @@ def check_telegram_cmds(cfg: dict, state: dict) -> None:
                 if len(parts) > 1:
                     targs["to_date"] = parts[1]
                 handle_action(cfg, state, "toss_stats", targs, source="텔레그램")
+            elif text.startswith("/큐텐재고"):
+                handle_action(cfg, state, "check_qoo10_daiso", source="텔레그램")
+            elif text.startswith("/대시보드"):
+                handle_action(cfg, state, "push_dashboard", source="텔레그램")
+            elif text.startswith("/토스상품"):
+                body = text[len("/토스상품"):].strip()
+                targs = {}
+                if body:
+                    parts = [p for p in re.split(r"[\s,]+", body) if p]
+                    if parts:
+                        targs["section"] = parts[0]
+                    if len(parts) > 1:
+                        targs["tab_code"] = parts[1]
+                handle_action(cfg, state, "toss_products", targs, source="텔레그램")
+            elif text.startswith("/토스정산"):
+                body = text[len("/토스정산"):].strip()
+                handle_action(cfg, state, "toss_settlements",
+                              {"month": body} if body else {}, source="텔레그램")
             elif text.startswith("/부스트"):
                 handle_action(cfg, state, "run_boost", source="텔레그램")
             elif text.startswith("/시트"):
@@ -2586,18 +3363,36 @@ def main() -> None:
     survey_sec = max(1800, int(float(cfg.get("survey_interval_hours", 2)) * 3600))
     stats_sec = max(600, int(cfg.get("stats_interval_minutes", 120)) * 60)
     boost_sec = max(900, int(cfg.get("boost_interval_minutes", 240)) * 60)
+    q10_sec = max(1800, int(cfg.get("qoo10_daiso_interval_minutes", 60)) * 60)
+    dash_sec = max(600, int(cfg.get("dashboard_push_minutes", 60)) * 60)
     poll_sec = max(20, int(cfg.get("remote_poll_seconds", 60)))
 
-    log("=== SY Auto Watch 시작 (57종 다이소+69매장+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
+    log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+토스 쉐어링크+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
 
     while True:
         now = time.time()
         dt = datetime.now()
+        today_str = dt.strftime("%Y-%m-%d")
         if now - state.get("last_deal_check", 0) >= deal_sec:
             try:
                 check_deals(cfg, state)
             except Exception as e:
                 log(f"핫딜 감시 오류: {e}")
+
+        # ① 큐텐 1~5호 다이소 구성품 최우선 점검 — 매일 09:30 먼저, 그 뒤 60분 간격
+        q10_daily_due = (state.get("last_qoo10_daiso_day") != today_str
+                         and (dt.hour, dt.minute) >= (9, 30))
+        if q10_daily_due:
+            state["last_qoo10_daiso_day"] = today_str
+            try:
+                check_qoo10_daiso(cfg, state, force_report=True)
+            except Exception as e:
+                log(f"큐텐 1~5호 점검 오류(본 루프 계속): {type(e).__name__}: {e}")
+        elif now - state.get("last_qoo10_daiso_check", 0) >= q10_sec:
+            try:
+                check_qoo10_daiso(cfg, state)
+            except Exception as e:
+                log(f"큐텐 1~5호 점검 오류(본 루프 계속): {type(e).__name__}: {e}")
 
         if now - state.get("last_daiso_check", 0) >= daiso_sec:
             try:
@@ -2609,7 +3404,6 @@ def main() -> None:
             except Exception as e:
                 log(f"부이 시트 감시 오류: {e}")
 
-        today_str = dt.strftime("%Y-%m-%d")
         if dt.hour == 9 and dt.minute >= 30 and state.get("last_full_offline_date") != today_str:
             try:
                 check_daiso_full_offline(cfg, state)
@@ -2639,6 +3433,13 @@ def main() -> None:
                 run_boost(cfg, state)
             except Exception as e:
                 log(f"무료부스트 오류(본 루프 계속): {type(e).__name__}: {e}")
+
+        # ③ 집 PC 수치를 대시보드(pc_stats.json dashboard)로 직접 푸시
+        if now - state.get("last_dash_push", 0) >= dash_sec:
+            try:
+                push_dashboard(cfg, state)
+            except Exception as e:
+                log(f"대시보드 푸시 오류(본 루프 계속): {type(e).__name__}: {e}")
 
         check_remote_cmd(cfg, state)
         check_telegram_cmds(cfg, state)
