@@ -1986,8 +1986,8 @@
  "dashboard": {
   "schema": "pc_dashboard/1",
   "generator": "sy_auto_watch.py",
-  "filled_at": "2026-11-29T00:03:33+09:00",
-  "filled_at_kst": "11-29 00:03",
+  "filled_at": "2026-11-29T00:30:35+09:00",
+  "filled_at_kst": "11-29 00:30",
   "shopee": {
    "source_at": "2026-11-29T00:01:59+09:00",
    "cookie_state": "ok",
@@ -2083,7 +2083,7 @@
    ]
   },
   "boost": {
-   "source_at": "2026-11-28T20:25:53+09:00",
+   "source_at": "2026-11-29T00:26:21+09:00",
    "regions_ok": 8,
    "regions_total": 8,
    "boosted": 40,
@@ -2094,12 +2094,12 @@
    "next_free_at": ""
   },
   "survey": {
-   "source_at": "2026-11-28T22:22:30+09:00",
-   "new_candidates": 0,
-   "candidates": 0,
-   "review": 0,
-   "duplicates": 302,
-   "candidates_total": 0,
+   "source_at": "2026-11-29T00:23:09+09:00",
+   "new_candidates": 4,
+   "candidates": 3,
+   "review": 1,
+   "duplicates": 300,
+   "candidates_total": 4,
    "sources_ok": 4,
    "sources_failed": 0
   },
@@ -2170,18 +2170,18 @@
   },
   "youtube": null,
   "blog": {
-   "source_at": "2026-11-28T23:53:31+09:00",
+   "source_at": "2026-11-29T00:24:18+09:00",
    "post_count": 44,
    "post_count_source": "blog.naver.com totalCount",
    "feed_items": 44,
-   "posts_today": 2,
+   "posts_today": 0,
    "latest_title": "크리스마스 케이크 사전예약, 파리바게뜨 12월 19일·뚜레쥬르 12월 22일 마감…픽업 시작일이 다릅니다",
    "latest_link": "https://blog.naver.com/sy_global-/224495812269",
    "latest_pub": "11-28 13:19",
    "blog_url": "https://blog.naver.com/sy_global-"
   },
   "threads": {
-   "source_at": "2026-11-28T23:53:31+09:00",
+   "source_at": "2026-11-29T00:24:18+09:00",
    "followers": 32,
    "posts_total": 148,
    "views_30d": null,
