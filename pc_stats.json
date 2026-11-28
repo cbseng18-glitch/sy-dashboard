@@ -1818,8 +1818,8 @@
  "dashboard": {
   "schema": "pc_dashboard/1",
   "generator": "sy_auto_watch.py",
-  "filled_at": "2026-11-28T21:22:57+09:00",
-  "filled_at_kst": "11-28 21:22",
+  "filled_at": "2026-11-28T21:49:54+09:00",
+  "filled_at_kst": "11-28 21:49",
   "shopee": {
    "source_at": "2026-11-28T20:00:51+09:00",
    "cookie_state": "ok",
@@ -1937,7 +1937,7 @@
   },
   "qoo10": {
    "threshold": 50,
-   "checked_at": "11-28 20:44",
+   "checked_at": "11-28 21:44",
    "checked": 26,
    "alert_count": 7,
    "danger": [],
@@ -2002,7 +2002,7 @@
   },
   "youtube": null,
   "blog": {
-   "source_at": "2026-11-28T21:22:55+09:00",
+   "source_at": "2026-11-28T21:49:51+09:00",
    "post_count": 44,
    "post_count_source": "blog.naver.com totalCount",
    "feed_items": 44,
@@ -2013,7 +2013,7 @@
    "blog_url": "https://blog.naver.com/sy_global-"
   },
   "threads": {
-   "source_at": "2026-11-28T21:22:55+09:00",
+   "source_at": "2026-11-28T21:49:51+09:00",
    "followers": 32,
    "posts_total": 148,
    "views_30d": null,
