@@ -1,5 +1,13 @@
 {
-  "id": "pushdash_pc3_20261128_1347",
-  "action": "push_dashboard",
-  "args": {}
+  "id": "cafe_hot_20261128_1355",
+  "action": "self_update",
+  "args": {
+    "files": [
+      {
+        "remote": "pc_auto/sy_auto_watch.py",
+        "local": "sy_auto_watch.py"
+      }
+    ],
+    "restart": true
+  }
 }
