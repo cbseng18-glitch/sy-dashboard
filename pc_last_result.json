@@ -1,12 +1,12 @@
 {
  "self_update": {
-  "ok": true,
-  "updated": [
-   "sy_auto_watch.py (195929B)"
+  "ok": false,
+  "updated": [],
+  "failed": [
+   "sy_auto_watch.py → 내려받기 실패(sy_auto_watch.py): contents API HTTPError: HTTP Error 404: Not Found / raw HTTPError: HTTP Error 404: Not Found"
   ],
-  "failed": [],
-  "restart_planned": true,
-  "at": "2026-11-28T21:22:53+09:00"
+  "restart_planned": false,
+  "at": "2026-11-28T21:40:22+09:00"
  },
  "make_shorts": {
   "ok": true,
