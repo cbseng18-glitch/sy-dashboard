@@ -1288,9 +1288,12 @@
 <div class="pc-live-cell"><span>큐텐 1~5호 위험</span><b data-pc-bind="qoo10.alert_count" data-pc-unit="종">—</b><i>완전품절 <em data-pc-bind="qoo10.danger">—</em> · 50개미만 <em data-pc-bind="qoo10.low">—</em></i></div>
 <div class="pc-live-cell"><span>토스 쉐어링크(월)</span><b data-pc-bind="toss.month_clicks" data-pc-unit="클릭">—</b><i>판매 <em data-pc-bind="toss.month_sold">—</em> · 예상 <em data-pc-bind="toss.expected_krw" data-pc-unit="원">—</em></i></div>
 <div class="pc-live-cell"><span>다이소 온라인 재고</span><b data-pc-bind="daiso.in_stock" data-pc-unit="종">—</b><i>/ <em data-pc-bind="daiso.total">—</em>종 · 오프라인 <em data-pc-bind="daiso.offline_date">—</em></i></div>
+<div class="pc-live-cell"><span>네이버 블로그 발행</span><b data-pc-bind="blog.post_count" data-pc-unit="편">—</b><i>오늘 <em data-pc-bind="blog.posts_today">—</em>편 · 최신 <em data-pc-bind="blog.latest_pub">—</em></i></div>
+<div class="pc-live-cell"><span>스레드 팔로워</span><b data-pc-bind="threads.followers" data-pc-unit="명">—</b><i>30일 조회 <em data-pc-bind="threads.views_30d">—</em>회 · 게시 <em data-pc-bind="threads.posts_total">—</em>개</i></div>
 </div>
 <div class="pc-live-regions" data-pc-bind="shopee.regions"></div>
-<p class="pc-live-note">집 PC(<code>sy_auto_watch.py</code>)가 <code>sy-dashboard</code>의 <code>pc_stats.json</code>에 <code>dashboard</code> 키만 따로 올리고, 이 카드가 페이지를 열 때 그 값만 읽어 표시합니다. <b>이 블록 밖의 전략·메모 영역은 자동 갱신 대상이 아닙니다.</b></p>
+<p class="pc-live-note pc-live-blog"><b>블로그 최신 글</b> <a data-pc-bind="blog.latest_title" href="https://blog.naver.com/sy_global-" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600;text-decoration:none">—</a></p>
+<p class="pc-live-note">집 PC(<code>sy_auto_watch.py</code>)가 <code>sy-dashboard</code>의 <code>pc_stats.json</code>에 <code>dashboard</code> 키만 따로 올리고, 이 카드가 페이지를 열 때 그 값만 읽어 표시합니다. <b>이 블록 밖의 전략·메모 영역은 자동 갱신 대상이 아닙니다.</b> 블로그는 네이버 RSS·전체글 수(비로그인), 스레드 팔로워·게시물 수는 공개 프로필에서 읽고, <b>스레드 30일 조회수는 공식 API 토큰이 집 PC에 들어오기 전까지 '미수집'</b>으로 표시됩니다.</p>
 <script>
 (function () {
   var root = document.getElementById('pc-live');
@@ -1342,6 +1345,22 @@
       if (key === 'pc.stale') { el.textContent = staleText(dash.filled_at); continue; }
       if (key === 'qoo10.danger') { el.textContent = (pick(data, 'qoo10.danger') || []).length; continue; }
       if (key === 'qoo10.low') { el.textContent = (pick(data, 'qoo10.low') || []).length; continue; }
+      if (key === 'threads.views_30d') {
+        /* 30일 조회수는 Threads API 토큰이 있어야만 채워진다 — 없으면 숨기지 않고 '미수집'으로 둔다 */
+        var vv = pick(data, 'threads.views_30d');
+        el.textContent = (vv === null || vv === undefined || vv === '') ? '미수집' : fmt(vv);
+        continue;
+      }
+      if (key === 'blog.latest_title') {
+        var bt = pick(data, 'blog.latest_title');
+        if (bt) {
+          el.textContent = bt;
+          el.setAttribute('title', bt);
+          var bl = pick(data, 'blog.latest_link');
+          if (bl) el.setAttribute('href', bl);
+        }
+        continue;
+      }
       v = pick(data, key);
       if (v === undefined || v === null || v === '') { continue; }   /* 없으면 기존 HTML 유지 */
       unit = el.getAttribute('data-pc-unit');
