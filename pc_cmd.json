@@ -1,7 +1,11 @@
 {
-  "id": "noop_20261128_2128",
-  "action": "noop",
+  "id": "selfupdate_threfresh_20261128_2142",
+  "action": "self_update",
   "args": {
-    "note": "블로그 RSS·스레드 수집 패치 self_update 완료(195929B) — 재실행 방지용 noop"
+    "files": {
+      "remote": "pc_auto/sy_auto_watch.py",
+      "local": "sy_auto_watch.py"
+    },
+    "note": "스레드 60일 장기 토큰 25일 주기 자동 연장(th_refresh_token) 패치"
   }
 }
