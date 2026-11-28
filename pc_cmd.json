@@ -1,5 +1,5 @@
 {
-  "id": "getip_20261128_01",
-  "action": "get_ip",
+  "id": "toss_stats_20261128_01",
+  "action": "toss_stats",
   "args": {}
 }
