@@ -2,7 +2,7 @@
  "schema": "pc_stats/1",
  "generator": "stats_checker.py",
  "version": "1.1.0",
- "generated_at": "2026-11-28T09:57:48+09:00",
+ "generated_at": "2026-11-28T11:58:28+09:00",
  "mode": "live",
  "shopee": {
   "enabled": true,
@@ -26,16 +26,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827468,
-     "hour_buckets": 9
+     "server_time": 1795834708,
+     "hour_buckets": 11
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8819,
-     "next_free_at": "2026-11-28T12:24:47+09:00",
+     "cooldown_remaining_seconds": 1579,
+     "next_free_at": "2026-11-28T12:24:48+09:00",
      "product_ids": [
       "26447109019",
       "57971534333",
@@ -62,15 +62,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827469,
-     "hour_buckets": 9
+     "server_time": 1795834709,
+     "hour_buckets": 11
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8824,
+     "cooldown_remaining_seconds": 1584,
      "next_free_at": "2026-11-28T12:24:54+09:00",
      "product_ids": [
       "56221950415",
@@ -98,15 +98,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827470,
-     "hour_buckets": 9
+     "server_time": 1795834710,
+     "hour_buckets": 11
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8830,
+     "cooldown_remaining_seconds": 1590,
      "next_free_at": "2026-11-28T12:25:01+09:00",
      "product_ids": [
       "47871640401",
@@ -134,15 +134,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827471,
-     "hour_buckets": 9
+     "server_time": 1795834711,
+     "hour_buckets": 11
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8835,
+     "cooldown_remaining_seconds": 1595,
      "next_free_at": "2026-11-28T12:25:07+09:00",
      "product_ids": [
       "51821726804",
@@ -170,16 +170,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827472,
-     "hour_buckets": 8
+     "server_time": 1795834713,
+     "hour_buckets": 10
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8841,
-     "next_free_at": "2026-11-28T12:25:14+09:00",
+     "cooldown_remaining_seconds": 1601,
+     "next_free_at": "2026-11-28T12:25:15+09:00",
      "product_ids": [
       "45021595956",
       "41536716883",
@@ -206,16 +206,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827474,
-     "hour_buckets": 8
+     "server_time": 1795834714,
+     "hour_buckets": 10
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8847,
-     "next_free_at": "2026-11-28T12:25:21+09:00",
+     "cooldown_remaining_seconds": 1607,
+     "next_free_at": "2026-11-28T12:25:22+09:00",
      "product_ids": [
       "46271644365",
       "43136730512",
@@ -242,16 +242,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827475,
-     "hour_buckets": 19
+     "server_time": 1795834715,
+     "hour_buckets": 21
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8854,
-     "next_free_at": "2026-11-28T12:25:30+09:00",
+     "cooldown_remaining_seconds": 1614,
+     "next_free_at": "2026-11-28T12:25:31+09:00",
      "product_ids": [
       "49672049494",
       "44486736281",
@@ -278,15 +278,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795827477,
-     "hour_buckets": 22
+     "server_time": 1795834717,
+     "hour_buckets": 24
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8860,
+     "cooldown_remaining_seconds": 1620,
      "next_free_at": "2026-11-28T12:25:38+09:00",
      "product_ids": [
       "45221609311",
@@ -342,7 +342,7 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302207,
+      "bytes": 302332,
       "error": null
      },
      {
@@ -426,7 +426,7 @@
       "engine": "cffi",
       "ok": true,
       "status": 200,
-      "bytes": 302121,
+      "bytes": 302319,
       "error": null
      },
      {
@@ -576,7 +576,7 @@
  "github": null,
  "telegram": null,
  "changes": {
-  "since": "2026-11-28T07:57:38+09:00",
+  "since": "2026-11-28T09:57:48+09:00",
   "regions": {},
   "qoo10": [],
   "watch": [],
@@ -1501,7 +1501,74 @@
      "slots": "5/5"
     }
    }
+  },
+  {
+   "generated_at": "2026-11-28T11:58:28+09:00",
+   "cookie_state": "ok",
+   "uv": 2,
+   "clicks": 0,
+   "orders": 0,
+   "boost": "40/40",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {
+    "SG": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TW": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MY": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "PH": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "VN": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TH": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MX": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "BR": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    }
+   }
   }
  ],
- "merged_at": "2026-11-28T09:58:05+09:00"
+ "merged_at": "2026-11-28T11:58:45+09:00"
 }
