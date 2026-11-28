@@ -4298,10 +4298,10 @@ def main() -> None:
     stats_sec = max(600, int(cfg.get("stats_interval_minutes", 120)) * 60)
     boost_sec = max(900, int(cfg.get("boost_interval_minutes", 240)) * 60)
     q10_sec = max(1800, int(cfg.get("qoo10_daiso_interval_minutes", 60)) * 60)
-    dash_sec = max(600, int(cfg.get("dashboard_push_minutes", 60)) * 60)
+    dash_sec = max(600, int(cfg.get("dashboard_push_minutes", 15)) * 60)
     toss_sec = max(1800, int(cfg.get("toss_interval_minutes", 180)) * 60)
-    blog_sec = max(600, int(cfg.get("blog_rss_interval_minutes", 30)) * 60)
-    threads_sec = max(900, int(cfg.get("threads_interval_minutes", 60)) * 60)
+    blog_sec = max(600, int(cfg.get("blog_rss_interval_minutes", 15)) * 60)
+    threads_sec = max(900, int(cfg.get("threads_interval_minutes", 15)) * 60)
     poll_sec = max(20, int(cfg.get("remote_poll_seconds", 60)))
 
     log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+블로그 RSS·스레드 공개수집+토스 쉐어링크+네이버카페 인기글(08:30/14:30)+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
