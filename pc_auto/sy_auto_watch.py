@@ -1498,6 +1498,227 @@ def check_qoo10_daiso(cfg: dict, state: dict, force_report: bool = False) -> dic
     return {"ok": True, "checked": len(qty_now), "danger": len(danger), "low": len(low)}
 
 
+# ---------------------------------------------------------------- 네이버 카페 인기글 (비로그인)
+# 2026-11-28 지시: '정가거부'·'월급쟁이 재테크 연구(월재연)' 최신글 중 인기글 Top 5.
+# ★ 원칙 — 쿠키·로그인 일절 사용 금지. 공개 목록 API(ArticleListV2.json)만 호출한다.
+#   실측(2026-11-28): 둘 다 비로그인 HTTP 200, 제목/조회(readCount)/댓글(commentCount)/
+#   추천(likeItCount)/작성시각 정상. menuid=0 은 500 오류 → 실제 게시판 menuid 필수.
+#   search.queryType 은 LAST 만 동작(다른 값은 조용히 무시). 인기글 전용 API 는 없음
+#   → 여러 게시판 최신글을 모아 조회·댓글·추천으로 자체 랭킹(최근 글 가중).
+CAFE_API = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2.json"
+CAFE_REMOTE_PATH = "pc_cafe_hot.json"
+CAFE_SLOTS = ((8, 30), (14, 30))     # 매일 08:30·14:30 KST 자동 수집
+CAFE_TOP_N = 5
+CAFE_MAX_AGE_HOURS = 72              # 최근 3일 글만 인기글 후보로
+CAFE_PAGE_SIZE = 50                  # 게시판당 최신 50건
+CAFE_FETCH_MAX = 10                  # 카페당 최대 게시판 수(과호출 방지)
+
+CAFE_TARGETS = [
+    {
+        "name": "정가거부",
+        "full_name": "정가를 거부하는 사람들 (알뜰폰·절약·재테크)",
+        "clubid": 30786704,
+        "slug": "wjdrkrjqn",
+        "menus": [(1, "자유"), (33, "짠테크"), (21, "쇼핑핫딜"), (9, "이벤트"),
+                  (49, "꿀팁"), (52, "명예의전당"), (84, "퀴즈정답"),
+                  (20, "카드"), (75, "편의점")],
+    },
+    {
+        "name": "월재연",
+        "full_name": "월급쟁이 재테크 연구 (예금·적금·절약·보험·주식·ETF·부동산)",
+        "clubid": 22290117,
+        "slug": "onepieceholicplus",
+        "menus": [(146, "와글 자유"), (107, "재테크 Q&A"), (550, "절약 BEST"),
+                  (288, "재테크 BEST"), (489, "선착 핫딜"), (314, "주식 수다"),
+                  (122, "ETF 수다"), (615, "유머")],
+    },
+]
+
+
+def _cafe_clean_text(text) -> str:
+    """제목 정리 — 줄바꿈/연속공백 압축 + 주요 HTML 엔티티 복원(텔레그램·JSON 공통)."""
+    t = str(text or "")
+    for a, b in (("&quot;", '"'), ("&apos;", "'"), ("&#39;", "'"), ("&lt;", "<"),
+                 ("&gt;", ">"), ("&nbsp;", " "), ("&amp;", "&")):
+        t = t.replace(a, b)
+    t = re.sub(r"<[^>]{1,40}>", "", t)          # 말머리 태그 잔여물 제거
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _cafe_fetch_menu(clubid: int, menuid: int, page: int = 1, per: int = CAFE_PAGE_SIZE):
+    """게시판 최신글 목록 1페이지 — (글 리스트, 오류문자열). 비로그인 공개 API."""
+    params = urllib.parse.urlencode({
+        "search.clubid": int(clubid),
+        "search.menuid": int(menuid),
+        "search.page": int(page),
+        "search.perPage": int(per),
+        "search.boardtype": "L",
+        "search.queryType": "LAST",
+    })
+    req = urllib.request.Request(
+        CAFE_API + "?" + params,
+        headers={
+            "User-Agent": _BROWSER_UA,
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "ko-KR,ko;q=0.9",
+            "Referer": f"https://cafe.naver.com/{clubid}",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            raw = r.read().decode("utf-8", "replace")
+        js = json.loads(raw)
+        msg = js.get("message") or {}
+        if str(msg.get("status")) != "200":
+            err = ((msg.get("error") or {}).get("msg") or "상태 이상")
+            return [], f"menu {menuid}: {err}"
+        arts = (msg.get("result") or {}).get("articleList") or []
+        return [a for a in arts if isinstance(a, dict)], ""
+    except Exception as e:
+        return [], f"menu {menuid}: {type(e).__name__}: {e}"
+
+
+def _cafe_score(art: dict, now_ms: float) -> float:
+    """인기 점수 = 조회 + 댓글*10 + 추천*5, 최근 글일수록 가중(36시간 주기 감쇠)."""
+    age_h = max(0.0, (now_ms - float(art.get("writeDateTimestamp") or 0)) / 3600000.0)
+    base = (int(art.get("readCount") or 0)
+            + int(art.get("commentCount") or 0) * 10
+            + int(art.get("likeItCount") or 0) * 5)
+    return base / ((1.0 + age_h / 36.0) ** 1.15), age_h
+
+
+def collect_cafe_hot(target: dict, top_n: int = CAFE_TOP_N) -> dict:
+    """카페 1곳 → 게시판별 최신글 병합·중복제거 후 인기 Top N. (쿠키 없음)"""
+    now_ms = time.time() * 1000.0
+    seen_ids, pool, errors, scanned = set(), [], [], 0
+    for menuid, mlabel in list(target.get("menus") or [])[:CAFE_FETCH_MAX]:
+        arts, err = _cafe_fetch_menu(target["clubid"], menuid)
+        if err:
+            errors.append(err)
+            continue
+        scanned += len(arts)
+        for a in arts:
+            aid = int(a.get("articleId") or 0)
+            if not aid or aid in seen_ids:
+                continue
+            seen_ids.add(aid)
+            pool.append(a)
+        time.sleep(0.25)        # 예의상 간격(과호출 방지)
+
+    # 같은 제목 중복(게시판 교차 게시) → 높은 점수 1건만
+    best = {}
+    for a in pool:
+        if a.get("blindArticle"):
+            continue
+        title = _cafe_clean_text(a.get("subject"))
+        if not title:
+            continue
+        score, age_h = _cafe_score(a, now_ms)
+        if age_h > CAFE_MAX_AGE_HOURS:
+            continue
+        key = re.sub(r"[\s\W]+", "", title.lower())[:80]
+        if key and (key not in best or score > best[key][0]):
+            best[key] = (score, age_h, a, title)
+
+    ranked = sorted(best.values(), key=lambda x: -x[0])[:max(1, int(top_n))]
+    rows = []
+    for i, (score, age_h, a, title) in enumerate(ranked, 1):
+        rows.append({
+            "rank": i,
+            "title": title,
+            "url": f"https://cafe.naver.com/{target['slug']}/{int(a['articleId'])}",
+            "article_id": int(a["articleId"]),
+            "board": _cafe_clean_text(a.get("menuName")),
+            "read": int(a.get("readCount") or 0),
+            "comment": int(a.get("commentCount") or 0),
+            "like": int(a.get("likeItCount") or 0),
+            "age_hours": round(age_h, 1),
+            "written_at_kst": datetime.fromtimestamp(
+                float(a.get("writeDateTimestamp") or 0) / 1000.0).strftime("%m-%d %H:%M"),
+        })
+    return {
+        "name": target["name"],
+        "full_name": target.get("full_name", ""),
+        "clubid": int(target["clubid"]),
+        "slug": target["slug"],
+        "menu_count": len(target.get("menus") or []),
+        "scanned": scanned,
+        "candidates": len(best),
+        "ok": bool(rows),
+        "top": rows,
+        "errors": errors[:4],
+    }
+
+
+def _cafe_msg(results: list, stamp: str, res: dict = None, source: str = "자동") -> str:
+    lines = [f"☕ [네이버 카페 인기글 ({source})] {stamp} KST · 최근 {CAFE_MAX_AGE_HOURS}시간 상위 {CAFE_TOP_N}"]
+    for r in results:
+        if not r.get("ok"):
+            lines.append(f"■ {r.get('name')} — 수집 실패: {(r.get('errors') or ['원인 미상'])[0][:90]}")
+            continue
+        lines.append(f"■ {r['name']} · 최신 {r['scanned']}건 중")
+        for row in r["top"]:
+            lines.append(f"{row['rank']}. {row['title'][:70]}")
+            lines.append(f"   조회 {row['read']:,} · 댓글 {row['comment']} · 추천 {row['like']} "
+                         f"· {row['age_hours']:.0f}시간 전")
+            lines.append(f"   {row['url']}")
+    if isinstance(res, dict):
+        if res.get("ok"):
+            lines.append(f"📄 {CAFE_REMOTE_PATH} 저장 (커밋 {res.get('commit') or res.get('sha') or '-'})")
+        else:
+            lines.append(f"📄 {CAFE_REMOTE_PATH} 저장 실패: {str(res.get('detail'))[:100]}")
+    return "\n".join(lines)
+
+
+def check_cafe_hot(cfg: dict, state: dict, force_report: bool = False, source: str = "자동") -> dict:
+    """두 카페 인기글 Top5 수집 → 텔레그램 발송 + GitHub pc_cafe_hot.json 저장."""
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    results = []
+    for target in CAFE_TARGETS:
+        try:
+            results.append(collect_cafe_hot(target))
+        except Exception as e:      # 한 카페가 깨져도 다른 카페·본 루프는 계속
+            log(f"[카페 인기글] {target.get('name')} 수집 오류: {type(e).__name__}: {e}")
+            results.append({"name": target.get("name"), "ok": False, "top": [],
+                            "errors": [f"{type(e).__name__}: {e}"], "scanned": 0})
+
+    payload = {
+        "cafe_hot": {
+            "filled_at_kst": stamp,
+            "window_hours": CAFE_MAX_AGE_HOURS,
+            "top_n": CAFE_TOP_N,
+            "auto_slots_kst": [f"{h:02d}:{m:02d}" for h, m in CAFE_SLOTS],
+            "login_used": False,
+            "api": "apis.naver.com/cafe-web/cafe2/ArticleListV2.json",
+            "cafes": results,
+        }
+    }
+    res = {"ok": False, "detail": "GitHub 토큰 없음"}
+    token = _get_github_token(cfg)
+    if token:
+        try:
+            res = _github_put_json(CAFE_REMOTE_PATH, payload,
+                                   f"cafe: 인기글 Top{CAFE_TOP_N} ({stamp} KST)", token)
+        except Exception as e:
+            res = {"ok": False, "detail": f"{type(e).__name__}: {e}"}
+        if not res.get("ok"):
+            log(f"[카페 인기글] GitHub 저장 실패: {res.get('detail')}")
+    else:
+        log("[카페 인기글] GitHub 토큰 없음 — JSON 저장 생략")
+
+    if any(r.get("ok") for r in results) or force_report:
+        send_telegram(cfg, _cafe_msg(results, stamp, res, source=source))
+    else:
+        log("[카페 인기글] 두 카페 모두 수집 실패 — 발송 생략(로그만)")
+    try:
+        state["last_cafe_check"] = time.time()
+        state["last_cafe_top"] = {r.get("name"): [row.get("article_id") for row in r.get("top") or []]
+                                  for r in results}
+    except Exception:
+        pass
+    return {"ok": any(r.get("ok") for r in results), "cafes": results, "push": res}
+
+
 # ---------------------------------------------------------------- 대시보드 수치 직접 푸시
 # 2026-11-28 지시: 집 PC가 모은 수치를 sy-dashboard 에 직접 올린다.
 # 절대 원칙 — index.html·전략·메모 영역은 건드리지 않는다. pc_stats.json 의 "dashboard" 키만
@@ -3084,7 +3305,8 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
             f"쿠키: {'설정됨' if _shopee_cookie_path() else '없음'}\n"
             f"• 큐텐 1~5호 다이소: {len(state.get('qoo10_daiso_qty') or {})}종 · "
             f"위험 {_qoo10_alert_count(state, cfg)}종 · {_ago(state.get('last_qoo10_daiso_check'))}\n"
-            f"• 대시보드 푸시: {_ago(state.get('last_dash_push'))}\n"
+            f"• 대시보드 푸시: {_ago(state.get('last_dash_push'))}\n"            f"• 네이버 카페 인기글: {_ago(state.get('last_cafe_check'))}"
+            f" · 자동 {'/'.join(f'{h:02d}:{m:02d}' for h, m in CAFE_SLOTS)} KST\n"
             f"• 토스 쉐어링크: {_toss_state_note()}"
         )
         send_telegram(cfg, msg)
@@ -3099,6 +3321,12 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
         except Exception as e:      # 본 감시 루프가 절대 죽지 않게
             log(f"큐텐 1~5호 점검 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
             send_telegram(cfg, f"📦 [큐텐 1~5호 점검 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
+    elif action == "check_cafe":
+        try:
+            check_cafe_hot(cfg, state, force_report=True, source=source)
+        except Exception as e:      # 카페 수집 실패가 본 루프를 죽이지 않게
+            log(f"카페 인기글 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+            send_telegram(cfg, f"☕ [카페 인기글 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
     elif action == "push_dashboard":
         try:
             push_dashboard(cfg, state, force=True, source=source)
@@ -3287,6 +3515,8 @@ def check_telegram_cmds(cfg: dict, state: dict) -> None:
                 handle_action(cfg, state, "run_boost", source="텔레그램")
             elif text.startswith("/시트"):
                 handle_action(cfg, state, "check_sheet", source="텔레그램")
+            elif text.startswith("/카페"):
+                handle_action(cfg, state, "check_cafe", source="텔레그램")
             elif text.startswith("/카드"):
                 body = text[len("/카드"):].strip()
                 data = None
@@ -3367,7 +3597,7 @@ def main() -> None:
     dash_sec = max(600, int(cfg.get("dashboard_push_minutes", 60)) * 60)
     poll_sec = max(20, int(cfg.get("remote_poll_seconds", 60)))
 
-    log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+토스 쉐어링크+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
+    log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+토스 쉐어링크+네이버카페 인기글(08:30/14:30)+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
 
     while True:
         now = time.time()
@@ -3440,6 +3670,18 @@ def main() -> None:
                 push_dashboard(cfg, state)
             except Exception as e:
                 log(f"대시보드 푸시 오류(본 루프 계속): {type(e).__name__}: {e}")
+
+        # ☕ 네이버 카페 인기글 — 매일 08:30·14:30 KST (가장 최근 도래 슬롯 1회만 실행)
+        cafe_slot = ""
+        for slot_h, slot_m in CAFE_SLOTS:
+            if (dt.hour, dt.minute) >= (slot_h, slot_m):
+                cafe_slot = f"{today_str}@{slot_h:02d}{slot_m:02d}"
+        if cafe_slot and state.get("last_cafe_slot") != cafe_slot:
+            state["last_cafe_slot"] = cafe_slot
+            try:
+                check_cafe_hot(cfg, state)
+            except Exception as e:
+                log(f"카페 인기글 오류(본 루프 계속): {type(e).__name__}: {e}")
 
         check_remote_cmd(cfg, state)
         check_telegram_cmds(cfg, state)
