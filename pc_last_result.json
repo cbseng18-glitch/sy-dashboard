@@ -2,11 +2,11 @@
  "self_update": {
   "ok": true,
   "updated": [
-   "sy_auto_watch.py (208143B)"
+   "sy_auto_watch.py (251138B)"
   ],
   "failed": [],
   "restart_planned": true,
-  "at": "2026-11-28T21:55:20+09:00"
+  "at": "2026-11-29T00:30:31+09:00"
  },
  "make_shorts": {
   "ok": true,
