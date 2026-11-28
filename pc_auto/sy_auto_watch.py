@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
@@ -190,6 +191,16 @@ def load_config() -> dict:
     merged.update(cfg.get("daiso_items") or {})
     cfg["daiso_items"] = merged
     return cfg
+
+
+def _toss_state_note() -> str:
+    """상태 보고용 토스 설정 한 줄(키 값 자체는 절대 찍지 않는다)."""
+    try:
+        tc = load_toss_config()
+        filled = sum(1 for k in ("client_id", "client_secret", "publisher_id") if tc.get(k))
+        return "설정됨" if filled == 3 else f"미설정({filled}/3)"
+    except Exception:
+        return "확인 실패"
 
 
 def load_state() -> dict:
@@ -1921,6 +1932,393 @@ def check_vooy_sheet(cfg: dict, state: dict, force_report: bool = False) -> None
             send_telegram(cfg, f"📊 [부이_조사함 즉시 점검] 신규 행 없음 (누적 {len(rows)-1}행)")
 
 
+# ---------------------------------------------------------------- 토스 쉐어링크 Open API · 공인 IP
+#  ★ 보안 원칙: client_id·client_secret·publisher_id 는 집 PC 의 toss_config.json 에만 둔다.
+#    코드·공개 저장소에는 어떤 키도 하드코딩/커밋하지 않는다.
+#    공인 IP 도 공개 저장소(pc_stats.json 등)에 올리지 않고 비공개 텔레그램 방으로만 보낸다.
+TOSS_CONFIG_FILE = BASE_DIR / "toss_config.json"
+TOSS_TOKEN_FILE = BASE_DIR / "toss_token.json"      # 액세스 토큰 재사용용(집 PC 로컬 전용)
+TOSS_TOKEN_URL = "https://oauth2.cert.toss.im/token"
+TOSS_API_BASE = "https://sharelink.toss.im/openapi"
+TOSS_SCOPE = "sharelink:read sharelink:write"
+TOSS_TOKEN_MARGIN = 300                                # 만료 5분 전에 미리 재발급
+IP_LOOKUP_URLS = [
+    "https://api.ipify.org",
+    "https://checkip.amazonaws.com",
+    "https://ifconfig.me/ip",
+]
+KST = timezone(timedelta(hours=9))
+
+
+def load_toss_config() -> dict:
+    """toss_config.json 로드. 파일이 없으면 빈 템플릿만 만들어 두고 빈 값으로 돌려준다."""
+    template = {"client_id": "", "client_secret": "", "publisher_id": ""}
+    if not TOSS_CONFIG_FILE.exists():
+        try:
+            TOSS_CONFIG_FILE.write_text(
+                json.dumps(template, ensure_ascii=False, indent=2), encoding="utf-8")
+            log(f"토스 설정 템플릿 생성: {TOSS_CONFIG_FILE}")
+        except Exception as e:
+            log(f"토스 설정 템플릿 생성 실패: {type(e).__name__}: {e}")
+        return dict(template)
+    try:
+        raw = json.loads(TOSS_CONFIG_FILE.read_text(encoding="utf-8"))
+    except Exception as e:
+        log(f"토스 설정 해석 실패: {type(e).__name__}: {e}")
+        return dict(template)
+    out = dict(template)
+    if isinstance(raw, dict):
+        for key in template:
+            out[key] = str(raw.get(key) or "").strip()
+    return out
+
+
+def _toss_ready(cfg: dict):
+    """설정이 다 채워져 있으면 설정 dict, 아니면 텔레그램 안내 후 None."""
+    tc = load_toss_config()
+    missing = [k for k in ("client_id", "client_secret", "publisher_id") if not tc.get(k)]
+    if missing:
+        send_telegram(
+            cfg,
+            "🔑 [토스 쉐어링크] 설정이 비어 있습니다\n"
+            "toss_config.json에 client_id, client_secret, publisher_id를 입력해 주세요\n"
+            f"• 파일: {TOSS_CONFIG_FILE}\n"
+            f"• 비어 있는 값: {', '.join(missing)}",
+        )
+        log(f"토스 설정 미완료({', '.join(missing)}) — API 호출 생략")
+        return None
+    return tc
+
+
+def get_public_ip():
+    """집 PC 현재 공인 IPv4 → (ip, 사용한 조회 URL). 실패하면 ("", "")."""
+    for url in IP_LOOKUP_URLS:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "SY-PC-Watch/1.0"})
+            with urllib.request.urlopen(req, timeout=10) as r:
+                body = r.read(200).decode("utf-8", "replace")
+            found = re.search(r"\b(?:\d{1,3}\.){3}\d{1,3}\b", body)
+            if found:
+                return found.group(0), url
+            log(f"공인 IP 응답 해석 실패({url})")
+        except Exception as e:
+            log(f"공인 IP 조회 실패({url}): {type(e).__name__}: {e}")
+    return "", ""
+
+
+def cmd_get_ip(cfg: dict, args: dict | None = None, source: str = "원격") -> dict:
+    """공인 IP 는 비공개 텔레그램 방으로만 보낸다(공개 저장소·외부 전송 금지)."""
+    ip, used = get_public_ip()
+    if not ip:
+        send_telegram(cfg, "🌐 [집 PC 공인 IP] 조회 실패 — 조회처 3곳 모두 응답이 없습니다\n"
+                           "집 PC 인터넷 연결을 확인한 뒤 /ip 를 다시 보내 주세요.")
+        return {"ok": False, "ip": ""}
+    send_telegram(cfg, f"🌐 [집 PC 공인 IP] {ip} (토스 허용 IP 등록용)")
+    log(f"공인 IP 조회 완료({used}) → 비공개 텔레그램으로만 전송")
+    return {"ok": True, "ip": ip, "source": used}
+
+
+def _toss_err_text(js) -> str:
+    """토스 공통 오류 규약(error.errorCode / error.reason)에서 사유 문자열을 뽑는다."""
+    if not isinstance(js, dict):
+        return ""
+    err = js.get("error")
+    if isinstance(err, dict):
+        code = str(err.get("errorCode") or "").strip()
+        reason = str(err.get("reason") or err.get("message") or "").strip()
+        return " ".join(x for x in (code, reason) if x)
+    if isinstance(err, str) and err.strip():
+        return err.strip()
+    return str(js.get("errorCode") or "").strip()
+
+
+def _toss_err_hint(err: str) -> str:
+    """자주 겪는 오류에 대한 다음 조치 한 줄."""
+    e = err or ""
+    if "SHARELINK_OPENAPI_ACCESS_DENIED" in e:
+        return ("• 출발지 IP 가 등록되지 않았거나 인증 정보가 다릅니다. 쉐어링크 크리에이터 어드민 → "
+                "연동 → API 키 발급에서 집 PC 공인 IP(/ip)를 등록해 주세요.")
+    if "PARTNER_NOT_AUTHORIZED" in e:
+        return "• 상품 조회 API 는 토스쇼핑 인증 크리에이터만 쓸 수 있습니다(재시도해도 같음)."
+    if "INVALID_ARGUMENT" in e:
+        return "• 날짜 형식·기간(한 번에 31일)·subTagId 값을 확인해 주세요."
+    if "token" in e.lower() or "토큰" in e or "401" in e:
+        return "• toss_config.json 의 client_id·client_secret 을 확인해 주세요."
+    return ""
+
+
+def _toss_token(cfg: dict, tc: dict, force: bool = False) -> str:
+    """액세스 토큰. 토스 문서 권고대로 받은 토큰을 저장해 재사용하고 만료 전에만 재발급한다."""
+    now = time.time()
+    if not force:
+        try:
+            saved = json.loads(TOSS_TOKEN_FILE.read_text(encoding="utf-8"))
+            token = str(saved.get("access_token") or "")
+            expires_at = float(saved.get("expires_at") or 0)
+            # Access Key 가 바뀌면 앞 6자 힌트가 달라져 캐시를 버린다
+            if (token and expires_at - now > TOSS_TOKEN_MARGIN
+                    and str(saved.get("client_hint") or "") == tc["client_id"][:6]):
+                return token
+        except Exception:
+            pass
+    # ★ Authorization: Basic 헤더를 쓰지 않는다. client_id·client_secret·scope 를 폼 본문에 넣는다.
+    form = urllib.parse.urlencode({
+        "grant_type": "client_credentials",
+        "scope": TOSS_SCOPE,
+        "client_id": tc["client_id"],
+        "client_secret": tc["client_secret"],
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        TOSS_TOKEN_URL, data=form, method="POST",
+        headers={"Content-Type": "application/x-www-form-urlencoded",
+                 "User-Agent": "SY-PC-Watch/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            res = json.loads(r.read().decode("utf-8", "replace"))
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", "replace")[:200]
+        log(f"토스 토큰 발급 실패 HTTP {e.code}: {detail}")
+        return ""
+    except Exception as e:
+        log(f"토스 토큰 발급 실패: {type(e).__name__}: {e}")
+        return ""
+    token = str((res or {}).get("access_token") or "")
+    if not token:
+        log(f"토스 토큰 응답에 access_token 없음: {_tg_clean(res, cfg)}")
+        return ""
+    try:
+        TOSS_TOKEN_FILE.write_text(json.dumps({
+            "access_token": token,
+            "expires_at": now + float(res.get("expires_in") or 0),
+            "client_hint": tc["client_id"][:6],
+            "saved_at": datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S"),
+        }, ensure_ascii=False), encoding="utf-8")
+        try:
+            os.chmod(TOSS_TOKEN_FILE, 0o600)
+        except Exception:
+            pass
+    except Exception as e:
+        log(f"토스 토큰 저장 실패(이번 호출은 계속): {type(e).__name__}: {e}")
+    return token
+
+
+def _toss_call(cfg: dict, tc: dict, path: str, params: dict | None = None, body: dict | None = None):
+    """토스 API 1회 호출 → (json, http_code, 오류사유). 토큰 401 이면 1회 재발급 후 재시도."""
+    js, code, err = {}, 0, ""
+    for attempt in (0, 1):
+        token = _toss_token(cfg, tc, force=(attempt == 1))
+        if not token:
+            return None, 0, "토큰 발급 실패(client_id·client_secret·네트워크 확인)"
+        url = TOSS_API_BASE + path
+        if params:
+            url += "?" + urllib.parse.urlencode(params)
+        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json",
+                   "User-Agent": "SY-PC-Watch/1.0"}
+        data = None
+        if body is not None:
+            data = json.dumps(body, ensure_ascii=False).encode("utf-8")
+            headers["Content-Type"] = "application/json"
+        req = urllib.request.Request(url, data=data, headers=headers,
+                                     method="POST" if data is not None else "GET")
+        try:
+            with urllib.request.urlopen(req, timeout=25) as r:
+                code = r.status
+                raw = r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            code = e.code
+            raw = e.read().decode("utf-8", "replace")
+        except Exception as e:
+            log(f"토스 호출 실패({path}): {type(e).__name__}: {e}")
+            return None, 0, f"{type(e).__name__}: {e}"
+        try:
+            js = json.loads(raw) if raw.strip() else {}
+        except Exception:
+            js = {"_raw": raw[:300]}
+        err = _toss_err_text(js)
+        if code == 401 and attempt == 0:
+            log(f"토스 토큰 만료(401) → 재발급 후 재시도: {path}")
+            try:
+                TOSS_TOKEN_FILE.unlink()
+            except Exception:
+                pass
+            continue
+        if code >= 400 and not err:
+            err = f"HTTP {code}"
+        return js, code, err
+    return js, 401, "인증 실패(토큰을 새로 받아도 401)"
+
+
+def cmd_toss_health(cfg: dict, args: dict | None = None, source: str = "원격") -> dict:
+    """GET /openapi/health — 인증·출발지 IP 등록이 통과하는지 확인."""
+    tc = _toss_ready(cfg)
+    if tc is None:
+        return {"ok": False, "error": "설정 미완료"}
+    js, code, err = _toss_call(cfg, tc, "/health")
+    ok = isinstance(js, dict) and js.get("resultType") == "SUCCESS"
+    lines = [f"🔗 [토스 쉐어링크 연결 확인 ({source})]"]
+    if ok:
+        status = (js.get("success") or {}).get("status") or "ok"
+        lines.append(f"• 결과: 정상 (status={status})")
+        lines.append("• 인증과 출발지 IP 등록이 모두 통과했습니다")
+    else:
+        lines.append(f"• 결과: 실패 (HTTP {code})")
+        lines.append(f"• 사유: {err or '알 수 없음'}")
+        hint = _toss_err_hint(err)
+        if hint:
+            lines.append(hint)
+    send_telegram(cfg, "\n".join(lines))
+    return {"ok": ok, "http": code, "error": err}
+
+
+def _ymd(value, fallback):
+    """YYYY-MM-DD 문자열 → date. 비어 있으면 fallback, 형식 오류면 ValueError."""
+    s = str(value or "").strip()
+    if not s:
+        return fallback
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", s):
+        raise ValueError(f"날짜 형식이 올바르지 않습니다: {s} (YYYY-MM-DD)")
+    try:
+        return datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
+        raise ValueError(f"달력에 없는 날짜입니다: {s} (YYYY-MM-DD)")
+
+
+def cmd_toss_stats(cfg: dict, args: dict | None = None, source: str = "원격") -> dict:
+    """GET /openapi/performance — 기간 클릭·판매·예상 수익금 요약(기본: 이번 달 1일~오늘 KST)."""
+    args = args or {}
+    tc = _toss_ready(cfg)
+    if tc is None:
+        return {"ok": False, "error": "설정 미완료"}
+    today = datetime.now(KST).date()
+    try:
+        d_from = _ymd(args.get("from_date") or args.get("fromDate"), today.replace(day=1))
+        d_to = _ymd(args.get("to_date") or args.get("toDate"), today)
+    except ValueError as e:
+        send_telegram(cfg, f"📊 [토스 쉐어링크 실적] {e}")
+        return {"ok": False, "error": str(e)}
+    if d_from > d_to:
+        msg = f"📊 [토스 쉐어링크 실적] 시작일({d_from})이 종료일({d_to})보다 늦습니다"
+        send_telegram(cfg, msg)
+        return {"ok": False, "error": "from_date > to_date"}
+
+    sub_tag = str(args.get("sub_tag_id") or args.get("subTagId") or "").strip()
+    keys = ("clickCount", "soldQuantity", "refundedQuantity", "salesAmount",
+            "discountAmount", "netPaymentAmount", "expectedCommissionAmount",
+            "confirmedCommissionAmount")
+    total = {k: 0 for k in keys}
+    items = []
+    # 토스 문서: 기간은 최대 31일 → 넘으면 31일 창으로 나눠 합산
+    windows, cur = [], d_from
+    while cur <= d_to:
+        end = min(cur + timedelta(days=30), d_to)
+        windows.append((cur, end))
+        cur = end + timedelta(days=1)
+    for w_from, w_to in windows:
+        params = {"fromDate": w_from.strftime("%Y-%m-%d"),
+                  "toDate": w_to.strftime("%Y-%m-%d")}
+        if sub_tag:
+            params["subTagId"] = sub_tag
+        js, code, err = _toss_call(cfg, tc, "/performance", params=params)
+        if err or not isinstance(js, dict) or js.get("resultType") != "SUCCESS":
+            msg = (f"📊 [토스 쉐어링크 실적] 조회 실패 ({w_from}~{w_to}, HTTP {code})\n"
+                   f"• 사유: {err or '알 수 없음'}")
+            hint = _toss_err_hint(err)
+            if hint:
+                msg += "\n" + hint
+            send_telegram(cfg, msg)
+            return {"ok": False, "error": err}
+        summary = (js.get("success") or {}).get("summary") or {}
+        for k in keys:
+            try:
+                total[k] += int(summary.get(k) or 0)
+            except Exception:
+                pass
+        for it in ((js.get("success") or {}).get("items") or []):
+            if isinstance(it, dict):
+                items.append(it)
+
+    def won(v):
+        try:
+            return f"{int(v):,}원"
+        except Exception:
+            return f"{v}원"
+
+    lines = [f"📊 [토스 쉐어링크 실적] {d_from} ~ {d_to}"
+             + (f" · subTag {sub_tag}" if sub_tag else "")]
+    lines.append(f"• 클릭: {total['clickCount']:,}건")
+    lines.append(f"• 판매 수량: {total['soldQuantity']:,}개 (환불 {total['refundedQuantity']:,}개)")
+    lines.append(f"• 판매금액: {won(total['salesAmount'])}")
+    lines.append(f"• 실 결제금액: {won(total['netPaymentAmount'])}")
+    lines.append(f"• 예상 수익금: {won(total['expectedCommissionAmount'])} (원천징수 전)")
+    lines.append(f"• 확정 수익금: {won(total['confirmedCommissionAmount'])} (구매확정분)")
+    top = sorted(items, key=lambda x: int(x.get("expectedCommissionAmount") or 0), reverse=True)[:3]
+    if top:
+        lines.append("• 상위 상품:")
+        for it in top:
+            name = str(it.get("productName") or "(상품명 없음)")[:28]
+            lines.append(f"   - {name} · {int(it.get('soldQuantity') or 0)}개 · "
+                         f"{won(it.get('expectedCommissionAmount') or 0)}")
+    if not total["clickCount"] and not total["soldQuantity"]:
+        lines.append("• 이 기간에는 클릭·판매 실적이 없습니다")
+    lines.append("• 확정 금액은 정산내역 기준이며 부가세·원천징수 전 금액입니다")
+    send_telegram(cfg, "\n".join(lines))
+    result = {"ok": True, "from": str(d_from), "to": str(d_to)}
+    result.update(total)
+    return result
+
+
+def cmd_toss_link(cfg: dict, args: dict | None = None, source: str = "원격") -> dict:
+    """POST /openapi/links — 게시글에 넣을 쉐어링크(shortUrl) 발급."""
+    args = args or {}
+    raw_id = args.get("taca_item_id") or args.get("tacaItemId") or args.get("item_id")
+    try:
+        taca_item_id = int(str(raw_id).strip().replace(",", ""))
+    except Exception:
+        send_telegram(
+            cfg,
+            "🔗 [토스 쉐어링크 발급] taca_item_id(상품 옵션 ID)가 필요합니다\n"
+            "• 예: {\"action\":\"toss_link\",\"args\":{\"taca_item_id\":1234567890,\"sub_tag_id\":\"threads\"}}",
+        )
+        return {"ok": False, "error": "taca_item_id 없음"}
+    tc = _toss_ready(cfg)
+    if tc is None:
+        return {"ok": False, "error": "설정 미완료"}
+    sub_tag = str(args.get("sub_tag_id") or args.get("subTagId") or "threads").strip()
+    body = {"landingType": "PRODUCT", "tacaItemId": taca_item_id,
+            "publisherId": tc["publisher_id"]}
+    if sub_tag and sub_tag.lower() not in ("-", "none", "null"):
+        body["subTagId"] = sub_tag
+    js, code, err = _toss_call(cfg, tc, "/links", body=body)
+    ok = isinstance(js, dict) and js.get("resultType") == "SUCCESS"
+    if not ok:
+        msg = (f"🔗 [토스 쉐어링크 발급] 실패 (HTTP {code}) · tacaItemId {taca_item_id}"
+               + (f" · subTag {body.get('subTagId')}" if body.get("subTagId") else "")
+               + f"\n• 사유: {err or '알 수 없음'}")
+        hint = _toss_err_hint(err)
+        if hint:
+            msg += "\n" + hint
+        if body.get("subTagId"):
+            msg += ("\n• subTagId 는 어드민에 미리 등록된 값이어야 합니다. "
+                    "등록 전이면 sub_tag_id 없이 다시 실행해 주세요.")
+        send_telegram(cfg, msg)
+        return {"ok": False, "error": err}
+    succ = js.get("success") or {}
+    short_url = str(succ.get("shortUrl") or "")
+    origin_url = str(succ.get("originUrl") or "")
+    issues = succ.get("tacaItemId")
+    lines = ["🔗 [토스 쉐어링크 발급 완료]"]
+    lines.append(f"• 상품 옵션: {issues if issues is not None else taca_item_id}")
+    if body.get("subTagId"):
+        lines.append(f"• subTag: {body['subTagId']}")
+    lines.append(f"• 링크: {short_url or origin_url or '(응답에 링크 없음)'}")
+    if short_url and origin_url:
+        lines.append(f"• 원본: {origin_url}")
+    lines.append("• 게시글에는 이 링크만 넣어야 수익이 잡힙니다(productUrl 은 집계 안 됨)")
+    send_telegram(cfg, "\n".join(lines))
+    return {"ok": True, "short_url": short_url, "origin_url": origin_url,
+            "taca_item_id": issues}
+
+
 def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None, source: str = "원격") -> None:
     args = args or {}
     if action == "noop":
@@ -1941,7 +2339,8 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
             f"• 설문 수집기: 누적 중복상태 {_survey_state_note()} · {_ago(state.get('last_survey_check'))}\n"
             f"• 쇼피 통합조회: {_ago(state.get('last_stats_check'))} · "
             f"무료부스트: {_ago(state.get('last_boost_check'))} · "
-            f"쿠키: {'설정됨' if _shopee_cookie_path() else '없음'}"
+            f"쿠키: {'설정됨' if _shopee_cookie_path() else '없음'}\n"
+            f"• 토스 쉐어링크: {_toss_state_note()}"
         )
         send_telegram(cfg, msg)
     elif action == "check_daiso":
@@ -1984,6 +2383,21 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
             send_telegram(cfg, msg)
     elif action == "check_sheet":
         check_vooy_sheet(cfg, state, force_report=True)
+    elif action == "get_ip":
+        try:
+            cmd_get_ip(cfg, args, source=source)
+        except Exception as e:
+            log(f"공인 IP 조회 오류(본 루프 계속): {type(e).__name__}: {e}")
+            send_telegram(cfg, f"🌐 [집 PC 공인 IP] 오류 {type(e).__name__}: {_tg_clean(e, cfg)}")
+    elif action in ("toss_health", "toss_stats", "toss_link"):
+        handler = {"toss_health": cmd_toss_health,
+                   "toss_stats": cmd_toss_stats,
+                   "toss_link": cmd_toss_link}[action]
+        try:
+            handler(cfg, args, source=source)
+        except Exception as e:      # 토스 오류가 본 감시 루프를 죽이지 않게
+            log(f"토스 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
+            send_telegram(cfg, f"🔗 [토스 {action} 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
     elif action == "fetch_urls":
         urls = (args.get("urls") or [])[:15]
         lines = [f"• {check_url_alive(str(u))} | {u}" for u in urls]
@@ -2079,6 +2493,19 @@ def check_telegram_cmds(cfg: dict, state: dict) -> None:
                 handle_action(cfg, state, "check_surveys", source="텔레그램")
             elif text.startswith("/통계"):
                 handle_action(cfg, state, "check_stats", source="텔레그램")
+            elif text.startswith("/ip"):
+                handle_action(cfg, state, "get_ip", source="텔레그램")
+            elif text.startswith("/토스상태"):
+                handle_action(cfg, state, "toss_health", source="텔레그램")
+            elif text.startswith("/토스통계"):
+                body = text[len("/토스통계"):].strip()
+                parts = [p for p in re.split(r"[\s~]+", body) if p]
+                targs = {}
+                if parts:
+                    targs["from_date"] = parts[0]
+                if len(parts) > 1:
+                    targs["to_date"] = parts[1]
+                handle_action(cfg, state, "toss_stats", targs, source="텔레그램")
             elif text.startswith("/부스트"):
                 handle_action(cfg, state, "run_boost", source="텔레그램")
             elif text.startswith("/시트"):
