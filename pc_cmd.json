@@ -1,7 +1,9 @@
 {
-  "id": "noop_20261128_1706",
-  "action": "noop",
+  "id": "selfupdate_toss_20261128_115151",
+  "action": "self_update",
   "args": {
-    "note": "q5 쇼츠 완료 — 재실행 방지용 noop"
+    "files": [
+      "pc_auto/sy_auto_watch.py"
+    ]
   }
 }
