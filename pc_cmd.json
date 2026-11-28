@@ -1,7 +1,13 @@
 {
-  "id": "noop_20261128_2146",
-  "action": "noop",
+  "id": "selfupdate_dash15m_20261128_2153",
+  "action": "self_update",
   "args": {
-    "note": "스레드 60일 장기 토큰 25일 주기 자동 연장 패치 self_update 완료(208144B) — 재실행 방지용 noop"
+    "files": [
+      {
+        "remote": "pc_auto/sy_auto_watch.py",
+        "local": "sy_auto_watch.py"
+      }
+    ],
+    "note": "대시보드 푸시·블로그 RSS·스레드 공개수집 주기 15분 단축"
   }
 }
