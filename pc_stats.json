@@ -1574,8 +1574,8 @@
  "dashboard": {
   "schema": "pc_dashboard/1",
   "generator": "sy_auto_watch.py",
-  "filled_at": "2026-11-28T13:44:12+09:00",
-  "filled_at_kst": "11-28 13:44",
+  "filled_at": "2026-11-28T13:47:19+09:00",
+  "filled_at_kst": "11-28 13:47",
   "shopee": {
    "source_at": "2026-11-28T11:58:28+09:00",
    "cookie_state": "ok",
@@ -1772,7 +1772,15 @@
    "in_stock": 47,
    "offline_date": "2026-11-28"
   },
-  "toss": null,
+  "toss": {
+   "source_at": "2026-11-28T13:45:17+09:00",
+   "from": "2026-11-01",
+   "to": "2026-11-28",
+   "month_clicks": 5,
+   "month_sold": 0,
+   "month_sales_krw": 0,
+   "expected_krw": 0
+  },
   "youtube": null
  }
 }
