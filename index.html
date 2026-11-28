@@ -1256,7 +1256,114 @@
 <li><b>텔레그램 원격 명령</b> — <code>/상태</code>·<code>/재고</code>·<code>/전수재고</code>·<code>/핫딜</code>·<code>/시트</code>로 폰에서 바로 조회·실행합니다(정해진 안전 명령만 반응).</li>
 <li><b>피비서 원격 제어 + 원격 데스크톱</b> — <code>pc_cmd.json</code>으로 피비서가 명령을 넣고, 급하면 폰 크롬 원격 데스크톱 <b>집컴</b>으로 직접 들어가 조작합니다.</li>
 </ul></div></details>
+</article><!-- SYPC-BIND:START (집 PC 자동 푸시 · 이 블록 안쪽만 수정) -->
+<article class="card pc-live-card" id="pc-live" data-pc-src="pc_stats.json">
+<style>
+#pc-live .pc-live-h{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;margin:0 0 10px}
+#pc-live .pc-live-h>b{font-size:15px;font-weight:800;letter-spacing:-.01em}
+#pc-live .pc-live-t{font-size:12px;color:var(--text2,#667085)}
+#pc-live .pc-live-s{font-size:12px;font-weight:700;color:var(--amber,#b7791f)}
+#pc-live .pc-live-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+#pc-live .pc-live-cell{border:1px solid var(--line,#e6e8ec);border-radius:12px;padding:9px 11px;background:var(--bg2,rgba(0,0,0,.015))}
+#pc-live .pc-live-cell>span{display:block;font-size:11px;font-weight:700;color:var(--text2,#667085)}
+#pc-live .pc-live-cell>b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.25;margin:2px 0 1px}
+#pc-live .pc-live-cell>b small{font-size:12px;font-weight:700;color:var(--text2,#667085);margin-left:2px}
+#pc-live .pc-live-cell>i{display:block;font-size:11px;font-style:normal;color:var(--text2,#667085)}
+#pc-live .pc-live-cell>i em{font-style:normal;font-weight:700;color:var(--text,#1c2430)}
+#pc-live .pc-live-regions{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 0}
+#pc-live .pc-live-regions span{font-size:11px;font-weight:700;border:1px solid var(--line,#e6e8ec);border-radius:999px;padding:3px 8px;color:var(--text2,#667085)}
+#pc-live .pc-live-regions span.on{border-color:rgba(46,211,160,.55);color:var(--green,#12996b)}
+#pc-live .pc-live-note{margin:9px 0 0;font-size:11px;color:var(--text2,#667085);line-height:1.5}
+</style>
+<div class="pc-live-h">
+<b>📡 집 PC 실시간 푸시</b>
+<span class="pc-live-t">기준 <b data-pc-bind="pc.filled_at">불러오는 중</b> KST · <code>pc_stats.json</code></span>
+<span class="pc-live-s" data-pc-bind="pc.stale"></span>
+</div>
+<div class="pc-live-grid">
+<div class="pc-live-cell"><span>쇼피 오늘 방문</span><b data-pc-bind="shopee.uv" data-pc-unit="명">—</b><i>PV <em data-pc-bind="shopee.pv">—</em> · 클릭 <em data-pc-bind="shopee.clicks">—</em> · 주문 <em data-pc-bind="shopee.orders">—</em></i></div>
+<div class="pc-live-cell"><span>무료 부스트</span><b data-pc-bind="boost.boosted">—</b><i>/ <em data-pc-bind="boost.planned">—</em> · 실패 <em data-pc-bind="boost.failed">—</em> · 유료 0원</i></div>
+<div class="pc-live-cell"><span>설문 후보(신규)</span><b data-pc-bind="survey.new_candidates" data-pc-unit="건">—</b><i>중복 <em data-pc-bind="survey.duplicates">—</em> · 소스 <em data-pc-bind="survey.sources_ok">—</em></i></div>
+<div class="pc-live-cell"><span>큐텐 1~5호 위험</span><b data-pc-bind="qoo10.alert_count" data-pc-unit="종">—</b><i>완전품절 <em data-pc-bind="qoo10.danger">—</em> · 50개미만 <em data-pc-bind="qoo10.low">—</em></i></div>
+<div class="pc-live-cell"><span>토스 쉐어링크(월)</span><b data-pc-bind="toss.month_clicks" data-pc-unit="클릭">—</b><i>판매 <em data-pc-bind="toss.month_sold">—</em> · 예상 <em data-pc-bind="toss.expected_krw" data-pc-unit="원">—</em></i></div>
+<div class="pc-live-cell"><span>다이소 온라인 재고</span><b data-pc-bind="daiso.in_stock" data-pc-unit="종">—</b><i>/ <em data-pc-bind="daiso.total">—</em>종 · 오프라인 <em data-pc-bind="daiso.offline_date">—</em></i></div>
+</div>
+<div class="pc-live-regions" data-pc-bind="shopee.regions"></div>
+<p class="pc-live-note">집 PC(<code>sy_auto_watch.py</code>)가 <code>sy-dashboard</code>의 <code>pc_stats.json</code>에 <code>dashboard</code> 키만 따로 올리고, 이 카드가 페이지를 열 때 그 값만 읽어 표시합니다. <b>이 블록 밖의 전략·메모 영역은 자동 갱신 대상이 아닙니다.</b></p>
+<script>
+(function () {
+  var root = document.getElementById('pc-live');
+  if (!root) return;
+  var src = root.getAttribute('data-pc-src') || 'pc_stats.json';
+  function fmt(v) {
+    if (v === null || v === undefined) return '';
+    if (typeof v === 'number') return v.toLocaleString('ko-KR');
+    return String(v);
+  }
+  function pick(obj, path) {
+    var cur = obj, parts = path.split('.'), i;
+    for (i = 0; i < parts.length; i++) {
+      if (cur === null || cur === undefined) return undefined;
+      cur = cur[parts[i]];
+    }
+    return cur;
+  }
+  function staleText(iso) {
+    if (!iso) return '';
+    var t = Date.parse(iso);
+    if (isNaN(t)) return '';
+    var h = (Date.now() - t) / 3600000;
+    if (h >= 24) return '⚠ 집 PC ' + Math.floor(h) + '시간째 갱신 없음';
+    if (h >= 4) return '⚠ ' + Math.floor(h) + '시간 전 값';
+    return '';
+  }
+  function renderRegions(el, dash) {
+    var rows = (pick(dash, 'shopee.regions') || []);
+    if (!rows.length) return;
+    var html = '', i, r;
+    for (i = 0; i < rows.length; i++) {
+      r = rows[i] || {};
+      var live = (r.uv || 0) + (r.pv || 0) + (r.clicks || 0) + (r.orders || 0) > 0;
+      html += '<span class="' + (live ? 'on' : '') + '">' + (r.region || '?') +
+        ' ' + (r.uv || 0) + '/' + (r.clicks || 0) + '/' + (r.orders || 0) + '</span>';
+    }
+    el.innerHTML = html;
+  }
+  function apply(dash) {
+    var data = {};
+    for (var k in dash) { if (Object.prototype.hasOwnProperty.call(dash, k)) data[k] = dash[k]; }
+    data.pc = { filled_at: dash.filled_at_kst || dash.filled_at || '' };
+    var nodes = document.querySelectorAll('[data-pc-bind]'), i, el, key, v, unit;
+    for (i = 0; i < nodes.length; i++) {
+      el = nodes[i];
+      key = el.getAttribute('data-pc-bind');
+      if (key === 'shopee.regions') { renderRegions(el, data); continue; }
+      if (key === 'pc.stale') { el.textContent = staleText(dash.filled_at); continue; }
+      if (key === 'qoo10.danger') { el.textContent = (pick(data, 'qoo10.danger') || []).length; continue; }
+      if (key === 'qoo10.low') { el.textContent = (pick(data, 'qoo10.low') || []).length; continue; }
+      v = pick(data, key);
+      if (v === undefined || v === null || v === '') { continue; }   /* 없으면 기존 HTML 유지 */
+      unit = el.getAttribute('data-pc-unit');
+      if (unit) { el.innerHTML = fmt(v) + '<small>' + unit + '</small>'; }
+      else { el.textContent = fmt(v); }
+    }
+  }
+  function load() {
+    fetch(src + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) {
+        if (!j || !j.dashboard) { root.setAttribute('data-pc-state', 'empty'); return; }
+        root.setAttribute('data-pc-state', 'ok');
+        apply(j.dashboard);
+      })
+      .catch(function () { root.setAttribute('data-pc-state', 'error'); });
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', load); }
+  else { load(); }
+})();
+</script>
 </article>
+<!-- SYPC-BIND:END -->
 <div class="grid-2">
 <article class="card">
 <div class="card-h">
