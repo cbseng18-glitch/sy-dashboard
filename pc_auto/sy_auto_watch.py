@@ -1125,7 +1125,9 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
 #    스레드 공개 검색은 클라이언트 렌더링이라, 공식 keyword_search 토큰이 있을 때만 시도한다.
 GEMINI_CONFIG_FILE = BASE_DIR / "gemini_config.json"
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta"
-GEMINI_DEFAULT_MODEL = "gemini-2.5-flash"
+#  ★ 신규 무료 키(`AQ.` 시작)는 gemini-2.5-flash 를 404 로 거절한다 → 별칭 gemini-flash-latest 를 쓴다.
+GEMINI_DEFAULT_MODEL = "gemini-flash-latest"
+GEMINI_LEGACY_MODELS = ("gemini-2.5-flash",)   # 구 기본값 — 설정에 남아 있으면 자동 보정
 TARGETS_PUSH_PATH = "pc_targets.json"
 TARGETS_KEEP_MAX = 60            # pc_targets.json 에 남기는 후보 최대 수(최신 우선 롤링)
 TARGETS_SEEN_MAX = 400           # state.json 에 기억하는 처리 완료 URL 수
@@ -1161,6 +1163,20 @@ TARGETS_GEMINI_SCHEMA = {
 }
 
 
+def _resolve_gemini_model(value) -> str:
+    """gemini_config.json 의 model 값 → 실제 호출 모델명.
+
+    비어 있거나 구 기본값(gemini-2.5-flash)이면 gemini-flash-latest 로 보정한다.
+    사용자가 직접 넣은 값 — gemini-flash-latest 포함 — 은 그대로 쓴다.
+    """
+    m = str(value or "").strip()
+    if not m:
+        return GEMINI_DEFAULT_MODEL
+    if m.lower() in GEMINI_LEGACY_MODELS:
+        return GEMINI_DEFAULT_MODEL
+    return m
+
+
 def load_gemini_config() -> dict:
     """gemini_config.json 로드. 없으면 api_key 빈 템플릿만 만들어 둔다(키는 절대 로그에 안 찍는다)."""
     template = {
@@ -1175,7 +1191,8 @@ def load_gemini_config() -> dict:
         "_help": ("무료 Gemini API 키를 api_key 에 넣으면 지식iN·스레드 후보 글을 AI 로 걸러 "
                   "답글·피클 초대 초안까지 만들어 pc_targets.json 으로 올립니다. "
                   "비워 두면 후보 수집만 하고 푸시하지 않습니다(오류 없음). "
-                  "모델은 model 값(기본 gemini-2.5-flash)을 따릅니다."),
+                  "모델은 model 값(기본 gemini-flash-latest)을 따릅니다. "
+                  "gemini-2.5-flash 는 신규 무료 키에서 404 라 넣지 마세요."),
     }
     if not GEMINI_CONFIG_FILE.exists():
         try:
@@ -1194,7 +1211,10 @@ def load_gemini_config() -> dict:
     if isinstance(raw, dict):
         out.update(raw)
     out["api_key"] = str(out.get("api_key") or "").strip()
-    out["model"] = str(out.get("model") or "").strip() or GEMINI_DEFAULT_MODEL
+    raw_model = str(out.get("model") or "").strip()
+    out["model"] = _resolve_gemini_model(raw_model)
+    if raw_model and out["model"] != raw_model:
+        log("Gemini 모델 자동 보정: %s → %s (구 기본값, 신규 키에서 404)" % (raw_model, out["model"]))
     out["enabled"] = bool(out.get("enabled", True))
     try:
         out["max_candidates"] = max(1, min(30, int(out.get("max_candidates") or 12)))
@@ -1379,7 +1399,7 @@ def _gemini_generate(gc: dict, prompt: str, timeout: int = 60) -> tuple:
     key = str(gc.get("api_key") or "").strip()
     if not key:
         return "", "api_key 미설정"
-    model = str(gc.get("model") or "").strip() or GEMINI_DEFAULT_MODEL
+    model = _resolve_gemini_model(gc.get("model"))
     body = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
