@@ -1,7 +1,7 @@
 {
  "schema": "pc_survey_candidates/1",
  "collector_version": "1.1.0",
- "generated_at": "2026-11-28T18:21:27+09:00",
+ "generated_at": "2026-11-28T20:21:42+09:00",
  "mode": "live",
  "respondent": {
   "gender": "남성",
@@ -33,7 +33,7 @@
    "ok": true,
    "status": 200,
    "error": null,
-   "items": 4,
+   "items": 6,
    "agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"
   },
   {
@@ -43,18 +43,18 @@
    "status": 200,
    "error": null,
    "items": 257,
-   "filtered": 1442
+   "filtered": 1443
   }
  ],
  "counts": {
   "rss_items": 25,
-  "threads_posts": 19,
+  "threads_posts": 21,
   "joopjoop_items": 257,
-  "new_candidates": 46,
-  "candidate": 32,
-  "review": 14,
-  "skip": 24,
-  "duplicates": 231,
+  "new_candidates": 2,
+  "candidate": 2,
+  "review": 0,
+  "skip": 0,
+  "duplicates": 301,
   "stale": 0,
   "truncated": 0,
   "sources_ok": 4,
@@ -6203,836 +6203,78 @@
    "is_duplicate": false,
    "first_seen_at": "2026-11-28T08:18:26+09:00",
    "last_seen_at": "2026-11-28T08:18:26+09:00"
+  },
+  {
+   "id": "threads-threads:DgR974jGilu",
+   "status": "candidate",
+   "skip_reason": "",
+   "flags": [
+    "login_not_required"
+   ],
+   "requires_login": false,
+   "source": "threads",
+   "guid": "threads:DgR974jGilu",
+   "title": "1. 부산시보 11월호 다른그림 찾기 (11/30 18:00) https://form.naver.com/response/EGTGK1t5Xt2 2. 국립중앙도서관 연구정보서비스 이용 만족도 (11/3",
+   "url": "https://www.threads.com/@professional_jung/post/DgR974jGilu",
+   "survey_url": "https://form.naver.com/response/EGTGK1t5Xt2",
+   "other_urls": [
+    "https://form.naver.com/response/EGTGK1t5Xt2",
+    "https://docs.google.com/forms/d/e/1FAIpQLSfB-WktEoNfuW7eIUbFVqA3iHaIsdjmGFlhYqzhf02i-7LTPg/viewform",
+    "https://form.naver.com/response/HJ95Ir41IqG",
+    "https://docs.google.com/forms/d/e/1FAIpQLSeKubMiPyOxp5IuHZ34MgHrk9Ll3_OfPcGmegdemxCMGgWGNg/viewform"
+   ],
+   "deadline": null,
+   "deadline_text": "",
+   "prize": "",
+   "joop": null,
+   "published_at": "2026-11-28T18:47:36+09:00",
+   "age_days": 0,
+   "categories": [
+    "threads"
+   ],
+   "excerpt": "1. 부산시보 11월호 다른그림 찾기 (11/30 18:00) https://form.naver.com/response/EGTGK1t5Xt2 2. 국립중앙도서관 연구정보서비스 이용 만족도 (11/30) https://docs.google.com/forms/d/e/1FAIpQLSfB-WktEoNfuW7eIUbFVqA3iHaIsdjmGFlhYqzhf02i-7LTPg/viewform 3. 올림픽스포츠센터 AI 챗봇 '올톡' 만족도 조사 (12/02 17:00) https://form.naver.com/response/HJ95Ir41IqG 4. 국립해양박물관 하반기 SNS 만족도 설문 (12/13) https://docs.google.com/forms/d/e/1FAIpQLSeKubMiPyOxp5IuHZ34MgHrk",
+   "is_duplicate": false,
+   "first_seen_at": "2026-11-28T20:21:42+09:00",
+   "last_seen_at": "2026-11-28T20:21:42+09:00"
+  },
+  {
+   "id": "threads-threads:DgR976PGtSb",
+   "status": "candidate",
+   "skip_reason": "",
+   "flags": [
+    "login_not_required"
+   ],
+   "requires_login": false,
+   "source": "threads",
+   "guid": "threads:DgR976PGtSb",
+   "title": "5. 2026 쌀력고사 듣기평가 이벤트 (12/14) https://docs.google.com/forms/d/e/1FAIpQLScVgzYVYTmpSyla-bxb2UA_U5S-Ai56IBkhIax4",
+   "url": "https://www.threads.com/@professional_jung/post/DgR976PGtSb",
+   "survey_url": "https://docs.google.com/forms/d/e/1FAIpQLScVgzYVYTmpSyla-bxb2UA_U5S-Ai56IBkhIax4LRGH6ChbVA/viewform",
+   "other_urls": [
+    "https://docs.google.com/forms/d/e/1FAIpQLScVgzYVYTmpSyla-bxb2UA_U5S-Ai56IBkhIax4LRGH6ChbVA/viewform"
+   ],
+   "deadline": null,
+   "deadline_text": "",
+   "prize": "",
+   "joop": null,
+   "published_at": "2026-11-28T18:47:36+09:00",
+   "age_days": 0,
+   "categories": [
+    "threads"
+   ],
+   "excerpt": "5. 2026 쌀력고사 듣기평가 이벤트 (12/14) https://docs.google.com/forms/d/e/1FAIpQLScVgzYVYTmpSyla-bxb2UA_U5S-Ai56IBkhIax4LRGH6ChbVA/viewform",
+   "is_duplicate": false,
+   "first_seen_at": "2026-11-28T20:21:42+09:00",
+   "last_seen_at": "2026-11-28T20:21:42+09:00"
   }
  ],
- "skipped": [
-  {
-   "id": "joopjoop-joop:c39d85787c001f2c",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:c39d85787c001f2c",
-   "title": "모여구로 청소년 모니터링 설문조사",
-   "url": "https://www.instagram.com/p/DgGt2itCNLE/",
-   "survey_url": "https://www.instagram.com/p/DgGt2itCNLE/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgGt2itCNLE/"
-   ],
-   "deadline": "2026-11-28",
-   "deadline_text": "",
-   "prize": "커피 기프티콘",
-   "joop": {
-    "org": "모여구로(구로구 청소년입장지대)",
-    "cat": "설문",
-    "who": "100",
-    "auth": "free",
-    "dday": "D-0",
-    "urgent": true,
-    "rank": 490,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 모여구로(구로구 청소년입장지대) 분류 설문 마감 2026-11-28 경품 커피 기프티콘 대상 100 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:0b7a38de788e760f",
-   "status": "skip",
-   "skip_reason": "SNS 댓글·인증샷 게시 필요('댓글')",
-   "flags": [
-    "login_not_required",
-    "public_post_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:0b7a38de788e760f",
-   "title": "컴포즈커피 · 가고 싶은 광주 명소 댓글 남기기",
-   "url": "https://blog.naver.com/gjcityi/224484777528",
-   "survey_url": "https://blog.naver.com/gjcityi/224484777528",
-   "other_urls": [
-    "https://blog.naver.com/gjcityi/224484777528"
-   ],
-   "deadline": "2026-11-29",
-   "deadline_text": "",
-   "prize": "컴포즈커피",
-   "joop": {
-    "org": "경기도 광주시",
-    "cat": "이벤트",
-    "who": "",
-    "auth": "free",
-    "dday": "D-1",
-    "urgent": true,
-    "rank": 831,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "이벤트"
-   ],
-   "excerpt": "기관 경기도 광주시 분류 이벤트 마감 2026-11-29 경품 컴포즈커피 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:0523d3dbeac9bce2",
-   "status": "skip",
-   "skip_reason": "지역 제한('순천시민')",
-   "flags": [
-    "login_not_required",
-    "region_limited"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:0523d3dbeac9bce2",
-   "title": "2027 순천시민 보건서비스 요구도 조사",
-   "url": "https://form.naver.com/response/9LgOM7Hjcya",
-   "survey_url": "https://form.naver.com/response/9LgOM7Hjcya",
-   "other_urls": [
-    "https://form.naver.com/response/9LgOM7Hjcya"
-   ],
-   "deadline": "2026-11-29",
-   "deadline_text": "",
-   "prize": "모바일 커피쿠폰",
-   "joop": {
-    "org": "순천시",
-    "cat": "설문",
-    "who": "200명",
-    "auth": "free",
-    "dday": "D-1",
-    "urgent": true,
-    "rank": 835,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 순천시 분류 설문 마감 2026-11-29 경품 모바일 커피쿠폰 대상 200명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:766e0fb5fbf5a91d",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:766e0fb5fbf5a91d",
-   "title": "적극행정 퀴즈 이벤트",
-   "url": "https://www.instagram.com/p/DgMOwQahXwj/",
-   "survey_url": "https://www.instagram.com/p/DgMOwQahXwj/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgMOwQahXwj/"
-   ],
-   "deadline": "2026-11-30",
-   "deadline_text": "",
-   "prize": "모바일 기프티콘 1만원",
-   "joop": {
-    "org": "이천시시설관리공단",
-    "cat": "퀴즈",
-    "who": "",
-    "auth": "free",
-    "dday": "D-2",
-    "urgent": true,
-    "rank": 564,
-    "quiz": true
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "퀴즈"
-   ],
-   "excerpt": "기관 이천시시설관리공단 분류 퀴즈 마감 2026-11-30 경품 모바일 기프티콘 1만원 참여방법 비로그인 · 1분 퀴즈 정답 확인 필요",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:b2abfc861ab15e4c",
-   "status": "skip",
-   "skip_reason": "지역 제한('부산광역시립시민')",
-   "flags": [
-    "login_not_required",
-    "region_limited"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:b2abfc861ab15e4c",
-   "title": "2026 원북원부산 모니터링 설문조사",
-   "url": "https://docs.google.com/forms/d/e/1FAIpQLSczpKJ9EhjVW2efwP5uh3o1APq1UkIaN2yHKpiH-E_C5bl6UA/viewform",
-   "survey_url": "https://docs.google.com/forms/d/e/1FAIpQLSczpKJ9EhjVW2efwP5uh3o1APq1UkIaN2yHKpiH-E_C5bl6UA/viewform",
-   "other_urls": [
-    "https://docs.google.com/forms/d/e/1FAIpQLSczpKJ9EhjVW2efwP5uh3o1APq1UkIaN2yHKpiH-E_C5bl6UA/viewform"
-   ],
-   "deadline": "2026-11-30",
-   "deadline_text": "",
-   "prize": "커피 기프티콘",
-   "joop": {
-    "org": "부산광역시립시민도서관",
-    "cat": "설문",
-    "who": "200명",
-    "auth": "free",
-    "dday": "D-2",
-    "urgent": true,
-    "rank": 587,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 부산광역시립시민도서관 분류 설문 마감 2026-11-30 경품 커피 기프티콘 대상 200명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:572a9cf3f0b0133a",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:572a9cf3f0b0133a",
-   "title": "개인정보 보호 유형 테스트·설문 이벤트",
-   "url": "https://www.instagram.com/p/DgO7GcOkQC9/",
-   "survey_url": "https://www.instagram.com/p/DgO7GcOkQC9/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgO7GcOkQC9/"
-   ],
-   "deadline": "2026-11-30",
-   "deadline_text": "",
-   "prize": "커피 교환권",
-   "joop": {
-    "org": "한국인터넷진흥원",
-    "cat": "설문",
-    "who": "",
-    "auth": "free",
-    "dday": "D-2",
-    "urgent": true,
-    "rank": 853,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 한국인터넷진흥원 분류 설문 마감 2026-11-30 경품 커피 교환권 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:9b131789aeb60a2f",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:9b131789aeb60a2f",
-   "title": "국립춘천병원 '어떻게 생각해?' 정신건강 인식 설문 이벤트",
-   "url": "https://www.instagram.com/p/DgNYK3SN4EH/",
-   "survey_url": "https://www.instagram.com/p/DgNYK3SN4EH/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgNYK3SN4EH/"
-   ],
-   "deadline": "2026-12-01",
-   "deadline_text": "",
-   "prize": "간편결제 기프티콘 5천원",
-   "joop": {
-    "org": "국립춘천병원",
-    "cat": "설문",
-    "who": "30명",
-    "auth": "free",
-    "dday": "D-3",
-    "urgent": true,
-    "rank": 611,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 국립춘천병원 분류 설문 마감 2026-12-01 경품 간편결제 기프티콘 5천원 대상 30명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:d25143d2decdb888",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:d25143d2decdb888",
-   "title": "강동구청 당근 단골맺기 이벤트",
-   "url": "https://www.instagram.com/p/DgPNWhyhZiF/",
-   "survey_url": "https://www.instagram.com/p/DgPNWhyhZiF/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgPNWhyhZiF/"
-   ],
-   "deadline": "2026-12-02",
-   "deadline_text": "",
-   "prize": "다이소 모바일상품권 1만원",
-   "joop": {
-    "org": "강동구",
-    "cat": "이벤트",
-    "who": "50명",
-    "auth": "free",
-    "dday": "D-4",
-    "urgent": false,
-    "rank": 633,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "이벤트"
-   ],
-   "excerpt": "기관 강동구 분류 이벤트 마감 2026-12-02 경품 다이소 모바일상품권 1만원 대상 50명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:0ebd238ccfa619a8",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:0ebd238ccfa619a8",
-   "title": "제3회 국가유산의 날 축하 메시지 이벤트",
-   "url": "https://www.instagram.com/p/DgPCPcekmk0/",
-   "survey_url": "https://www.instagram.com/p/DgPCPcekmk0/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgPCPcekmk0/"
-   ],
-   "deadline": "2026-12-04",
-   "deadline_text": "",
-   "prize": "기프티콘 1만원",
-   "joop": {
-    "org": "국가유산진흥원",
-    "cat": "이벤트",
-    "who": "30명",
-    "auth": "free",
-    "dday": "D-6",
-    "urgent": false,
-    "rank": 682,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "이벤트"
-   ],
-   "excerpt": "기관 국가유산진흥원 분류 이벤트 마감 2026-12-04 경품 기프티콘 1만원 대상 30명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:75925748e31cbd8c",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:75925748e31cbd8c",
-   "title": "2026 경남문화예술진흥원 SNS 만족도 조사",
-   "url": "https://www.instagram.com/p/DgOcxv9CWDs/",
-   "survey_url": "https://www.instagram.com/p/DgOcxv9CWDs/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgOcxv9CWDs/"
-   ],
-   "deadline": "2026-12-04",
-   "deadline_text": "",
-   "prize": "투썸플레이스 커피 쿠폰",
-   "joop": {
-    "org": "경남문화예술진흥원",
-    "cat": "설문",
-    "who": "30명",
-    "auth": "free",
-    "dday": "D-6",
-    "urgent": false,
-    "rank": 939,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 경남문화예술진흥원 분류 설문 마감 2026-12-04 경품 투썸플레이스 커피 쿠폰 대상 30명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:7c84b29d3da95b46",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:7c84b29d3da95b46",
-   "title": "2026 부천시 10대 뉴스 투표 이벤트",
-   "url": "https://www.instagram.com/p/DgO4QgHDykP/",
-   "survey_url": "https://www.instagram.com/p/DgO4QgHDykP/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgO4QgHDykP/"
-   ],
-   "deadline": "2026-12-04",
-   "deadline_text": "",
-   "prize": "컴포즈커피 자몽허니블랙티",
-   "joop": {
-    "org": "부천시",
-    "cat": "투표",
-    "who": "50명",
-    "auth": "free",
-    "dday": "D-6",
-    "urgent": false,
-    "rank": 940,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "투표"
-   ],
-   "excerpt": "기관 부천시 분류 투표 마감 2026-12-04 경품 컴포즈커피 자몽허니블랙티 대상 50명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:b39fc678ea237e7b",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:b39fc678ea237e7b",
-   "title": "일·생활균형 문화확산 주간행사 만족도조사",
-   "url": "https://www.instagram.com/p/DgOV1JWhQ31/",
-   "survey_url": "https://www.instagram.com/p/DgOV1JWhQ31/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgOV1JWhQ31/"
-   ],
-   "deadline": "2026-12-04",
-   "deadline_text": "",
-   "prize": "롯데리아 버거 세트",
-   "joop": {
-    "org": "재단법인 전북여성가족재단",
-    "cat": "설문",
-    "who": "45명",
-    "auth": "free",
-    "dday": "D-6",
-    "urgent": false,
-    "rank": 1444,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 재단법인 전북여성가족재단 분류 설문 마감 2026-12-04 경품 롯데리아 버거 세트 대상 45명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:a675ae927910c987",
-   "status": "skip",
-   "skip_reason": "SNS 댓글·인증샷 게시 필요('댓글')",
-   "flags": [
-    "login_not_required",
-    "public_post_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:a675ae927910c987",
-   "title": "네이버페이 · 보도자료 인포그래픽 댓글 남기기",
-   "url": "https://sople.me/event/349963",
-   "survey_url": "https://sople.me/event/349963",
-   "other_urls": [
-    "https://sople.me/event/349963"
-   ],
-   "deadline": "2026-12-04",
-   "deadline_text": "",
-   "prize": "네이버페이",
-   "joop": {
-    "org": "대한상공회의소 소플",
-    "cat": "이벤트",
-    "who": "",
-    "auth": "free",
-    "dday": "D-6",
-    "urgent": false,
-    "rank": 1455,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "이벤트"
-   ],
-   "excerpt": "기관 대한상공회의소 소플 분류 이벤트 마감 2026-12-04 경품 네이버페이 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:20e13991fe75a0e0",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:20e13991fe75a0e0",
-   "title": "식품진흥원 영문 명칭 대국민 공모전",
-   "url": "https://www.instagram.com/p/DgO2vISqcF3/",
-   "survey_url": "https://www.instagram.com/p/DgO2vISqcF3/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgO2vISqcF3/"
-   ],
-   "deadline": "2026-12-06",
-   "deadline_text": "",
-   "prize": "커피 기프티콘 5만원 외",
-   "joop": {
-    "org": "한국식품산업클러스터진흥원",
-    "cat": "이벤트",
-    "who": "110명",
-    "auth": "free",
-    "dday": "D-8",
-    "urgent": false,
-    "rank": 150,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "이벤트"
-   ],
-   "excerpt": "기관 한국식품산업클러스터진흥원 분류 이벤트 마감 2026-12-06 경품 커피 기프티콘 5만원 외 대상 110명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:b19e218691039e0e",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:b19e218691039e0e",
-   "title": "농어촌 기본소득 숏폼 공모전 대국민 투표 인증 이벤트",
-   "url": "https://www.instagram.com/p/DgO0riUvDR2/",
-   "survey_url": "https://www.instagram.com/p/DgO0riUvDR2/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgO0riUvDR2/"
-   ],
-   "deadline": "2026-12-06",
-   "deadline_text": "",
-   "prize": "편의점 모바일 상품권 5천원",
-   "joop": {
-    "org": "농림축산식품부",
-    "cat": "투표",
-    "who": "50명",
-    "auth": "free",
-    "dday": "D-8",
-    "urgent": false,
-    "rank": 324,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "투표"
-   ],
-   "excerpt": "기관 농림축산식품부 분류 투표 마감 2026-12-06 경품 편의점 모바일 상품권 5천원 대상 50명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:97963f5f07e5266c",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:97963f5f07e5266c",
-   "title": "동아시아 람사르지역센터 김해 유치 기념 자연환경보전 온라인 퀴즈",
-   "url": "https://www.instagram.com/p/DgPGCrnj0Xl/",
-   "survey_url": "https://www.instagram.com/p/DgPGCrnj0Xl/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgPGCrnj0Xl/"
-   ],
-   "deadline": "2026-12-06",
-   "deadline_text": "",
-   "prize": "김해사랑상품권 1만원",
-   "joop": {
-    "org": "김해시",
-    "cat": "퀴즈",
-    "who": "100명",
-    "auth": "free",
-    "dday": "D-8",
-    "urgent": false,
-    "rank": 716,
-    "quiz": true
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "퀴즈"
-   ],
-   "excerpt": "기관 김해시 분류 퀴즈 마감 2026-12-06 경품 김해사랑상품권 1만원 대상 100명 참여방법 비로그인 · 1분 퀴즈 정답 확인 필요",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:e697d8920971dc51",
-   "status": "skip",
-   "skip_reason": "지역 제한('이천시 주민')",
-   "flags": [
-    "login_not_required",
-    "region_limited"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:e697d8920971dc51",
-   "title": "2027년 이천시 주민건강실태 요구도 조사",
-   "url": "https://form.naver.com/response/5vubP6WmRYc",
-   "survey_url": "https://form.naver.com/response/5vubP6WmRYc",
-   "other_urls": [
-    "https://form.naver.com/response/5vubP6WmRYc"
-   ],
-   "deadline": "2026-12-06",
-   "deadline_text": "",
-   "prize": "모바일 상품권 1만원권",
-   "joop": {
-    "org": "이천시",
-    "cat": "설문",
-    "who": "50명",
-    "auth": "free",
-    "dday": "D-8",
-    "urgent": false,
-    "rank": 724,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 이천시 분류 설문 마감 2026-12-06 경품 모바일 상품권 1만원권 대상 50명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:b35d06159ee4b922",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:b35d06159ee4b922",
-   "title": "적극행정 우수사례 선호도조사",
-   "url": "https://www.instagram.com/p/DgPCctWH2J0/",
-   "survey_url": "https://www.instagram.com/p/DgPCctWH2J0/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgPCctWH2J0/"
-   ],
-   "deadline": "2026-12-06",
-   "deadline_text": "",
-   "prize": "음료쿠폰",
-   "joop": {
-    "org": "광진구시설관리공단",
-    "cat": "투표",
-    "who": "100명",
-    "auth": "free",
-    "dday": "D-8",
-    "urgent": false,
-    "rank": 1530,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "투표"
-   ],
-   "excerpt": "기관 광진구시설관리공단 분류 투표 마감 2026-12-06 경품 음료쿠폰 대상 100명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:266a330c6a663362",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:266a330c6a663362",
-   "title": "용인FC 공식 응원가 가사 공모전",
-   "url": "https://www.instagram.com/p/DgL3_TcCCdK/",
-   "survey_url": "https://www.instagram.com/p/DgL3_TcCCdK/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgL3_TcCCdK/"
-   ],
-   "deadline": "2026-12-06",
-   "deadline_text": "",
-   "prize": "선수단 친필 사인 유니폼 외",
-   "joop": {
-    "org": "용인시시민프로축구단",
-    "cat": "이벤트",
-    "who": "7명",
-    "auth": "free",
-    "dday": "D-8",
-    "urgent": false,
-    "rank": 1532,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "이벤트"
-   ],
-   "excerpt": "기관 용인시시민프로축구단 분류 이벤트 마감 2026-12-06 경품 선수단 친필 사인 유니폼 외 대상 7명 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  },
-  {
-   "id": "joopjoop-joop:e37fbefe555f36e6",
-   "status": "skip",
-   "skip_reason": "인스타그램 팔로우·댓글 인증 필요(URL)",
-   "flags": [
-    "login_not_required",
-    "sns_required"
-   ],
-   "requires_login": false,
-   "source": "joopjoop",
-   "guid": "joop:e37fbefe555f36e6",
-   "title": "성북구 육아종합지원센터 이용자 만족도 조사",
-   "url": "https://www.instagram.com/p/DgEQF0EI7hl/",
-   "survey_url": "https://www.instagram.com/p/DgEQF0EI7hl/",
-   "other_urls": [
-    "https://www.instagram.com/p/DgEQF0EI7hl/"
-   ],
-   "deadline": "2026-12-07",
-   "deadline_text": "",
-   "prize": "모바일 쿠폰 5,000원권(SSG·배달의민족·CJ·네이버페이·교보 중 선택) / 치킨·커피쿠폰(중앙센터)",
-   "joop": {
-    "org": "성북구육아종합지원센터",
-    "cat": "설문",
-    "who": "공고 참조, 공고 참조",
-    "auth": "free",
-    "dday": "D-9",
-    "urgent": false,
-    "rank": 982,
-    "quiz": false
-   },
-   "published_at": null,
-   "age_days": null,
-   "categories": [
-    "joopjoop",
-    "설문"
-   ],
-   "excerpt": "기관 성북구육아종합지원센터 분류 설문 마감 2026-12-07 경품 모바일 쿠폰 5,000원권(SSG·배달의민족·CJ·네이버페이·교보 중 선택) / 치킨·커피쿠폰(중앙센터) 대상 공고 참조, 공고 참조 참여방법 비로그인 · 1분",
-   "is_duplicate": false,
-   "first_seen_at": "2026-11-28T18:21:27+09:00",
-   "last_seen_at": "2026-11-28T18:21:27+09:00"
-  }
- ],
+ "skipped": [],
  "warnings": [],
  "errors": [],
  "notes": {
   "usage": "candidates = 중복 제거 후 신규 후보. status=candidate(바로 응모 가능) / review(사람 확인) / skip(skip_reason 참조).",
   "dedupe": "survey_seen.json(본 guid·기사 URL·제목) + known_urls.json(기응모 URL·제목) 대조."
  },
- "merged_at": "2026-11-28T18:21:32+09:00",
- "previous_count": 107
+ "merged_at": "2026-11-28T20:21:47+09:00",
+ "previous_count": 153
 }
