@@ -2,7 +2,7 @@
  "schema": "pc_stats/1",
  "generator": "stats_checker.py",
  "version": "1.1.0",
- "generated_at": "2026-11-28T22:01:30+09:00",
+ "generated_at": "2026-11-29T00:01:59+09:00",
  "mode": "live",
  "shopee": {
   "enabled": true,
@@ -26,16 +26,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870889,
-     "hour_buckets": 22
+     "server_time": 1795878119,
+     "hour_buckets": 24
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8668,
-     "next_free_at": "2026-11-29T00:25:58+09:00",
+     "cooldown_remaining_seconds": 1439,
+     "next_free_at": "2026-11-29T00:25:59+09:00",
      "product_ids": [
       "26447109019",
       "57971534333",
@@ -54,23 +54,23 @@
     "ok": true,
     "state": "ok",
     "metrics": {
-     "uv": 0,
-     "pv": 0,
+     "uv": 1,
+     "pv": 1,
      "product_clicks": 0,
      "orders": 0,
      "units": 0,
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870891,
-     "hour_buckets": 22
+     "server_time": 1795878120,
+     "hour_buckets": 24
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8674,
+     "cooldown_remaining_seconds": 1445,
      "next_free_at": "2026-11-29T00:26:06+09:00",
      "product_ids": [
       "56221950415",
@@ -98,16 +98,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870892,
-     "hour_buckets": 22
+     "server_time": 1795878121,
+     "hour_buckets": 24
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8680,
-     "next_free_at": "2026-11-29T00:26:13+09:00",
+     "cooldown_remaining_seconds": 1451,
+     "next_free_at": "2026-11-29T00:26:14+09:00",
      "product_ids": [
       "47871640401",
       "47121595505",
@@ -134,15 +134,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870893,
-     "hour_buckets": 22
+     "server_time": 1795878122,
+     "hour_buckets": 24
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8686,
+     "cooldown_remaining_seconds": 1456,
      "next_free_at": "2026-11-29T00:26:20+09:00",
      "product_ids": [
       "51821726804",
@@ -162,23 +162,23 @@
     "ok": true,
     "state": "ok",
     "metrics": {
-     "uv": 0,
-     "pv": 0,
-     "product_clicks": 0,
+     "uv": 1,
+     "pv": 1,
+     "product_clicks": 1,
      "orders": 0,
      "units": 0,
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870894,
-     "hour_buckets": 21
+     "server_time": 1795878124,
+     "hour_buckets": 23
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8691,
+     "cooldown_remaining_seconds": 1462,
      "next_free_at": "2026-11-29T00:26:27+09:00",
      "product_ids": [
       "45021595956",
@@ -206,15 +206,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870896,
-     "hour_buckets": 21
+     "server_time": 1795878125,
+     "hour_buckets": 23
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8697,
+     "cooldown_remaining_seconds": 1468,
      "next_free_at": "2026-11-29T00:26:34+09:00",
      "product_ids": [
       "46271644365",
@@ -242,15 +242,15 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870897,
-     "hour_buckets": 8
+     "server_time": 1795878127,
+     "hour_buckets": 10
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8704,
+     "cooldown_remaining_seconds": 1475,
      "next_free_at": "2026-11-29T00:26:43+09:00",
      "product_ids": [
       "49672049494",
@@ -278,16 +278,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795870899,
-     "hour_buckets": 11
+     "server_time": 1795878129,
+     "hour_buckets": 13
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 8711,
-     "next_free_at": "2026-11-29T00:26:51+09:00",
+     "cooldown_remaining_seconds": 1482,
+     "next_free_at": "2026-11-29T00:26:52+09:00",
      "product_ids": [
       "45221609311",
       "44921615563",
@@ -302,9 +302,9 @@
   "totals": {
    "regions_ok": 8,
    "regions_total": 8,
-   "uv": 4,
-   "pv": 4,
-   "product_clicks": 0,
+   "uv": 6,
+   "pv": 6,
+   "product_clicks": 1,
    "orders": 0,
    "units": 0,
    "buyers": 0,
@@ -334,16 +334,16 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=None, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "cffi",
+    "fetcher": "curl",
     "fetch_attempts": [
      {
       "engine": "cffi",
-      "ok": true,
-      "status": 200,
-      "bytes": 302346,
-      "error": null
+      "ok": false,
+      "status": null,
+      "bytes": 0,
+      "error": "Timeout: Failed to perform, curl: (28) Operation timed out after 15002 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details."
      },
      {
       "engine": "curl",
@@ -356,7 +356,7 @@
       "engine": "urllib",
       "ok": true,
       "status": 200,
-      "bytes": 1241,
+      "bytes": 1240,
       "error": null
      }
     ]
@@ -418,16 +418,16 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=None, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "cffi",
+    "fetcher": "curl",
     "fetch_attempts": [
      {
       "engine": "cffi",
-      "ok": true,
-      "status": 200,
-      "bytes": 302333,
-      "error": null
+      "ok": false,
+      "status": null,
+      "bytes": 0,
+      "error": "Timeout: Failed to perform, curl: (28) Operation timed out after 15012 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details."
      },
      {
       "engine": "curl",
@@ -460,16 +460,16 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=None, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "cffi",
+    "fetcher": "curl",
     "fetch_attempts": [
      {
       "engine": "cffi",
-      "ok": true,
-      "status": 200,
-      "bytes": 301825,
-      "error": null
+      "ok": false,
+      "status": null,
+      "bytes": 0,
+      "error": "Timeout: Failed to perform, curl: (28) Operation timed out after 15011 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details."
      },
      {
       "engine": "curl",
@@ -502,16 +502,16 @@
     "price_match": null,
     "blocked": true,
     "warnings": [
-     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=200, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
+     "Qoo10 차단/오류 페이지(Akamai 523 등) — 시도 엔진: cffi=None, curl=200, urllib=200 · 주거용 IP(집 PC)에서만 정상 조회"
     ],
-    "fetcher": "cffi",
+    "fetcher": "curl",
     "fetch_attempts": [
      {
       "engine": "cffi",
-      "ok": true,
-      "status": 200,
-      "bytes": 302491,
-      "error": null
+      "ok": false,
+      "status": null,
+      "bytes": 0,
+      "error": "Timeout: Failed to perform, curl: (28) Operation timed out after 15003 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details."
      },
      {
       "engine": "curl",
@@ -576,27 +576,16 @@
  "github": null,
  "telegram": null,
  "changes": {
-  "since": "2026-11-28T20:00:51+09:00",
+  "since": "2026-11-28T22:01:30+09:00",
   "regions": {
-   "MY": {
-    "boost_slots": 1
-   },
-   "PH": {
+   "TW": {
     "uv": 1,
-    "pv": 1,
-    "boost_slots": 2
+    "pv": 1
    },
    "VN": {
-    "boost_slots": 5
-   },
-   "TH": {
-    "boost_slots": 5
-   },
-   "MX": {
-    "boost_slots": 5
-   },
-   "BR": {
-    "boost_slots": 5
+    "uv": 1,
+    "pv": 1,
+    "product_clicks": 1
    }
   },
   "qoo10": [],
@@ -1924,223 +1913,74 @@
      "slots": "5/5"
     }
    }
+  },
+  {
+   "generated_at": "2026-11-29T00:01:59+09:00",
+   "cookie_state": "ok",
+   "uv": 6,
+   "clicks": 1,
+   "orders": 0,
+   "boost": "40/40",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {
+    "SG": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TW": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MY": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "PH": {
+     "uv": 2,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "VN": {
+     "uv": 1,
+     "clicks": 1,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "TH": {
+     "uv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "MX": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    },
+    "BR": {
+     "uv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "slots": "5/5"
+    }
+   }
   }
  ],
- "merged_at": "2026-11-28T22:01:49+09:00",
- "dashboard": {
-  "schema": "pc_dashboard/1",
-  "generator": "sy_auto_watch.py",
-  "filled_at": "2026-11-28T23:01:59+09:00",
-  "filled_at_kst": "11-28 23:01",
-  "shopee": {
-   "source_at": "2026-11-28T22:01:30+09:00",
-   "cookie_state": "ok",
-   "regions_ok": 8,
-   "regions_total": 8,
-   "uv": 4,
-   "pv": 4,
-   "clicks": 0,
-   "orders": 0,
-   "units": 0,
-   "sales": 0,
-   "regions": [
-    {
-     "region": "SG",
-     "ok": true,
-     "uv": 0,
-     "pv": 0,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    },
-    {
-     "region": "TW",
-     "ok": true,
-     "uv": 0,
-     "pv": 0,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    },
-    {
-     "region": "MY",
-     "ok": true,
-     "uv": 1,
-     "pv": 1,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    },
-    {
-     "region": "PH",
-     "ok": true,
-     "uv": 2,
-     "pv": 2,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    },
-    {
-     "region": "VN",
-     "ok": true,
-     "uv": 0,
-     "pv": 0,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    },
-    {
-     "region": "TH",
-     "ok": true,
-     "uv": 1,
-     "pv": 1,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    },
-    {
-     "region": "MX",
-     "ok": true,
-     "uv": 0,
-     "pv": 0,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    },
-    {
-     "region": "BR",
-     "ok": true,
-     "uv": 0,
-     "pv": 0,
-     "clicks": 0,
-     "orders": 0,
-     "units": 0,
-     "sales": 0
-    }
-   ]
-  },
-  "boost": {
-   "source_at": "2026-11-28T20:25:53+09:00",
-   "regions_ok": 8,
-   "regions_total": 8,
-   "boosted": 40,
-   "planned": 40,
-   "free_slots": 40,
-   "failed": 0,
-   "cost_krw": 0,
-   "next_free_at": ""
-  },
-  "survey": {
-   "source_at": "2026-11-28T22:22:30+09:00",
-   "new_candidates": 0,
-   "candidates": 0,
-   "review": 0,
-   "duplicates": 302,
-   "candidates_total": 0,
-   "sources_ok": 4,
-   "sources_failed": 0
-  },
-  "qoo10": {
-   "threshold": 50,
-   "checked_at": "11-28 22:45",
-   "checked": 26,
-   "alert_count": 7,
-   "danger": [],
-   "low": [
-    {
-     "code": "1056955",
-     "set": "3호",
-     "name": "볼륨 조임 미니 파우치(블랙) ⑥",
-     "qty": 5
-    },
-    {
-     "code": "1078815",
-     "set": "1호",
-     "name": "마스킹테이프 3개입 ⑤",
-     "qty": 7
-    },
-    {
-     "code": "1013422",
-     "set": "4호",
-     "name": "파스텔 형광펜 3개입 ③",
-     "qty": 8
-    },
-    {
-     "code": "1058005",
-     "set": "3호",
-     "name": "T형 카드 스탠드 ②",
-     "qty": 11
-    },
-    {
-     "code": "1079748",
-     "set": "4호",
-     "name": "모트모트 데일리 체크 점착 메모지 60매입 ④",
-     "qty": 15
-    },
-    {
-     "code": "1073176",
-     "set": "3호",
-     "name": "비즈 키링 리본 ③",
-     "qty": 36
-    },
-    {
-     "code": "1074817",
-     "set": "4호",
-     "name": "모트모트 스프링 스터디 플래너 브라운 ①",
-     "qty": 41
-    }
-   ]
-  },
-  "daiso": {
-   "total": 64,
-   "in_stock": 53,
-   "offline_date": "2026-11-28"
-  },
-  "toss": {
-   "source_at": "2026-11-28T20:54:05+09:00",
-   "from": "2026-11-01",
-   "to": "2026-11-28",
-   "month_clicks": 5,
-   "month_sold": 0,
-   "month_sales_krw": 0,
-   "expected_krw": 0
-  },
-  "youtube": null,
-  "blog": {
-   "source_at": "2026-11-28T22:51:28+09:00",
-   "post_count": 44,
-   "post_count_source": "blog.naver.com totalCount",
-   "feed_items": 44,
-   "posts_today": 2,
-   "latest_title": "크리스마스 케이크 사전예약, 파리바게뜨 12월 19일·뚜레쥬르 12월 22일 마감…픽업 시작일이 다릅니다",
-   "latest_link": "https://blog.naver.com/sy_global-/224495812269",
-   "latest_pub": "11-28 13:19",
-   "blog_url": "https://blog.naver.com/sy_global-"
-  },
-  "threads": {
-   "source_at": "2026-11-28T22:51:28+09:00",
-   "followers": 32,
-   "posts_total": 148,
-   "views_30d": null,
-   "views_at": "",
-   "profile_source": "threads.com 공개 프로필(og:description, 비로그인)",
-   "handle": "@18.1q2w3e4r"
-  }
- },
- "toss": {
-  "source_at": "2026-11-28T20:54:05+09:00",
-  "from": "2026-11-01",
-  "to": "2026-11-28",
-  "month_clicks": 5,
-  "month_sold": 0,
-  "month_sales_krw": 0,
-  "expected_krw": 0
- }
+ "merged_at": "2026-11-29T00:03:31+09:00"
 }
