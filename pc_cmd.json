@@ -1,46 +1,45 @@
 {
-  "id": "shorts_qoo10_2_20261128_v2",
+  "id": "shorts_qoo10_4_20261128_v2",
   "action": "make_shorts",
   "args": {
-    "filename": "qoo10_2_new_v2_20261128.mp4",
+    "filename": "qoo10_4_new_v2_20261128.mp4",
     "theme": "navy",
     "brand": "@sy_global",
     "upload": true,
     "privacy": "public",
-    "yt_title": "韓国ダイソー サンリオ文房具8点セット マステ200枚 コインケース入り #Shorts #Qoo10",
+    "yt_title": "韓国 スタディプランナー 無音タイマー 勉強5点セット 101日 #Shorts #Qoo10",
     "yt_tags": [
-      "韓国ダイソー",
-      "サンリオ",
-      "ハローキティ",
-      "マイメロディ",
-      "Qoo10",
-      "韓国限定"
+      "韓国文房具",
+      "スタディプランナー",
+      "勉強",
+      "受験生",
+      "Qoo10"
     ],
     "scenes": [
       {
-        "badge": "韓国限定",
-        "title": "韓国ダイソー",
-        "subtitle": "サンリオ文房具8点セット",
-        "narration": "韓国ダイソーで販売されているサンリオ正規ライセンス文房具の8点セットです。",
+        "badge": "受験生に",
+        "title": "韓国スタディ",
+        "subtitle": "集中5点セット",
+        "narration": "韓国で人気の勉強記録グッズを5点セットにしました。",
         "motion": "in"
       },
       {
-        "badge": "マステ200枚",
-        "title": "ハローキティ",
-        "subtitle": "切り取り式マスキングテープ",
-        "narration": "1枚ずつ切り取って使えるマスキングテープは200枚入り。",
+        "badge": "101日",
+        "title": "スタディプランナー",
+        "subtitle": "1日1ページで101日分",
+        "narration": "1日1ページ、101日分書き込めるスプリング式プランナー。",
         "motion": "pan"
       },
       {
-        "badge": "8点入り",
-        "title": "シール・付箋・ペン",
-        "subtitle": "刺しゅうコインケースも",
-        "narration": "シール4種、ふせん、ボールペン、刺しゅうコインケースまで全部入りです。",
+        "badge": "無音モード",
+        "title": "学習タイマー",
+        "subtitle": "蛍光ペン・チェック付箋も",
+        "narration": "音の出ない学習タイマーと、パステル蛍光ペン、チェック付箋付き。",
         "motion": "out"
       },
       {
         "badge": "Qoo10販売中",
-        "title": "¥2,980 送料無料",
+        "title": "¥3,280 送料無料",
         "subtitle": "固定コメントをチェック",
         "narration": "Qoo10で販売中。詳細は固定コメントのリンクからどうぞ。",
         "motion": "in"
