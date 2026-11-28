@@ -1,5 +1,5 @@
 {
-  "id": "selfupdate_targets_ig_20261129_0036",
+  "id": "selfupdate_targets_ig_gemini_flash_latest_20261129_0045",
   "action": "self_update",
   "args": {
     "files": [
@@ -9,6 +9,6 @@
       }
     ],
     "restart": true,
-    "note": "후보글: Gemini 키 대기 중 30분 재확인(키 투입 즉시 가동)"
+    "note": "Gemini 기본 모델 gemini-flash-latest 패치(구 설정 gemini-2.5-flash 자동 보정)"
   }
 }
