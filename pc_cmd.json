@@ -1,13 +1,21 @@
 {
-  "id": "shorts_patch_v4_20261128_1656",
-  "action": "self_update",
+  "id": "shorts_probe_20261128_1658",
+  "action": "make_shorts",
   "args": {
-    "files": [
+    "filename": "q5_probe_preview.mp4",
+    "theme": "sunset",
+    "timeout": 600,
+    "upload": false,
+    "scenes": [
       {
-        "remote": "pc_auto/sy_auto_watch.py",
-        "local": "sy_auto_watch.py"
+        "image": "https://raw.githubusercontent.com/cbseng18-glitch/sy-dashboard/main/pc_auto/assets/q5/q5-1-ring.jpg",
+        "badge": "テスト",
+        "title": "MagSafe対応\nシリコンリング",
+        "subtitle": "指にかけてグリップ",
+        "narration": "まずはMagSafe対応のシリコンリング。指にかけてグリップ、立てればスタンドになります。",
+        "motion": "in",
+        "zoom": 1.16
       }
-    ],
-    "restart": true
+    ]
   }
 }
