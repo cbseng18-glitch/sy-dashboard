@@ -3190,7 +3190,18 @@ def cmd_toss_products(cfg: dict, args: dict | None = None, source: str = "원격
             lines.append("• 사유: 공식 상품 API 는 첫 매출 전까지 막혀 있습니다(PARTNER_NOT_AUTHORIZED)")
             lines.append("• toss_cookies.json 을 넣으면 내부 curation API 로 조회합니다")
         else:
-            lines.append(f"• 사유: {err or '상품이 없습니다'}")
+            shape = ""
+            if isinstance(js, dict):
+                s = js.get("success")
+                if isinstance(s, dict):
+                    shape = "keys=" + ",".join(list(s.keys())[:8])
+                    for k, v in s.items():
+                        if isinstance(v, list) and v and isinstance(v[0], dict):
+                            shape += f" | {k}[0]=" + ",".join(list(v[0].keys())[:8])
+                            break
+                else:
+                    shape = "top=" + ",".join(list(js.keys())[:8])
+            lines.append(f"• 사유: {err or '상품이 없습니다'} ({shape})")
         send_telegram(cfg, "\n".join(lines))
         log(f"토스 상품 조회 실패: HTTP {code} {err} (쿠키 {ck_state})")
         return {"ok": False, "http": code, "error": err, "cookie_state": ck_state}
