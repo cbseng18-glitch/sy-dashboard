@@ -2870,6 +2870,11 @@ THREADS_STATS_FILE = BASE_DIR / "threads_stats.json"
 THREADS_CONFIG_FILE = BASE_DIR / "threads_config.json"
 THREADS_API_BASE = "https://graph.threads.net/v1.0"
 THREADS_CRAWLER_UA = "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+# 60일 장기 토큰 자동 연장 — 수동 재발급 없이 계속 돌리기 위한 최소 장치(2026-11-28 패치)
+THREADS_REFRESH_URL = "https://graph.threads.net/refresh_access_token"
+THREADS_TOKEN_REFRESH_DAYS = 25       # 기본 연장 주기(일) — 60일 만료 35일 전에 미리 연장
+THREADS_REFRESH_RETRY_HOURS = 24      # 연장 실패 후 최소 재시도 간격(호출·로그 폭주 방지)
+THREADS_REFRESH_TIMEOUT = 25          # 연장 요청 타임아웃(초)
 
 
 def _http_bytes(url: str, ua: str, timeout: int = 25, limit: int = 900000) -> bytes:
@@ -2976,10 +2981,15 @@ def load_threads_config() -> dict:
         "enabled": True,
         "user_id": "",
         "access_token": "",
+        "token_refreshed_at": "",        # 마지막 연장 성공(또는 최초 설정) 시각 — 이 값 기준으로 연장 주기를 계산
+        "token_expires_in": 0,           # 마지막 연장 응답의 expires_in(초, 있으면)
+        "token_refresh_days": THREADS_TOKEN_REFRESH_DAYS,   # 연장 주기(일) — 1~55 범위
         "_help": ("스레드 30일 조회수는 공식 Threads API 토큰이 있어야만 읽힙니다. "
                   "developers.facebook.com 에서 앱 생성 → threads_basic·threads_manage_insights 권한으로 "
                   "장기 액세스 토큰 발급 → user_id(스레드 사용자 ID)와 함께 이 파일에 넣고 저장하세요. "
-                  "비워 두면 팔로워·스레드 수만 공개 페이지에서 읽습니다(알림 없음)."),
+                  "비워 두면 팔로워·스레드 수만 공개 페이지에서 읽습니다(알림 없음). "
+                  "access_token 을 넣으면 25일마다 자동 연장(th_refresh_token)되고 "
+                  "token_refreshed_at 에 마지막 연장 시각이 기록됩니다."),
     }
     if not THREADS_CONFIG_FILE.exists():
         try:
@@ -2995,10 +3005,233 @@ def load_threads_config() -> dict:
         return dict(template)
     out = dict(template)
     if isinstance(raw, dict):
-        for key in ("user_id", "access_token"):
+        for key in ("user_id", "access_token", "token_refreshed_at",
+                    "token_last_attempt_at", "token_refresh_error"):
             out[key] = str(raw.get(key) or "").strip()
+        try:
+            out["token_expires_in"] = int(raw.get("token_expires_in") or 0)
+        except Exception:
+            out["token_expires_in"] = 0
+        out["token_refresh_days"] = raw.get("token_refresh_days", THREADS_TOKEN_REFRESH_DAYS)
         out["enabled"] = bool(raw.get("enabled", True))
     return out
+
+
+def _atomic_write_json(path, obj) -> None:
+    """JSON 1개를 임시파일→교체로 원자적으로 저장한다(토큰 파일이 깨지지 않게)."""
+    path = Path(path)
+    tmp = path.with_name(path.name + ".tmp")
+    data = json.dumps(obj, ensure_ascii=False, indent=2)
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(data)
+        f.flush()
+        try:
+            os.fsync(f.fileno())
+        except Exception:
+            pass
+    try:
+        os.chmod(tmp, 0o600)          # 토큰 파일 권한(윈도우에서는 무시됨)
+    except Exception:
+        pass
+    os.replace(tmp, path)
+
+
+def _iso_kst(raw):
+    """ISO 문자열 → KST aware datetime. 비었거나 못 읽으면 None."""
+    s = str(raw or "").strip()
+    if not s:
+        return None
+    try:
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+    except Exception:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=KST)
+    try:
+        return dt.astimezone(KST)
+    except Exception:
+        return None
+
+
+def _scrub_threads_token(text, token) -> str:
+    """로그·오류 문자열에서 토큰 원문을 지운다(원문은 어떤 경로로도 남기지 않는다)."""
+    s = str(text if text is not None else "")
+    t = str(token or "").strip()
+    if t and t in s:
+        s = s.replace(t, "<token>")
+    return s
+
+
+def _threads_refresh_days(tc: dict = None, cfg: dict = None) -> float:
+    """연장 주기(일) — threads_config.json token_refresh_days → config.json → 기본 25일."""
+    for src, key in (((tc or {}), "token_refresh_days"), ((cfg or {}), "threads_token_refresh_days")):
+        try:
+            v = float(src.get(key))
+        except Exception:
+            continue
+        if 1 <= v <= 55:
+            return v
+    return float(THREADS_TOKEN_REFRESH_DAYS)
+
+
+def _threads_token_refresh_plan(tc: dict, now: datetime = None, interval_days: float = None) -> dict:
+    """토큰 연장이 필요한지 판단한다(토큰 원문은 읽지 않고 시각만 본다).
+
+    - token_refreshed_at 기준 interval_days(기본 25일) 이상 지났으면 연장 시점.
+    - 마지막 시도(token_last_attempt_at) 후 24시간이 안 지났으면 재시도하지 않는다.
+    반환: {due, reason, age_days, retry_in_hours, interval_days}
+    """
+    now = now or datetime.now(KST)
+    interval = float(interval_days or _threads_refresh_days(tc))
+    plan = {"due": False, "reason": "", "age_days": None,
+            "retry_in_hours": 0.0, "interval_days": interval}
+    if not str(tc.get("access_token") or "").strip():
+        plan["reason"] = "access_token 없음"
+        return plan
+    last_ok = _iso_kst(tc.get("token_refreshed_at"))
+    age = (now - last_ok).total_seconds() / 86400.0 if last_ok else None
+    plan["age_days"] = round(age, 2) if age is not None else None
+    if age is not None and age < interval:
+        plan["reason"] = "아직 연장 시점 아님(%.1f일/%d일)" % (age, int(interval))
+        return plan
+    last_try = _iso_kst(tc.get("token_last_attempt_at"))
+    if last_try is not None:
+        waited_h = (now - last_try).total_seconds() / 3600.0
+        if waited_h < THREADS_REFRESH_RETRY_HOURS:
+            plan["retry_in_hours"] = round(THREADS_REFRESH_RETRY_HOURS - waited_h, 1)
+            plan["reason"] = "직전 시도 %.1f시간 전 → %.1f시간 뒤 재시도" % (
+                waited_h, plan["retry_in_hours"])
+            return plan
+    plan["due"] = True
+    if age is None:
+        plan["reason"] = "token_refreshed_at 없음 → 지금 연장 확인"
+    else:
+        plan["reason"] = "마지막 연장 %.0f일 경과(기준 %d일)" % (age, int(interval))
+    return plan
+
+
+def _threads_refresh_call(token: str) -> tuple:
+    """Meta th_refresh_token 1회 호출 → (json, http_code, 오류문자열). 토큰 원문은 남기지 않는다."""
+    params = urllib.parse.urlencode({"grant_type": "th_refresh_token", "access_token": token})
+    req = urllib.request.Request(
+        THREADS_REFRESH_URL + "?" + params,
+        headers={"User-Agent": "SY-PC-Watch/1.0", "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=THREADS_REFRESH_TIMEOUT) as r:
+            code = int(getattr(r, "status", 0) or 0)
+            raw = r.read(300000).decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        code = int(getattr(e, "code", 0) or 0)
+        try:
+            raw = e.read().decode("utf-8", "replace")
+        except Exception:
+            raw = ""
+        log("스레드 토큰 연장 응답 HTTP %s" % code)
+    except Exception as e:
+        return {}, 0, _scrub_threads_token("%s: %s" % (type(e).__name__, e), token)[:240]
+    try:
+        js = json.loads(raw) if raw.strip() else {}
+    except Exception:
+        js = {"_raw": raw[:200]}
+    if not isinstance(js, dict):
+        js = {}
+    err = ""
+    eobj = js.get("error")
+    if isinstance(eobj, dict):
+        err = " ".join(str(x) for x in (eobj.get("type"), eobj.get("code"),
+                                        eobj.get("message"), eobj.get("error_user_msg")) if x)
+    elif isinstance(eobj, str):
+        err = eobj
+    if not err and code >= 400:
+        err = "HTTP %s" % code
+    return js, code, _scrub_threads_token(err, token)[:240]
+
+
+def _update_threads_config(patch: dict) -> None:
+    """threads_config.json 에 patch 키만 덮어써 원자적으로 저장한다(다른 키·_help 보존)."""
+    base = {}
+    try:
+        if THREADS_CONFIG_FILE.exists():
+            base = json.loads(THREADS_CONFIG_FILE.read_text(encoding="utf-8")) or {}
+    except Exception as e:
+        log("스레드 설정 읽기 실패(받은 값만 저장): %s: %s" % (type(e).__name__, e))
+        base = {}
+    if not isinstance(base, dict):
+        base = {}
+    base.update(patch)
+    _atomic_write_json(THREADS_CONFIG_FILE, base)
+
+
+def refresh_threads_token(cfg: dict, state: dict = None, tc: dict = None,
+                          force: bool = False) -> dict:
+    """Threads 60일 장기 토큰을 도래 시 Meta 공식 엔드포인트(th_refresh_token)로 자동 연장한다.
+
+    - access_token 이 없거나 enabled=false 면 조용히 건너뛴다(알림 없음).
+    - 도래 판단: token_refreshed_at 기준 token_refresh_days(기본 25일). 값이 없으면 지금 한 번 확인.
+    - 성공: 새 토큰을 메모리(tc)와 threads_config.json 에 원자적으로 저장하고 token_refreshed_at 갱신.
+    - 실패: 기존 access_token 을 절대 지우지 않고 token_last_attempt_at 만 남겨 24시간 뒤 재시도.
+    - 반환값·로그·결과 JSON·텔레그램에 토큰 원문은 넣지 않는다.
+    """
+    now = datetime.now(KST)
+    try:
+        if not isinstance(tc, dict):
+            tc = load_threads_config()
+    except Exception as e:
+        log("스레드 토큰 연장 건너뜀(설정 읽기 실패): %s: %s" % (type(e).__name__, e))
+        return {"ok": False, "skipped": True, "reason": "설정 읽기 실패"}
+
+    token = str(tc.get("access_token") or "").strip()
+    if not token:
+        return {"ok": True, "skipped": True, "reason": "access_token 없음"}
+    if not tc.get("enabled", True):
+        return {"ok": True, "skipped": True, "reason": "enabled=false"}
+
+    interval = _threads_refresh_days(tc, cfg)
+    plan = _threads_token_refresh_plan(tc, now, interval)
+    if not plan["due"] and not force:
+        return {"ok": True, "skipped": True, "reason": plan["reason"],
+                "age_days": plan["age_days"], "interval_days": interval,
+                "retry_in_hours": plan["retry_in_hours"]}
+
+    at = now.isoformat(timespec="seconds")
+    js, code, err = _threads_refresh_call(token)
+    new_token = str((js or {}).get("access_token") or "").strip()
+    if new_token:
+        try:
+            expires_in = int((js or {}).get("expires_in") or 0)
+        except Exception:
+            expires_in = 0
+        patch = {"access_token": new_token, "token_refreshed_at": at,
+                 "token_last_attempt_at": at, "token_refresh_error": "",
+                 "token_expires_in": expires_in}
+        tc.update(patch)          # 메모리 즉시 반영 → 같은 회차 인사이트가 새 토큰을 쓴다
+        saved = True
+        try:
+            _update_threads_config(patch)
+        except Exception as e:
+            saved = False
+            log("스레드 토큰 연장은 됐지만 설정 저장 실패: %s: %s" % (type(e).__name__, e))
+        if isinstance(state, dict):
+            try:
+                state["threads_token_refreshed_at"] = at
+            except Exception:
+                pass
+        days = round(expires_in / 86400.0, 1) if expires_in else None
+        log("스레드 토큰 자동 연장 완료: %s (만료 %s일, 설정저장 %s)" % (
+            at, days if days is not None else "?", "성공" if saved else "실패"))
+        return {"ok": True, "refreshed": True, "saved": saved, "refreshed_at": at,
+                "expires_in": expires_in, "expires_days": days, "reason": "연장 완료"}
+
+    # 실패 — 기존 토큰은 그대로 둔다(access_token 키를 쓰지 않으므로 덮어쓰지 않는다)
+    etext = _scrub_threads_token(err or ("HTTP %s" % code), token)[:240].strip() or "이유 미상"
+    try:
+        _update_threads_config({"token_last_attempt_at": at, "token_refresh_error": etext})
+    except Exception as e:
+        log("스레드 토큰 연장 실패 기록 저장 오류: %s: %s" % (type(e).__name__, e))
+    log("스레드 토큰 자동 연장 실패(기존 토큰 유지): %s — %s시간 뒤 재시도" % (
+        etext, THREADS_REFRESH_RETRY_HOURS))
+    return {"ok": False, "refreshed": False, "error": etext, "http": code,
+            "retry_in_hours": THREADS_REFRESH_RETRY_HOURS}
 
 
 def _threads_public_profile() -> dict:
@@ -3037,9 +3270,10 @@ def _threads_api_insights(tc: dict) -> dict:
                               .decode("utf-8", "replace"))
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:200]
-            log("스레드 인사이트 HTTP %s: %s" % (e.code, _tg_clean(detail, {})))
+            log("스레드 인사이트 HTTP %s: %s" % (e.code, _tg_clean(_scrub_threads_token(detail, token), {})))
         except Exception as e:
-            log("스레드 인사이트 오류: %s: %s" % (type(e).__name__, e))
+            # 예외 메시지에 요청 URL(토큰 포함)이 섞이는 경우가 있어 반드시 가린다
+            log("스레드 인사이트 오류: %s: %s" % (type(e).__name__, _scrub_threads_token(e, token)))
         return {}
 
     res = _call({"metric": "views", "period": "day",
@@ -3093,6 +3327,20 @@ def refresh_threads_stats(cfg: dict, state: dict) -> None:
     try:
         tc = load_threads_config()
         if str(tc.get("access_token") or "").strip() and tc.get("enabled", True):
+            # ① 60일 장기 토큰 자동 연장(기본 25일 주기) — 인사이트보다 먼저 돌려야 같은 회차에 새 토큰을 쓴다.
+            #    실패해도 기존 토큰을 지우지 않고 본 루프를 막지 않는다(내부에서 24시간 재시도 제한).
+            tr = refresh_threads_token(cfg, state, tc=tc)
+            out["token_refresh"] = {
+                "checked_at": out["fetched_at"],
+                "ok": bool(tr.get("ok")),
+                "refreshed": bool(tr.get("refreshed")),
+                "skipped": bool(tr.get("skipped")),
+                "reason": str(tr.get("reason") or tr.get("error") or "")[:160],
+                "age_days": tr.get("age_days"),
+                "expires_days": tr.get("expires_days"),
+                "refreshed_at": str(tc.get("token_refreshed_at") or ""),
+                "last_attempt_at": str(tc.get("token_last_attempt_at") or ""),
+            }
             ins = _threads_api_insights(tc)
             if ins:
                 out.update(ins)
