@@ -1930,8 +1930,8 @@
  "dashboard": {
   "schema": "pc_dashboard/1",
   "generator": "sy_auto_watch.py",
-  "filled_at": "2026-11-28T22:01:51+09:00",
-  "filled_at_kst": "11-28 22:01",
+  "filled_at": "2026-11-28T23:01:59+09:00",
+  "filled_at_kst": "11-28 23:01",
   "shopee": {
    "source_at": "2026-11-28T22:01:30+09:00",
    "cookie_state": "ok",
@@ -2038,18 +2038,18 @@
    "next_free_at": ""
   },
   "survey": {
-   "source_at": "2026-11-28T20:21:42+09:00",
-   "new_candidates": 2,
-   "candidates": 2,
+   "source_at": "2026-11-28T22:22:30+09:00",
+   "new_candidates": 0,
+   "candidates": 0,
    "review": 0,
-   "duplicates": 301,
-   "candidates_total": 2,
+   "duplicates": 302,
+   "candidates_total": 0,
    "sources_ok": 4,
    "sources_failed": 0
   },
   "qoo10": {
    "threshold": 50,
-   "checked_at": "11-28 21:44",
+   "checked_at": "11-28 22:45",
    "checked": 26,
    "alert_count": 7,
    "danger": [],
@@ -2064,7 +2064,7 @@
      "code": "1078815",
      "set": "1호",
      "name": "마스킹테이프 3개입 ⑤",
-     "qty": 8
+     "qty": 7
     },
     {
      "code": "1013422",
@@ -2114,7 +2114,7 @@
   },
   "youtube": null,
   "blog": {
-   "source_at": "2026-11-28T21:49:51+09:00",
+   "source_at": "2026-11-28T22:51:28+09:00",
    "post_count": 44,
    "post_count_source": "blog.naver.com totalCount",
    "feed_items": 44,
@@ -2125,7 +2125,7 @@
    "blog_url": "https://blog.naver.com/sy_global-"
   },
   "threads": {
-   "source_at": "2026-11-28T21:49:51+09:00",
+   "source_at": "2026-11-28T22:51:28+09:00",
    "followers": 32,
    "posts_total": 148,
    "views_30d": null,
