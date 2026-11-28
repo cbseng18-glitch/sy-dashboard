@@ -1224,6 +1224,19 @@ def _gemini_ready(gc: dict) -> tuple:
     return True, ""
 
 
+def _targets_gap_seconds(targets_sec: int) -> int:
+    """다음 후보글 수집까지 기다릴 초. Gemini 키가 없으면 30분마다 확인한다.
+
+    토큰·키를 19:30 에 넣었는데 정규 주기(기본 180분) 때문에 두 시간을 기다리는 일이 없도록,
+    키가 없는 동안에는 짧게(최대 30분) 다시 본다. 키가 들어오면 정규 주기로 돌아간다.
+    """
+    try:
+        ready = _gemini_ready(load_gemini_config())[0]
+    except Exception:
+        ready = False
+    return int(targets_sec) if ready else min(int(targets_sec), 1800)
+
+
 def _gemini_note() -> str:
     """상태 보고용 한 줄 — 키 값 자체는 절대 찍지 않는다."""
     try:
@@ -5245,7 +5258,7 @@ def main() -> None:
 
         # 🎯 지식iN·스레드 후보글 → Gemini 필터 → pc_targets.json
         #   gemini_config.json 의 api_key 가 없으면 수집만 하고 조용히 건너뛴다(알림 없음).
-        if now - state.get("last_targets_check", 0) >= targets_sec:
+        if now - state.get("last_targets_check", 0) >= _targets_gap_seconds(targets_sec):
             try:
                 collect_targets(cfg, state)
             except Exception as e:
