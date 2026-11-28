@@ -2101,7 +2101,11 @@ def push_dashboard(cfg: dict, state: dict, force: bool = False, source: str = "�
             return {"ok": True, "skipped": True}
         log("원격 pc_stats.json 에 dashboard 키가 없음 → 생성 푸시")
 
-    res = _github_put_json(DASH_REMOTE_PATH, {"dashboard": payload},
+    put_obj = {"dashboard": payload}
+    if payload.get("toss"):
+        # 최상위 toss 키도 같이 덮어쓴다 — 예전에 pc_stats.json의 toss를 읽던 쪽도 null이 아니게.
+        put_obj["toss"] = payload["toss"]
+    res = _github_put_json(DASH_REMOTE_PATH, put_obj,
                            f"pc: dashboard numbers {payload['filled_at_kst']} KST ({source})", token)
     if res.get("ok"):
         state["last_dash_push"] = time.time()
@@ -2787,6 +2791,37 @@ def _toss_ready(cfg: dict):
     return tc
 
 
+def _toss_configured() -> bool:
+    """toss_config.json 이 다 채워졌는지 조용히 확인한다(텔레그램 알림 없음·파일 생성만)."""
+    try:
+        tc = load_toss_config()
+    except Exception:
+        return False
+    return all(tc.get(k) for k in ("client_id", "client_secret", "publisher_id"))
+
+
+def refresh_toss_stats(cfg: dict, state: dict) -> None:
+    """pc_stats.json 의 toss 수치가 늘 최신이 되도록 토스 실적을 조용히 갱신한다.
+
+    - toss_config.json 이 없거나 비어 있으면 아무 알림 없이 건너뛴다(본 루프는 계속).
+    - 성공하면 집 PC 로컬 toss_stats.json 이 갱신되고, 다음 대시보드 푸시에 toss 로 실린다.
+    - 실패해도 예외를 밖으로 던지지 않는다(감시 루프 보호).
+    """
+    state["last_toss_check"] = time.time()      # 재시도 폭주 방지: 시도 시각부터 간격 계산
+    if not _toss_configured():
+        log("토스 실적 자동 갱신 건너뜀: toss_config.json 미완료(설정 안내는 /토스통계 때만)")
+        return
+    try:
+        r = cmd_toss_stats(cfg, {}, source="자동", quiet=True)
+        if isinstance(r, dict) and r.get("ok"):
+            log("토스 실적 자동 갱신 완료: %s~%s 클릭 %s·판매 %s" % (
+                r.get("from"), r.get("to"), r.get("clickCount"), r.get("soldQuantity")))
+        else:
+            log("토스 실적 자동 갱신 실패: %s" % ((r or {}).get("error") if isinstance(r, dict) else r))
+    except Exception as e:
+        log(f"토스 실적 자동 갱신 오류(본 루프 계속): {type(e).__name__}: {e}")
+
+
 def get_public_ip():
     """집 PC 현재 공인 IPv4 → (ip, 사용한 조회 URL). 실패하면 ("", "")."""
     for url in IP_LOOKUP_URLS:
@@ -2980,8 +3015,13 @@ def _ymd(value, fallback):
         raise ValueError(f"달력에 없는 날짜입니다: {s} (YYYY-MM-DD)")
 
 
-def cmd_toss_stats(cfg: dict, args: dict | None = None, source: str = "원격") -> dict:
-    """GET /openapi/performance — 기간 클릭·판매·예상 수익금 요약(기본: 이번 달 1일~오늘 KST)."""
+def cmd_toss_stats(cfg: dict, args: dict | None = None, source: str = "원격",
+                   quiet: bool = False) -> dict:
+    """GET /openapi/performance — 기간 클릭·판매·예상 수익금 요약(기본: 이번 달 1일~오늘 KST).
+
+    quiet=True 는 본 루프의 자동 갱신용이다 — 텔레그램 보고를 보내지 않고 결과만 돌려준다.
+    (명령·텔레그램 수동 호출은 기본 quiet=False 로 기존과 똑같이 보고한다.)
+    """
     args = args or {}
     tc = _toss_ready(cfg)
     if tc is None:
@@ -2991,11 +3031,13 @@ def cmd_toss_stats(cfg: dict, args: dict | None = None, source: str = "원격") 
         d_from = _ymd(args.get("from_date") or args.get("fromDate"), today.replace(day=1))
         d_to = _ymd(args.get("to_date") or args.get("toDate"), today)
     except ValueError as e:
-        send_telegram(cfg, f"📊 [토스 쉐어링크 실적] {e}")
+        if not quiet:
+            send_telegram(cfg, f"📊 [토스 쉐어링크 실적] {e}")
         return {"ok": False, "error": str(e)}
     if d_from > d_to:
         msg = f"📊 [토스 쉐어링크 실적] 시작일({d_from})이 종료일({d_to})보다 늦습니다"
-        send_telegram(cfg, msg)
+        if not quiet:
+            send_telegram(cfg, msg)
         return {"ok": False, "error": "from_date > to_date"}
 
     sub_tag = str(args.get("sub_tag_id") or args.get("subTagId") or "").strip()
@@ -3022,7 +3064,8 @@ def cmd_toss_stats(cfg: dict, args: dict | None = None, source: str = "원격") 
             hint = _toss_err_hint(err)
             if hint:
                 msg += "\n" + hint
-            send_telegram(cfg, msg)
+            if not quiet:
+                send_telegram(cfg, msg)
             return {"ok": False, "error": err}
         summary = (js.get("success") or {}).get("summary") or {}
         for k in keys:
@@ -3058,7 +3101,8 @@ def cmd_toss_stats(cfg: dict, args: dict | None = None, source: str = "원격") 
     if not total["clickCount"] and not total["soldQuantity"]:
         lines.append("• 이 기간에는 클릭·판매 실적이 없습니다")
     lines.append("• 확정 금액은 정산내역 기준이며 부가세·원천징수 전 금액입니다")
-    send_telegram(cfg, "\n".join(lines))
+    if not quiet:
+        send_telegram(cfg, "\n".join(lines))
     result = {"ok": True, "from": str(d_from), "to": str(d_to)}
     result.update(total)
     try:
@@ -3717,10 +3761,12 @@ def main() -> None:
     boost_sec = max(900, int(cfg.get("boost_interval_minutes", 240)) * 60)
     q10_sec = max(1800, int(cfg.get("qoo10_daiso_interval_minutes", 60)) * 60)
     dash_sec = max(600, int(cfg.get("dashboard_push_minutes", 60)) * 60)
+    toss_sec = max(1800, int(cfg.get("toss_interval_minutes", 180)) * 60)
     poll_sec = max(20, int(cfg.get("remote_poll_seconds", 60)))
 
     log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+토스 쉐어링크+네이버카페 인기글(08:30/14:30)+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
 
+    first_cycle = True
     while True:
         now = time.time()
         dt = datetime.now()
@@ -3774,11 +3820,26 @@ def main() -> None:
             except Exception as e:
                 log(f"설문 수집 오류(본 루프 계속): {type(e).__name__}: {e}")
 
+        # 토스 쉐어링크 실적 → toss_stats.json 조용히 갱신(설정 없으면 알림 없이 건너뜀)
+        #   대시보드 푸시·통합조회보다 먼저 돌려야 같은 회차 푸시에 최신 toss 값이 실린다.
+        if now - state.get("last_toss_check", 0) >= toss_sec:
+            try:
+                refresh_toss_stats(cfg, state)
+            except Exception as e:
+                log(f"토스 실적 자동 갱신 오류(본 루프 계속): {type(e).__name__}: {e}")
+
         if now - state.get("last_stats_check", 0) >= stats_sec:
             try:
                 check_stats(cfg, state)
             except Exception as e:
                 log(f"통합조회 오류(본 루프 계속): {type(e).__name__}: {e}")
+            # stats_checker 가 pc_stats.json 을 통째로 새로 올리면 dashboard 키가 사라진다
+            # → 바로 다시 박아 집 PC 실시간 카드가 1시간씩 비어 보이지 않게 한다(내부에서 생략 판단).
+            try:
+                push_dashboard(cfg, state)
+            except Exception as e:
+                log(f"통합조회 뒤 대시보드 재푸시 오류(본 루프 계속): {type(e).__name__}: {e}")
+
 
         if now - state.get("last_boost_check", 0) >= boost_sec:
             try:
@@ -3787,11 +3848,13 @@ def main() -> None:
                 log(f"무료부스트 오류(본 루프 계속): {type(e).__name__}: {e}")
 
         # ③ 집 PC 수치를 대시보드(pc_stats.json dashboard)로 직접 푸시
-        if now - state.get("last_dash_push", 0) >= dash_sec:
+        #   기동 첫 회차는 무조건 한 번 점검한다 — 재시작 뒤 dashboard 키 누락·토스 신규값을 바로 반영.
+        if first_cycle or (now - state.get("last_dash_push", 0) >= dash_sec):
             try:
                 push_dashboard(cfg, state)
             except Exception as e:
                 log(f"대시보드 푸시 오류(본 루프 계속): {type(e).__name__}: {e}")
+        first_cycle = False
 
         # ☕ 네이버 카페 인기글 — 매일 08:30·14:30 KST (가장 최근 도래 슬롯 1회만 실행)
         cafe_slot = ""
