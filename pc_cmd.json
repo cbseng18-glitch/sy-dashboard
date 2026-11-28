@@ -1,13 +1,5 @@
 {
-  "id": "selfupd_toss_20261128_01",
-  "action": "self_update",
-  "args": {
-    "files": [
-      {
-        "remote": "pc_auto/sy_auto_watch.py",
-        "local": "sy_auto_watch.py"
-      }
-    ],
-    "restart": true
-  }
+  "id": "getip_20261128_01",
+  "action": "get_ip",
+  "args": {}
 }
