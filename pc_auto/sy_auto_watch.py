@@ -1861,7 +1861,8 @@ def instagram_status_msg(cfg: dict) -> str:
                 _ig_base(ic), kin, THREADS_CONFIG_FILE))
 
 
-def instagram_publish(cfg: dict, args: dict, source: str = "원격") -> dict:
+def instagram_publish(cfg: dict, args: dict, source: str = "원격",
+                      state: dict | None = None) -> dict:
     """원격·텔레그램 명령용 발행 진입점. confirm 이 없으면 드라이런(검증만)이다."""
     args = args or {}
     ic = load_instagram_config()
@@ -1901,10 +1902,8 @@ def instagram_publish(cfg: dict, args: dict, source: str = "원격") -> dict:
     if res.get("error") or res.get("skipped"):
         lines.append("• 사유: %s" % (res.get("error") or res.get("skipped")))
     send_telegram(cfg, "\n".join(lines))
-    if res.get("ok") and not res.get("dry_run"):
-        state = load_state()
+    if res.get("ok") and not res.get("dry_run") and isinstance(state, dict):
         state["last_ig_publish"] = datetime.now(KST).isoformat(timespec="seconds")
-        save_state(state)
     _report_pc_result(cfg, "instagram_publish", res)
     return res
 
@@ -4931,7 +4930,7 @@ def handle_action(cfg: dict, state: dict, action: str, args: dict | None = None,
             log(f"인스타 상태 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
     elif action in ("ig_publish", "instagram_publish"):
         try:
-            instagram_publish(cfg, args, source=source)
+            instagram_publish(cfg, args, source=source, state=state)
         except Exception as e:      # 발행 오류가 본 감시 루프를 죽이지 않게
             log(f"인스타 발행 명령 오류(본 루프 계속): {type(e).__name__}: {e}")
             send_telegram(cfg, f"📸 [인스타 발행 오류] {type(e).__name__}: {_tg_clean(e, cfg)}")
