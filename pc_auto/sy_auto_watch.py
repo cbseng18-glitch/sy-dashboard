@@ -1478,7 +1478,8 @@ def check_qoo10_daiso(cfg: dict, state: dict, force_report: bool = False) -> dic
     state["qoo10_daiso_alert_sig"] = sig
     head = "🚨 [큐텐 1~5호 다이소 품절 경보]"
     if force_report:
-        head += " 09:30 최우선 점검"
+        now_hm = datetime.now().strftime("%H:%M")
+        head += (" 09:30 최우선 점검" if now_hm == "09:30" else f" 최우선 점검({now_hm})")
     lines = [head]
     if danger:
         lines.append(f"■ 완전품절 {len(danger)}종")
