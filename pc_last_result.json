@@ -7,5 +7,29 @@
   "failed": [],
   "restart_planned": true,
   "at": "2026-11-28T16:52:16+09:00"
+ },
+ "make_shorts": {
+  "ok": true,
+  "path": "C:\\sy_auto\\shorts_factory\\out\\q5_probe_preview.mp4",
+  "file": "q5_probe_preview.mp4",
+  "size_mb": 1.27,
+  "elapsed": 22,
+  "scenes": 1,
+  "video_message_id": 477,
+  "video_sent": true,
+  "uploaded": false,
+  "voices": [
+   "ja-JP-NanamiNeural"
+  ],
+  "stdout_tail": [
+   "[2/3] 이어붙이기",
+   "[3/3] 마무리",
+   "============================================================",
+   "완성: C:\\sy_auto\\shorts_factory\\out\\q5_probe_preview.mp4",
+   "길이: 8.7초 / 크기: 1.27MB / 해상도: 1080x1920",
+   "============================================================"
+  ],
+  "source": "피비서 원격",
+  "at": "2026-11-28T16:53:52+09:00"
  }
 }
