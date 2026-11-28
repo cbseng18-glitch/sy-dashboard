@@ -1,5 +1,5 @@
 {
-  "id": "selfupdate_stats30m_20261128_2200",
+  "id": "selfupdate_targets_ig_20261129_0032",
   "action": "self_update",
   "args": {
     "files": [
@@ -8,6 +8,7 @@
         "local": "sy_auto_watch.py"
       }
     ],
-    "note": "쇼피 등 통합 통계 수집 주기 30분 단축"
+    "restart": true,
+    "note": "지식iN·스레드 후보글 + Gemini 필터(pc_targets.json) · 인스타 릴스/피드 교차발행 틀 선반영"
   }
 }
