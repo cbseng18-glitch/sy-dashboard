@@ -1,13 +1,8 @@
 {
-  "id": "toss_diag2_20261128_1436",
-  "action": "self_update",
+  "id": "toss_diag2_test_20261128_1437",
+  "action": "toss_products",
   "args": {
-    "files": [
-      {
-        "remote": "pc_auto/sy_auto_watch.py",
-        "local": "sy_auto_watch.py"
-      }
-    ],
-    "restart": true
+    "section": "TODAY_DEAL",
+    "limit": 8
   }
 }
