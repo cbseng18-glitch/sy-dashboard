@@ -1,11 +1,19 @@
 {
-  "id": "q5_skus_v2_20261128_1454",
+  "id": "shorts_patch_v3_20261128_1658",
   "action": "self_update",
   "args": {
     "files": [
       {
         "remote": "pc_auto/sy_auto_watch.py",
         "local": "sy_auto_watch.py"
+      },
+      {
+        "remote": "pc_auto/shorts_factory/make_shorts.py",
+        "local": "shorts_factory/make_shorts.py"
+      },
+      {
+        "remote": "pc_auto/shorts_factory/youtube_upload.py",
+        "local": "shorts_factory/youtube_upload.py"
       }
     ],
     "restart": true
