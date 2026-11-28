@@ -1,40 +1,41 @@
 {
-  "id": "shorts_qoo10_3_20261128_v2",
+  "id": "shorts_qoo10_2_20261128_v2",
   "action": "make_shorts",
   "args": {
-    "filename": "qoo10_3_new_v2_20261128.mp4",
+    "filename": "qoo10_2_new_v2_20261128.mp4",
     "theme": "navy",
     "brand": "@sy_global",
     "upload": true,
     "privacy": "public",
-    "yt_title": "韓国ダイソー限定 K-POPライブ参戦6点セット #Shorts #Qoo10",
+    "yt_title": "韓国ダイソー サンリオ文房具8点セット マステ200枚 コインケース入り #Shorts #Qoo10",
     "yt_tags": [
       "韓国ダイソー",
-      "推し活",
-      "KPOP",
+      "サンリオ",
+      "ハローキティ",
+      "マイメロディ",
       "Qoo10",
       "韓国限定"
     ],
     "scenes": [
       {
         "badge": "韓国限定",
-        "title": "K-POPライブ",
-        "subtitle": "参戦フルキット6点セット",
-        "narration": "韓国ダイソー限定のK-POPライブ参戦フルキットが登場。",
+        "title": "韓国ダイソー",
+        "subtitle": "サンリオ文房具8点セット",
+        "narration": "韓国ダイソーで販売されているサンリオ正規ライセンス文房具の8点セットです。",
         "motion": "in"
       },
       {
-        "badge": "ポーチ2種",
-        "title": "キルティング＆巾着",
-        "subtitle": "アクスタ・トレカ収納に",
-        "narration": "犬のキルティングキーリングポーチとミニ巾着の2種入り。",
+        "badge": "マステ200枚",
+        "title": "ハローキティ",
+        "subtitle": "切り取り式マスキングテープ",
+        "narration": "1枚ずつ切り取って使えるマスキングテープは200枚入り。",
         "motion": "pan"
       },
       {
-        "badge": "推し活小物",
-        "title": "スタンド＆キーリング",
-        "subtitle": "デコシールまで全部入り",
-        "narration": "トレカスタンドやビーズキーリング、デコシールもセットです。",
+        "badge": "8点入り",
+        "title": "シール・付箋・ペン",
+        "subtitle": "刺しゅうコインケースも",
+        "narration": "シール4種、ふせん、ボールペン、刺しゅうコインケースまで全部入りです。",
         "motion": "out"
       },
       {
