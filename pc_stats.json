@@ -1766,5 +1766,192 @@
    }
   }
  ],
- "merged_at": "2026-11-28T18:00:53+09:00"
+ "merged_at": "2026-11-28T18:00:53+09:00",
+ "dashboard": {
+  "schema": "pc_dashboard/1",
+  "generator": "sy_auto_watch.py",
+  "filled_at": "2026-11-28T18:50:25+09:00",
+  "filled_at_kst": "11-28 18:50",
+  "shopee": {
+   "source_at": "2026-11-28T18:00:36+09:00",
+   "cookie_state": "ok",
+   "regions_ok": 8,
+   "regions_total": 8,
+   "uv": 3,
+   "pv": 3,
+   "clicks": 0,
+   "orders": 0,
+   "units": 0,
+   "sales": 0,
+   "regions": [
+    {
+     "region": "SG",
+     "ok": true,
+     "uv": 0,
+     "pv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    },
+    {
+     "region": "TW",
+     "ok": true,
+     "uv": 0,
+     "pv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    },
+    {
+     "region": "MY",
+     "ok": true,
+     "uv": 1,
+     "pv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    },
+    {
+     "region": "PH",
+     "ok": true,
+     "uv": 1,
+     "pv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    },
+    {
+     "region": "VN",
+     "ok": true,
+     "uv": 0,
+     "pv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    },
+    {
+     "region": "TH",
+     "ok": true,
+     "uv": 1,
+     "pv": 1,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    },
+    {
+     "region": "MX",
+     "ok": true,
+     "uv": 0,
+     "pv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    },
+    {
+     "region": "BR",
+     "ok": true,
+     "uv": 0,
+     "pv": 0,
+     "clicks": 0,
+     "orders": 0,
+     "units": 0,
+     "sales": 0
+    }
+   ]
+  },
+  "boost": {
+   "source_at": "2026-11-28T16:25:41+09:00",
+   "regions_ok": 8,
+   "regions_total": 8,
+   "boosted": 17,
+   "planned": 17,
+   "free_slots": 17,
+   "failed": 0,
+   "cost_krw": 0,
+   "next_free_at": "2026-11-28T16:26:33+09:00"
+  },
+  "survey": {
+   "source_at": "2026-11-28T18:21:27+09:00",
+   "new_candidates": 46,
+   "candidates": 32,
+   "review": 14,
+   "duplicates": 231,
+   "candidates_total": 46,
+   "sources_ok": 4,
+   "sources_failed": 0
+  },
+  "qoo10": {
+   "threshold": 50,
+   "checked_at": "11-28 18:43",
+   "checked": 26,
+   "alert_count": 7,
+   "danger": [],
+   "low": [
+    {
+     "code": "1056955",
+     "set": "3호",
+     "name": "볼륨 조임 미니 파우치(블랙) ⑥",
+     "qty": 7
+    },
+    {
+     "code": "1013422",
+     "set": "4호",
+     "name": "파스텔 형광펜 3개입 ③",
+     "qty": 8
+    },
+    {
+     "code": "1078815",
+     "set": "1호",
+     "name": "마스킹테이프 3개입 ⑤",
+     "qty": 10
+    },
+    {
+     "code": "1058005",
+     "set": "3호",
+     "name": "T형 카드 스탠드 ②",
+     "qty": 11
+    },
+    {
+     "code": "1079748",
+     "set": "4호",
+     "name": "모트모트 데일리 체크 점착 메모지 60매입 ④",
+     "qty": 16
+    },
+    {
+     "code": "1073176",
+     "set": "3호",
+     "name": "비즈 키링 리본 ③",
+     "qty": 36
+    },
+    {
+     "code": "1074817",
+     "set": "4호",
+     "name": "모트모트 스프링 스터디 플래너 브라운 ①",
+     "qty": 41
+    }
+   ]
+  },
+  "daiso": {
+   "total": 64,
+   "in_stock": 53,
+   "offline_date": "2026-11-28"
+  },
+  "toss": {
+   "source_at": "2026-11-28T13:45:17+09:00",
+   "from": "2026-11-01",
+   "to": "2026-11-28",
+   "month_clicks": 5,
+   "month_sold": 0,
+   "month_sales_krw": 0,
+   "expected_krw": 0
+  },
+  "youtube": null
+ }
 }
