@@ -2,7 +2,7 @@
  "schema": "pc_boost/1",
  "generator": "shopee_booster.py",
  "version": "1.0.0",
- "generated_at": "2026-11-28T12:25:37+09:00",
+ "generated_at": "2026-11-28T16:25:41+09:00",
  "mode": "live",
  "config_path": "C:\\sy_auto\\config.json",
  "cookie_state": "ok",
@@ -72,7 +72,7 @@
     "slots_free": 0,
     "cooldown_seconds_config": 14400,
     "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:25:42+09:00",
+    "next_free_at": "2026-11-28T20:25:46+09:00",
     "product_ids": [
      "26447109019",
      "57971534333",
@@ -145,7 +145,7 @@
     "slots_free": 0,
     "cooldown_seconds_config": 14400,
     "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:25:48+09:00",
+    "next_free_at": "2026-11-28T20:25:53+09:00",
     "product_ids": [
      "56221950415",
      "56471987779",
@@ -163,19 +163,20 @@
    "ok": true,
    "slots": {
     "slots_total": 5,
-    "slots_used": 0,
-    "slots_free": 5,
+    "slots_used": 1,
+    "slots_free": 4,
     "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 0,
-    "next_free_at": null,
-    "product_ids": []
+    "cooldown_remaining_seconds": 1,
+    "next_free_at": "2026-11-28T16:25:55+09:00",
+    "product_ids": [
+     "43736692092"
+    ]
    },
    "planned_ids": [
     "47871640401",
     "47121595505",
     "44521752790",
-    "43736692139",
-    "43736692092"
+    "43736692139"
    ],
    "plan_source": "최신목록",
    "boosts": [
@@ -202,29 +203,24 @@
      "state": "ok",
      "detail": "",
      "http_status": 200
-    },
-    {
-     "product_id": "43736692092",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
     }
    ],
-   "warnings": [],
+   "warnings": [
+    "재조회 4/5 — 일부 미반영"
+   ],
    "error": null,
    "slots_after": {
     "slots_total": 5,
-    "slots_used": 5,
-    "slots_free": 0,
+    "slots_used": 4,
+    "slots_free": 1,
     "cooldown_seconds_config": 14400,
     "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:25:56+09:00",
+    "next_free_at": "2026-11-28T20:25:58+09:00",
     "product_ids": [
      "47871640401",
      "47121595505",
      "44521752790",
-     "43736692139",
-     "43736692092"
+     "43736692139"
     ]
    }
   },
@@ -236,19 +232,20 @@
    "ok": true,
    "slots": {
     "slots_total": 5,
-    "slots_used": 0,
-    "slots_free": 5,
+    "slots_used": 2,
+    "slots_free": 3,
     "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 0,
-    "next_free_at": null,
-    "product_ids": []
+    "cooldown_remaining_seconds": 2,
+    "next_free_at": "2026-11-28T16:26:02+09:00",
+    "product_ids": [
+     "46621579863",
+     "46621579860"
+    ]
    },
    "planned_ids": [
     "51821726804",
     "40486803664",
-    "47871640395",
-    "46621579863",
-    "46621579860"
+    "47871640395"
    ],
    "plan_source": "최신목록",
    "boosts": [
@@ -269,35 +266,23 @@
      "state": "ok",
      "detail": "",
      "http_status": 200
-    },
-    {
-     "product_id": "46621579863",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "46621579860",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
     }
    ],
-   "warnings": [],
+   "warnings": [
+    "재조회 3/5 — 일부 미반영"
+   ],
    "error": null,
    "slots_after": {
     "slots_total": 5,
-    "slots_used": 5,
-    "slots_free": 0,
+    "slots_used": 3,
+    "slots_free": 2,
     "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:26:03+09:00",
+    "cooldown_remaining_seconds": 14398,
+    "next_free_at": "2026-11-28T20:26:02+09:00",
     "product_ids": [
      "51821726804",
      "40486803664",
-     "47871640395",
-     "46621579863",
-     "46621579860"
+     "47871640395"
     ]
    }
   },
@@ -309,62 +294,11 @@
    "ok": true,
    "slots": {
     "slots_total": 5,
-    "slots_used": 0,
-    "slots_free": 5,
-    "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 0,
-    "next_free_at": null,
-    "product_ids": []
-   },
-   "planned_ids": [
-    "45021595956",
-    "41536716883",
-    "40936716806",
-    "25149552050",
-    "48321630283"
-   ],
-   "plan_source": "최신목록",
-   "boosts": [
-    {
-     "product_id": "45021595956",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "41536716883",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "40936716806",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "25149552050",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "48321630283",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    }
-   ],
-   "warnings": [],
-   "error": null,
-   "slots_after": {
-    "slots_total": 5,
     "slots_used": 5,
     "slots_free": 0,
     "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:26:10+09:00",
+    "cooldown_remaining_seconds": 5,
+    "next_free_at": "2026-11-28T16:26:09+09:00",
     "product_ids": [
      "45021595956",
      "41536716883",
@@ -372,7 +306,12 @@
      "25149552050",
      "48321630283"
     ]
-   }
+   },
+   "planned_ids": [],
+   "plan_source": null,
+   "boosts": [],
+   "warnings": [],
+   "error": null
   },
   {
    "region": "TH",
@@ -382,62 +321,11 @@
    "ok": true,
    "slots": {
     "slots_total": 5,
-    "slots_used": 0,
-    "slots_free": 5,
-    "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 0,
-    "next_free_at": null,
-    "product_ids": []
-   },
-   "planned_ids": [
-    "46271644365",
-    "43136730512",
-    "27947057214",
-    "48371680989",
-    "47971770151"
-   ],
-   "plan_source": "최신목록",
-   "boosts": [
-    {
-     "product_id": "46271644365",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "43136730512",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "27947057214",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "48371680989",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "47971770151",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    }
-   ],
-   "warnings": [],
-   "error": null,
-   "slots_after": {
-    "slots_total": 5,
     "slots_used": 5,
     "slots_free": 0,
     "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:26:17+09:00",
+    "cooldown_remaining_seconds": 11,
+    "next_free_at": "2026-11-28T16:26:16+09:00",
     "product_ids": [
      "46271644365",
      "43136730512",
@@ -445,7 +333,12 @@
      "48371680989",
      "47971770151"
     ]
-   }
+   },
+   "planned_ids": [],
+   "plan_source": null,
+   "boosts": [],
+   "warnings": [],
+   "error": null
   },
   {
    "region": "MX",
@@ -455,62 +348,11 @@
    "ok": true,
    "slots": {
     "slots_total": 5,
-    "slots_used": 0,
-    "slots_free": 5,
-    "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 0,
-    "next_free_at": null,
-    "product_ids": []
-   },
-   "planned_ids": [
-    "49672049494",
-    "44486736281",
-    "43786737206",
-    "43436726387",
-    "48571640570"
-   ],
-   "plan_source": "최신목록",
-   "boosts": [
-    {
-     "product_id": "49672049494",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "44486736281",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "43786737206",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "43436726387",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "48571640570",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    }
-   ],
-   "warnings": [],
-   "error": null,
-   "slots_after": {
-    "slots_total": 5,
     "slots_used": 5,
     "slots_free": 0,
     "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:26:25+09:00",
+    "cooldown_remaining_seconds": 19,
+    "next_free_at": "2026-11-28T16:26:24+09:00",
     "product_ids": [
      "49672049494",
      "44486736281",
@@ -518,7 +360,12 @@
      "43436726387",
      "48571640570"
     ]
-   }
+   },
+   "planned_ids": [],
+   "plan_source": null,
+   "boosts": [],
+   "warnings": [],
+   "error": null
   },
   {
    "region": "BR",
@@ -528,62 +375,11 @@
    "ok": true,
    "slots": {
     "slots_total": 5,
-    "slots_used": 0,
-    "slots_free": 5,
-    "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 0,
-    "next_free_at": null,
-    "product_ids": []
-   },
-   "planned_ids": [
-    "45221609311",
-    "44921615563",
-    "47171645711",
-    "43136699283",
-    "48571640503"
-   ],
-   "plan_source": "최신목록",
-   "boosts": [
-    {
-     "product_id": "45221609311",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "44921615563",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "47171645711",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "43136699283",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    },
-    {
-     "product_id": "48571640503",
-     "state": "ok",
-     "detail": "",
-     "http_status": 200
-    }
-   ],
-   "warnings": [],
-   "error": null,
-   "slots_after": {
-    "slots_total": 5,
     "slots_used": 5,
     "slots_free": 0,
     "cooldown_seconds_config": 14400,
-    "cooldown_remaining_seconds": 14399,
-    "next_free_at": "2026-11-28T16:26:34+09:00",
+    "cooldown_remaining_seconds": 27,
+    "next_free_at": "2026-11-28T16:26:33+09:00",
     "product_ids": [
      "45221609311",
      "44921615563",
@@ -591,16 +387,21 @@
      "43136699283",
      "48571640503"
     ]
-   }
+   },
+   "planned_ids": [],
+   "plan_source": null,
+   "boosts": [],
+   "warnings": [],
+   "error": null
   }
  ],
  "totals": {
   "regions_total": 8,
   "regions_ok": 8,
-  "free_slots": 40,
-  "planned": 40,
-  "attempted": 40,
-  "boosted": 40,
+  "free_slots": 17,
+  "planned": 17,
+  "attempted": 17,
+  "boosted": 17,
   "failed": 0,
   "skipped": 0
  },
@@ -864,7 +665,48 @@
      "boosted": 5
     }
    }
+  },
+  {
+   "generated_at": "2026-11-28T16:25:41+09:00",
+   "cookie_state": "ok",
+   "boosted": 17,
+   "failed": 0,
+   "free_slots": 17,
+   "regions": {
+    "SG": {
+     "slots": "0/5",
+     "boosted": 5
+    },
+    "TW": {
+     "slots": "0/5",
+     "boosted": 5
+    },
+    "MY": {
+     "slots": "1/5",
+     "boosted": 4
+    },
+    "PH": {
+     "slots": "2/5",
+     "boosted": 3
+    },
+    "VN": {
+     "slots": "5/5",
+     "boosted": 0
+    },
+    "TH": {
+     "slots": "5/5",
+     "boosted": 0
+    },
+    "MX": {
+     "slots": "5/5",
+     "boosted": 0
+    },
+    "BR": {
+     "slots": "5/5",
+     "boosted": 0
+    }
+   }
   }
  ],
- "merged_at": "2026-11-28T12:26:36+09:00"
+ "merged_at": "2026-11-28T16:26:07+09:00"
 }
