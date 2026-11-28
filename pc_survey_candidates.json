@@ -1,7 +1,7 @@
 {
  "schema": "pc_survey_candidates/1",
  "collector_version": "1.0.0",
- "generated_at": "2026-11-28T10:19:15+09:00",
+ "generated_at": "2026-11-28T12:19:20+09:00",
  "mode": "live",
  "respondent": {
   "gender": "남성",
@@ -155,6 +155,6 @@
   "usage": "candidates = 중복 제거 후 신규 후보. status=candidate(바로 응모 가능) / review(사람 확인) / skip(skip_reason 참조).",
   "dedupe": "survey_seen.json(본 guid·기사 URL·제목) + known_urls.json(기응모 URL·제목) 대조."
  },
- "merged_at": "2026-11-28T10:19:20+09:00",
+ "merged_at": "2026-11-28T12:19:25+09:00",
  "previous_count": 3
 }
