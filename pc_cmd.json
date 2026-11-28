@@ -1,12 +1,7 @@
 {
-  "id": "selfupdate_toss_fix_20261128_115311",
-  "action": "self_update",
+  "id": "noop_20261128_2054",
+  "action": "noop",
   "args": {
-    "files": [
-      {
-        "remote": "pc_auto/sy_auto_watch.py",
-        "local": "sy_auto_watch.py"
-      }
-    ]
+    "note": "토스 연동 패치 self_update 완료(180771B) — 재실행 방지용 noop"
   }
 }
