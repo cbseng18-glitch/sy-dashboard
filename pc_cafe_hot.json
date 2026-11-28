@@ -1,0 +1,161 @@
+{
+ "cafe_hot": {
+  "filled_at_kst": "2026-11-28 13:56",
+  "window_hours": 72,
+  "top_n": 5,
+  "auto_slots_kst": [
+   "08:30",
+   "14:30"
+  ],
+  "login_used": false,
+  "api": "apis.naver.com/cafe-web/cafe2/ArticleListV2.json",
+  "cafes": [
+   {
+    "name": "정가거부",
+    "full_name": "정가를 거부하는 사람들 (알뜰폰·절약·재테크)",
+    "clubid": 30786704,
+    "slug": "wjdrkrjqn",
+    "menu_count": 9,
+    "scanned": 423,
+    "candidates": 205,
+    "ok": true,
+    "top": [
+     {
+      "rank": 1,
+      "title": "(종료)국민카드 쓰시는분 올리브영 80%할인",
+      "url": "https://cafe.naver.com/wjdrkrjqn/225356",
+      "article_id": 225356,
+      "board": "이벤트 정보 게시판",
+      "read": 2809,
+      "comment": 65,
+      "like": 52,
+      "age_hours": 2.4,
+      "written_at_kst": "11-28 11:30"
+     },
+     {
+      "rank": 2,
+      "title": "요기요 페이득 쿠폰 받으세요",
+      "url": "https://cafe.naver.com/wjdrkrjqn/225296",
+      "article_id": 225296,
+      "board": "짠테크 정보 게시판",
+      "read": 3481,
+      "comment": 22,
+      "like": 21,
+      "age_hours": 13.7,
+      "written_at_kst": "11-28 00:13"
+     },
+     {
+      "rank": 3,
+      "title": "실리만] 패밀리세일 990원딜외",
+      "url": "https://cafe.naver.com/wjdrkrjqn/225238",
+      "article_id": 225238,
+      "board": "쇼핑 핫딜 게시판",
+      "read": 3467,
+      "comment": 21,
+      "like": 31,
+      "age_hours": 17.9,
+      "written_at_kst": "11-27 20:00"
+     },
+     {
+      "rank": 4,
+      "title": "롯데이츠] 코드 입력하고 랜덤혜택",
+      "url": "https://cafe.naver.com/wjdrkrjqn/225126",
+      "article_id": 225126,
+      "board": "짠테크 정보 게시판",
+      "read": 3332,
+      "comment": 53,
+      "like": 52,
+      "age_hours": 24.1,
+      "written_at_kst": "11-27 13:48"
+     },
+     {
+      "rank": 5,
+      "title": "토스 오늘의 메가딜 요기요 (토스 안하시는 분들도 오세요)",
+      "url": "https://cafe.naver.com/wjdrkrjqn/225289",
+      "article_id": 225289,
+      "board": "짠테크 정보 게시판",
+      "read": 2573,
+      "comment": 28,
+      "like": 14,
+      "age_hours": 14.0,
+      "written_at_kst": "11-27 23:59"
+     }
+    ],
+    "errors": []
+   },
+   {
+    "name": "월재연",
+    "full_name": "월급쟁이 재테크 연구 (예금·적금·절약·보험·주식·ETF·부동산)",
+    "clubid": 22290117,
+    "slug": "onepieceholicplus",
+    "menu_count": 8,
+    "scanned": 400,
+    "candidates": 147,
+    "ok": true,
+    "top": [
+     {
+      "rank": 1,
+      "title": "네이버] 김보람 수제 생초콜릿 떴어요. 150g, 8,400원(천원쿠폰)=2or3개 이상 무배. 적립도 2천이상",
+      "url": "https://cafe.naver.com/onepieceholicplus/6243373",
+      "article_id": 6243373,
+      "board": "[선착] 핫딜 정보방",
+      "read": 1736,
+      "comment": 21,
+      "like": 24,
+      "age_hours": 66.8,
+      "written_at_kst": "11-25 19:11"
+     },
+     {
+      "rank": 2,
+      "title": "머무르 \"꿈꾸던 어른이 되었나요\"",
+      "url": "https://cafe.naver.com/onepieceholicplus/6244676",
+      "article_id": 6244676,
+      "board": "[와글] 자유게시판 💬",
+      "read": 1161,
+      "comment": 15,
+      "like": 17,
+      "age_hours": 39.3,
+      "written_at_kst": "11-26 22:40"
+     },
+     {
+      "rank": 3,
+      "title": "베라 어제 당일 조기마감 했데요. 가지마세요.",
+      "url": "https://cafe.naver.com/onepieceholicplus/6246037",
+      "article_id": 6246037,
+      "board": "[와글] 자유게시판 💬",
+      "read": 593,
+      "comment": 2,
+      "like": 3,
+      "age_hours": 4.6,
+      "written_at_kst": "11-28 09:22"
+     },
+     {
+      "rank": 4,
+      "title": "네이버] 사과 부사 고당도 꿀사과 2kg [원산지:국산(경상북도 안동시)], 4,900원 무배",
+      "url": "https://cafe.naver.com/onepieceholicplus/6245358",
+      "article_id": 6245358,
+      "board": "[선착] 핫딜 정보방",
+      "read": 688,
+      "comment": 6,
+      "like": 11,
+      "age_hours": 22.2,
+      "written_at_kst": "11-27 15:45"
+     },
+     {
+      "rank": 5,
+      "title": "네이버] 탑텐 공용 벨로아 팬츠_MSF4UG3002, 7,110원 무배",
+      "url": "https://cafe.naver.com/onepieceholicplus/6243532",
+      "article_id": 6243532,
+      "board": "[선착] 핫딜 정보방",
+      "read": 1370,
+      "comment": 0,
+      "like": 17,
+      "age_hours": 63.9,
+      "written_at_kst": "11-25 22:02"
+     }
+    ],
+    "errors": []
+   }
+  ]
+ }
+}
