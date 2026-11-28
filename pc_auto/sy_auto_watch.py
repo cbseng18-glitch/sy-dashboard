@@ -1,6 +1,7 @@
 import base64
 import csv
 import email.utils
+import html
 import http.cookiejar
 import importlib
 import io
@@ -1892,6 +1893,8 @@ def build_dashboard_payload(cfg: dict, state: dict) -> dict:
     survey = _read_json_file(BASE_DIR / "pc_survey_candidates.json", {}) or {}
     toss = _read_json_file(BASE_DIR / "toss_stats.json", {}) or {}
     yt = _read_json_file(BASE_DIR / "pc_youtube.json", {}) or {}
+    blog = _read_json_file(BLOG_STATS_FILE, {}) or {}
+    th = _read_json_file(THREADS_STATS_FILE, {}) or {}
     threshold = int(cfg.get("qoo10_daiso_min_qty", QOO10_DAISO_MIN_QTY) or QOO10_DAISO_MIN_QTY)
 
     qty = state.get("qoo10_daiso_qty") or {}
@@ -1979,6 +1982,26 @@ def build_dashboard_payload(cfg: dict, state: dict) -> dict:
             "views": yt.get("views"),
             "subscribers": yt.get("subscribers"),
         } if yt else None),
+        "blog": ({
+            "source_at": blog.get("fetched_at") or "",
+            "post_count": int(blog.get("post_count") or 0),
+            "post_count_source": blog.get("post_count_source") or "",
+            "feed_items": int(blog.get("feed_items") or 0),
+            "posts_today": int(blog.get("posts_today") or 0),
+            "latest_title": blog.get("latest_title") or "",
+            "latest_link": blog.get("latest_link") or "",
+            "latest_pub": blog.get("latest_pub_kst") or "",
+            "blog_url": blog.get("blog_url") or "",
+        } if blog.get("fetched_at") else None),
+        "threads": ({
+            "source_at": th.get("fetched_at") or "",
+            "followers": th.get("followers"),
+            "posts_total": th.get("posts_total"),
+            "views_30d": th.get("views_30d"),
+            "views_at": th.get("insights_at") or "",
+            "profile_source": th.get("profile_source") or "",
+            "handle": "@18.1q2w3e4r",
+        } if th.get("fetched_at") else None),
     }
     return payload
 
@@ -2069,6 +2092,12 @@ def _dash_msg(payload: dict, res: dict) -> str:
     lines.append(f"• 부스트 {bo.get('boosted')}/{bo.get('planned')} · 실패 {bo.get('failed')} · 0원")
     lines.append(f"• 설문 후보 신규 {su.get('new_candidates')} · 중복 {su.get('duplicates')}")
     lines.append(f"• 큐텐 1~5호 위험 {q10.get('alert_count')}종(완전품절 {len(q10.get('danger') or [])})")
+    bl = payload.get("blog") or {}
+    if bl:
+        lines.append(f"• 블로그 {bl.get('post_count')}편(오늘 {bl.get('posts_today')}편) · 최신 {bl.get('latest_pub') or '-'}")
+    th = payload.get("threads") or {}
+    if th:
+        lines.append(f"• 스레드 팔로워 {th.get('followers')} · 게시 {th.get('posts_total')} · 30일 조회 {th.get('views_30d') if th.get('views_30d') is not None else '미수집'}")
     if res.get("commit") or res.get("sha"):
         lines.append(f"• 커밋 {res.get('commit') or res.get('sha')}")
     return "\n".join(lines)
@@ -2091,6 +2120,11 @@ def push_dashboard(cfg: dict, state: dict, force: bool = False, source: str = "�
         log(f"pc_dashboard.json 저장 실패: {e}")
 
     sig_src = {k: v for k, v in payload.items() if k not in ("filled_at", "filled_at_kst")}
+    # 블로그·스레드는 수집 시각(source_at)만 바뀌어도 커밋이 늘어나므로, 서명에서는 숫자·링크만 본다.
+    for _k in ("blog", "threads"):
+        if isinstance(sig_src.get(_k), dict):
+            sig_src[_k] = {kk: vv for kk, vv in sig_src[_k].items()
+                           if kk not in ("source_at", "views_at")}
     sig = json.dumps(sig_src, ensure_ascii=False, sort_keys=True)
     gap = time.time() - float(state.get("last_dash_push", 0) or 0)
     if (not force) and state.get("dash_sig") == sig and gap < DASH_PUSH_MIN_GAP:
@@ -2820,6 +2854,262 @@ def refresh_toss_stats(cfg: dict, state: dict) -> None:
             log("토스 실적 자동 갱신 실패: %s" % ((r or {}).get("error") if isinstance(r, dict) else r))
     except Exception as e:
         log(f"토스 실적 자동 갱신 오류(본 루프 계속): {type(e).__name__}: {e}")
+
+
+# ---------------------------------------------------------------- 네이버 블로그 RSS · 스레드 공개 프로필 (비로그인 경량 수집)
+#  ★ 원칙: 로그인·쿠키 없이 공개 주소만 읽는다. 스레드 30일 조회수 같은 인사이트는 공식 Threads API
+#    토큰이 집 PC threads_config.json 에 있을 때만 조용히 시도하고, 없으면 알림 없이 건너뛴다.
+#    토큰·비밀값은 이 파일·공개 저장소에 절대 남기지 않는다(로그에도 찍지 않는다).
+BLOG_ID = "sy_global-"
+BLOG_RSS_URL = "https://rss.blog.naver.com/%s.xml" % BLOG_ID
+BLOG_TOTAL_URL = ("https://blog.naver.com/PostTitleListAsync.naver?blogId=%s"
+                  "&viewdate=&currentPage=1&categoryNo=0&parentCategoryNo=&countPerPage=1" % BLOG_ID)
+BLOG_STATS_FILE = BASE_DIR / "blog_rss_stats.json"
+THREADS_PROFILE_URL = "https://www.threads.com/@18.1q2w3e4r"
+THREADS_STATS_FILE = BASE_DIR / "threads_stats.json"
+THREADS_CONFIG_FILE = BASE_DIR / "threads_config.json"
+THREADS_API_BASE = "https://graph.threads.net/v1.0"
+THREADS_CRAWLER_UA = "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+
+
+def _http_bytes(url: str, ua: str, timeout: int = 25, limit: int = 900000) -> bytes:
+    req = urllib.request.Request(url, headers={
+        "User-Agent": ua,
+        "Accept-Language": "ko-KR,ko;q=0.9",
+        "Accept": "application/rss+xml,application/xml,text/xml,text/html,*/*",
+    })
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read(limit)
+
+
+def _num_kr(txt) -> int | None:
+    """'32'·'1,234'·'1.2만' 같은 표기를 int 로. 못 읽으면 None."""
+    t = str(txt or "").strip().replace(",", "").replace(" ", "")
+    if not t:
+        return None
+    mult = 1
+    for suf, m in (("억", 100000000), ("만", 10000), ("천", 1000)):
+        if t.endswith(suf):
+            mult, t = m, t[:-1]
+            break
+    try:
+        return int(round(float(t) * mult))
+    except Exception:
+        return None
+
+
+def _clean_rss_link(link: str) -> str:
+    """네이버 RSS 꼬리표(?fromRss=true&trackingCode=rss) 제거."""
+    link = (link or "").strip()
+    if link.startswith("https://blog.naver.com/"):
+        link = link.split("?")[0]
+    return link
+
+
+def refresh_blog_rss(cfg: dict, state: dict) -> None:
+    """블로그 RSS(최신 글·오늘 발행 수) + 전체 글 수를 조용히 갱신한다.
+
+    - 실패해도 예외를 밖으로 던지지 않고 텔레그램도 보내지 않는다(감시 루프 보호).
+    - 결과는 집 PC 로컬 blog_rss_stats.json → 다음 대시보드 푸시의 blog 블록으로 실린다.
+    """
+    state["last_blog_check"] = time.time()
+    now = datetime.now(KST)
+    out = {"fetched_at": now.isoformat(timespec="seconds"), "ok": False,
+           "blog_id": BLOG_ID, "blog_url": "https://blog.naver.com/%s" % BLOG_ID}
+    items = []
+    try:
+        items = _parse_rss_items(_http_bytes(BLOG_RSS_URL, _BROWSER_UA))
+    except Exception as e:
+        out["error"] = "%s: %s" % (type(e).__name__, e)
+        log("블로그 RSS 수집 실패(본 루프 계속): %s" % out["error"])
+    if items:
+        today_kst = now.strftime("%Y-%m-%d")
+        posts_today = 0
+        for _t, _l, pub in items:
+            if pub is None:
+                continue
+            try:
+                p = pub.astimezone(KST) if pub.tzinfo else pub.replace(tzinfo=KST)
+                if p.strftime("%Y-%m-%d") == today_kst:
+                    posts_today += 1
+            except Exception:
+                continue
+        title, link, pub = items[0]
+        out.update({
+            "ok": True,
+            "feed_items": len(items),
+            "feed_capped": len(items) >= 50,       # 네이버 RSS 는 최근 50편까지만 준다
+            "latest_title": re.sub(r"\s+", " ", title or "").strip()[:180],
+            "latest_link": _clean_rss_link(link),
+            "latest_pub": (pub.astimezone(KST).isoformat(timespec="seconds") if pub else ""),
+            "latest_pub_kst": (pub.astimezone(KST).strftime("%m-%d %H:%M") if pub else ""),
+            "posts_today": posts_today,
+            "today": today_kst,
+        })
+    total = None
+    try:
+        raw = _http_bytes(BLOG_TOTAL_URL, _BROWSER_UA, timeout=20, limit=200000).decode("utf-8", "replace")
+        m = re.search(r'"totalCount"\s*:\s*"?(\d+)', raw)
+        if m:
+            total = int(m.group(1))
+    except Exception as e:
+        log("블로그 전체 글 수 조회 실패(본 루프 계속): %s: %s" % (type(e).__name__, e))
+    if total is not None:
+        out["post_count"] = total
+        out["post_count_source"] = "blog.naver.com totalCount"
+        out["ok"] = True
+    elif out.get("feed_items"):
+        out["post_count"] = out["feed_items"]
+        out["post_count_source"] = "rss_items(최근 50편 한도)"
+    try:
+        BLOG_STATS_FILE.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:
+        log("블로그 RSS 결과 저장 실패: %s: %s" % (type(e).__name__, e))
+    if out.get("ok"):
+        log("블로그 RSS 갱신: %s편(오늘 %s편) · 최신 %s" % (
+            out.get("post_count"), out.get("posts_today"), out.get("latest_pub_kst")))
+
+
+def load_threads_config() -> dict:
+    """threads_config.json 로드(없으면 빈 템플릿만 만들어 둔다). enabled=false 면 인사이트 수집 안 함."""
+    template = {
+        "enabled": True,
+        "user_id": "",
+        "access_token": "",
+        "_help": ("스레드 30일 조회수는 공식 Threads API 토큰이 있어야만 읽힙니다. "
+                  "developers.facebook.com 에서 앱 생성 → threads_basic·threads_manage_insights 권한으로 "
+                  "장기 액세스 토큰 발급 → user_id(스레드 사용자 ID)와 함께 이 파일에 넣고 저장하세요. "
+                  "비워 두면 팔로워·스레드 수만 공개 페이지에서 읽습니다(알림 없음)."),
+    }
+    if not THREADS_CONFIG_FILE.exists():
+        try:
+            THREADS_CONFIG_FILE.write_text(json.dumps(template, ensure_ascii=False, indent=2), encoding="utf-8")
+            log("스레드 설정 템플릿 생성: %s" % THREADS_CONFIG_FILE)
+        except Exception as e:
+            log("스레드 설정 템플릿 생성 실패: %s: %s" % (type(e).__name__, e))
+        return dict(template)
+    try:
+        raw = json.loads(THREADS_CONFIG_FILE.read_text(encoding="utf-8"))
+    except Exception as e:
+        log("스레드 설정 해석 실패: %s: %s" % (type(e).__name__, e))
+        return dict(template)
+    out = dict(template)
+    if isinstance(raw, dict):
+        for key in ("user_id", "access_token"):
+            out[key] = str(raw.get(key) or "").strip()
+        out["enabled"] = bool(raw.get("enabled", True))
+    return out
+
+
+def _threads_public_profile() -> dict:
+    """비로그인 공개 프로필(og:description)에서 팔로워·스레드 수를 읽는다."""
+    text = _http_bytes(THREADS_PROFILE_URL, THREADS_CRAWLER_UA, timeout=25).decode("utf-8", "replace")
+    m = re.search(r'<meta[^>]+property="og:description"[^>]+content="([^"]*)"', text)
+    if not m:
+        raise ValueError("og:description 없음(페이지 형식 변경 의심)")
+    desc = html.unescape(m.group(1))
+    fm = re.search(r"팔로워\s*([\d.,]*\d)\s*(억|만|천)?\s*명", desc)
+    pm = re.search(r"스레드\s*([\d.,]*\d)\s*(억|만|천)?\s*개", desc)
+    out = {
+        "profile_followers": _num_kr((fm.group(1) + (fm.group(2) or "")) if fm else ""),
+        "profile_posts": _num_kr((pm.group(1) + (pm.group(2) or "")) if pm else ""),
+        "profile_text": desc[:200],
+    }
+    if out["profile_followers"] is None and out["profile_posts"] is None:
+        raise ValueError("팔로워·스레드 수 파싱 실패: %s" % desc[:120])
+    return out
+
+
+def _threads_api_insights(tc: dict) -> dict:
+    """공식 Threads API(선택) — 최근 30일 views 합계·팔로워 수. 토큰 없으면 {}."""
+    token = str(tc.get("access_token") or "").strip()
+    if not token:
+        return {}
+    uid = str(tc.get("user_id") or "").strip() or "me"
+    now = datetime.now(KST)
+    out = {}
+
+    def _call(params: dict) -> dict:
+        url = "%s/%s/threads_insights?%s" % (
+            THREADS_API_BASE, urllib.parse.quote(uid), urllib.parse.urlencode(params))
+        try:
+            return json.loads(_http_bytes(url, "SY-PC-Watch/1.0", timeout=25, limit=300000)
+                              .decode("utf-8", "replace"))
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", "replace")[:200]
+            log("스레드 인사이트 HTTP %s: %s" % (e.code, _tg_clean(detail, {})))
+        except Exception as e:
+            log("스레드 인사이트 오류: %s: %s" % (type(e).__name__, e))
+        return {}
+
+    res = _call({"metric": "views", "period": "day",
+                 "since": str(int((now - timedelta(days=30)).timestamp())),
+                 "until": str(int(now.timestamp())),
+                 "access_token": token})
+    for row in (res.get("data") or []):
+        if not isinstance(row, dict) or row.get("name") != "views":
+            continue
+        vals = [v.get("value") for v in (row.get("values") or []) if isinstance(v, dict)]
+        vals = [v for v in vals if isinstance(v, (int, float))]
+        if vals:
+            out["views_30d"] = int(sum(vals))
+            out["views_days"] = len(vals)
+
+    res2 = _call({"metric": "followers_count", "access_token": token})
+    for row in (res2.get("data") or []):
+        if not isinstance(row, dict) or row.get("name") != "followers_count":
+            continue
+        total = (row.get("total_value") or {}).get("value") if isinstance(row.get("total_value"), dict) else None
+        if total is None:
+            vals = [v.get("value") for v in (row.get("values") or []) if isinstance(v, dict)]
+            vals = [v for v in vals if isinstance(v, (int, float))]
+            total = vals[-1] if vals else None
+        if isinstance(total, (int, float)):
+            out["followers_api"] = int(total)
+    return out
+
+
+def refresh_threads_stats(cfg: dict, state: dict) -> None:
+    """스레드 팔로워·게시물 수(공개 페이지) + 토큰이 있으면 30일 조회수 → threads_stats.json."""
+    state["last_threads_check"] = time.time()
+    now = datetime.now(KST)
+    prev = _read_json_file(THREADS_STATS_FILE, {}) or {}
+    out = dict(prev) if isinstance(prev, dict) else {}
+    out["fetched_at"] = now.isoformat(timespec="seconds")
+    ok = False
+    try:
+        prof = _threads_public_profile()
+        if prof.get("profile_followers") is not None:
+            out["followers"] = prof["profile_followers"]
+        if prof.get("profile_posts") is not None:
+            out["posts_total"] = prof["profile_posts"]
+        out["profile_at"] = out["fetched_at"]
+        out["profile_source"] = "threads.com 공개 프로필(og:description, 비로그인)"
+        ok = True
+        log("스레드 공개 프로필: 팔로워 %s · 스레드 %s" % (
+            prof.get("profile_followers"), prof.get("profile_posts")))
+    except Exception as e:
+        log("스레드 공개 프로필 수집 실패(본 루프 계속): %s: %s" % (type(e).__name__, e))
+    try:
+        tc = load_threads_config()
+        if str(tc.get("access_token") or "").strip() and tc.get("enabled", True):
+            ins = _threads_api_insights(tc)
+            if ins:
+                out.update(ins)
+                out["insights_at"] = out["fetched_at"]
+                out["insights_source"] = "graph.threads.net threads_insights"
+                ok = True
+                log("스레드 인사이트 갱신: 30일 조회 %s · 팔로워 %s" % (
+                    ins.get("views_30d"), ins.get("followers_api")))
+        else:
+            out["insights_skip"] = "threads_config.json 토큰 없음 → 30일 조회수 미수집(공개 값만)"
+    except Exception as e:
+        log("스레드 인사이트 건너뜀: %s: %s" % (type(e).__name__, e))
+    out["ok"] = ok
+    try:
+        THREADS_STATS_FILE.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:
+        log("스레드 결과 저장 실패: %s: %s" % (type(e).__name__, e))
 
 
 def get_public_ip():
@@ -3762,9 +4052,11 @@ def main() -> None:
     q10_sec = max(1800, int(cfg.get("qoo10_daiso_interval_minutes", 60)) * 60)
     dash_sec = max(600, int(cfg.get("dashboard_push_minutes", 60)) * 60)
     toss_sec = max(1800, int(cfg.get("toss_interval_minutes", 180)) * 60)
+    blog_sec = max(600, int(cfg.get("blog_rss_interval_minutes", 30)) * 60)
+    threads_sec = max(900, int(cfg.get("threads_interval_minutes", 60)) * 60)
     poll_sec = max(20, int(cfg.get("remote_poll_seconds", 60)))
 
-    log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+토스 쉐어링크+네이버카페 인기글(08:30/14:30)+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
+    log("=== SY Auto Watch 시작 (57종 다이소+69매장+큐텐1~5호 09:30 경보+핫딜+부이시트+설문/퀴즈 레이더+경품 설문 수집+쇼피 통합조회·무료부스트+대시보드 수치 푸시+블로그 RSS·스레드 공개수집+토스 쉐어링크+네이버카페 인기글(08:30/14:30)+원격제어+인포그래픽카드+미리캔버스 · Ctrl+C 종료) ===")
 
     first_cycle = True
     while True:
@@ -3819,6 +4111,20 @@ def main() -> None:
                 check_surveys(cfg, state)
             except Exception as e:
                 log(f"설문 수집 오류(본 루프 계속): {type(e).__name__}: {e}")
+
+        # 네이버 블로그 RSS·스레드 공개 프로필 → 블로그·스레드 카드 수치 조용히 갱신
+        #   (토스·통합조회·대시보드 푸시보다 먼저 돌려야 같은 회차 푸시에 최신값이 실린다)
+        if now - state.get("last_blog_check", 0) >= blog_sec:
+            try:
+                refresh_blog_rss(cfg, state)
+            except Exception as e:
+                log(f"블로그 RSS 갱신 오류(본 루프 계속): {type(e).__name__}: {e}")
+
+        if now - state.get("last_threads_check", 0) >= threads_sec:
+            try:
+                refresh_threads_stats(cfg, state)
+            except Exception as e:
+                log(f"스레드 수집 오류(본 루프 계속): {type(e).__name__}: {e}")
 
         # 토스 쉐어링크 실적 → toss_stats.json 조용히 갱신(설정 없으면 알림 없이 건너뜀)
         #   대시보드 푸시·통합조회보다 먼저 돌려야 같은 회차 푸시에 최신 toss 값이 실린다.
