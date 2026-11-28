@@ -4295,7 +4295,7 @@ def main() -> None:
     daiso_sec = max(15, int(cfg.get("daiso_interval_minutes", 60))) * 60
     event_sec = max(300, int(cfg.get("event_interval_minutes", 10)) * 60)
     survey_sec = max(1800, int(float(cfg.get("survey_interval_hours", 2)) * 3600))
-    stats_sec = max(600, int(cfg.get("stats_interval_minutes", 120)) * 60)
+    stats_sec = max(600, int(cfg.get("stats_interval_minutes", 30)) * 60)
     boost_sec = max(900, int(cfg.get("boost_interval_minutes", 240)) * 60)
     q10_sec = max(1800, int(cfg.get("qoo10_daiso_interval_minutes", 60)) * 60)
     dash_sec = max(600, int(cfg.get("dashboard_push_minutes", 15)) * 60)
