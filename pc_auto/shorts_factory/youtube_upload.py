@@ -85,6 +85,7 @@ def upload(args) -> str:
         die(f"영상 파일이 없습니다: {video}")
 
     title, desc = args.title, args.description
+    lang = (args.lang or "ko").strip()[:8] or "ko"      # ja 영상이면 ja — 자동 자막 언어가 틀어지지 않게
     if args.shorts:
         title, desc = shortsify(title, desc)
 
@@ -94,8 +95,8 @@ def upload(args) -> str:
             "description": desc[:5000],
             "tags": [t.strip() for t in args.tags.split(",") if t.strip()][:30],
             "categoryId": args.category,
-            "defaultLanguage": "ko",
-            "defaultAudioLanguage": "ko",
+            "defaultLanguage": lang,
+            "defaultAudioLanguage": lang,
         },
         "status": {
             "privacyStatus": "private" if args.publish_at else args.privacy,
@@ -198,6 +199,7 @@ def main() -> None:
     p.add_argument("--privacy", default="public", choices=["public", "unlisted", "private"])
     p.add_argument("--publish-at", default="", help="예약 공개 ISO 시각 (예: 2026-11-28T19:00:00+09:00)")
     p.add_argument("--category", default="22", choices=list(CATEGORIES))
+    p.add_argument("--lang", default="ko", help="영상 언어 코드 (ja 영상이면 ja — 기본 자막·음성 언어)")
     p.add_argument("--thumbnail", default="", help="썸네일 이미지 경로")
     p.add_argument("--playlist", default="", help="재생목록 ID")
     p.add_argument("--pinned-comment", default="", help="등록할 고정댓글 내용")

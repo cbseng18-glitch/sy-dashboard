@@ -787,6 +787,77 @@ def _shorts_scene_list(args: dict):
     return scenes, ""
 
 
+_SHORTS_IMG_EXT = (".jpg", ".jpeg", ".png", ".webp", ".bmp")
+_SHORTS_IMG_MAX_MB = 20
+
+
+def _shorts_download_images(scenes: list, dest_dir: Path) -> tuple[list, int]:
+    """장면의 image 가 http(s) URL 이면 실제 파일로 내려받아 로컬 경로로 바꾼다.
+
+    단색 배경이 아닌 실물 사진 장면을 원격 명령 한 줄로 쓰기 위한 처리(2026-11-28 패치).
+    반환: (오류 목록, 내려받은 수)
+    """
+    errors: list[str] = []
+    saved = 0
+    try:
+        dest_dir.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        return [f"이미지 폴더 생성 실패: {type(e).__name__}: {e}"], 0
+    for i, sc in enumerate(scenes):
+        raw = sc.get("image")
+        if not isinstance(raw, str):
+            continue
+        url = raw.strip()
+        if not url.lower().startswith(("http://", "https://")):
+            continue
+        try:
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "Mozilla/5.0 (SY-Shorts/1.0)", "Accept": "image/*,*/*"})
+            with urllib.request.urlopen(req, timeout=45) as r:
+                data = r.read(_SHORTS_IMG_MAX_MB * 1024 * 1024 + 1)
+                ctype = (r.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+            if not data:
+                errors.append(f"장면{i + 1}: 빈 응답({url[-60:]})")
+                continue
+            if len(data) > _SHORTS_IMG_MAX_MB * 1024 * 1024:
+                errors.append(f"장면{i + 1}: {_SHORTS_IMG_MAX_MB}MB 초과")
+                continue
+            if ctype and not ctype.startswith("image/"):
+                errors.append(f"장면{i + 1}: 이미지가 아님({ctype})")
+                continue
+            stem = Path(urllib.parse.urlparse(url).path).stem
+            ext = Path(urllib.parse.urlparse(url).path).suffix.lower()
+            if ext not in _SHORTS_IMG_EXT:
+                ext = {"image/png": ".png", "image/webp": ".webp", "image/bmp": ".bmp"}.get(ctype, ".jpg")
+            name = re.sub(r"[^0-9A-Za-z._-]", "", f"s{i + 1:02d}_{stem}")[:60] or f"s{i + 1:02d}"
+            path = dest_dir / (name + ext)
+            cached = path.exists() and path.stat().st_size == len(data)
+            if not cached:
+                path.write_bytes(data)
+            sc["image"] = str(path)
+            sc["image_url"] = url
+            saved += 1
+            log(f"쇼츠 장면{i + 1} 이미지 {'캐시' if cached else '저장'}: {path.name} ({len(data) // 1024}KB)")
+        except Exception as e:
+            errors.append(f"장면{i + 1}: {type(e).__name__}: {e}")
+    return errors, saved
+
+
+def _report_pc_result(cfg: dict, key: str, payload: dict) -> None:
+    """원격 명령 결과를 저장소 pc_last_result.json 에 남긴다(밖에서 결과를 확인할 수 있게)."""
+    try:
+        token = _get_github_token(cfg)
+        if not token:
+            log(f"결과 기록 생략({key}): GitHub 토큰 없음")
+            return
+        body = dict(payload)
+        body["at"] = datetime.now(KST).isoformat(timespec="seconds")
+        res = _github_put_json("pc_last_result.json", {key: body}, f"chore: {key} 결과 기록", token)
+        log(f"결과 기록({key}): {res}")
+    except Exception as e:
+        log(f"결과 기록 실패({key}): {type(e).__name__}: {e}")
+
+
 def _shorts_cli_extra(args: dict, skip=()) -> list:
     """단일 장면 인자 → make_shorts.py 옵션 목록(허용 키·선택지만)."""
     out = []
@@ -832,6 +903,22 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
         send_telegram(cfg, msg)
         return {"ok": False, "error": serr}
 
+    # 장면 이미지가 원격 URL 이면 먼저 집 PC 로 내려받는다(실물 사진 장면 지원)
+    if scenes and any(isinstance(sc.get("image"), str)
+                      and sc["image"].strip().lower().startswith(("http://", "https://"))
+                      for sc in scenes):
+        derr, dn = _shorts_download_images(scenes, out_dir / "img")
+        if derr:
+            msg = (f"🎬 [쇼츠 ({source})] 장면 이미지 내려받기 실패 {len(derr)}건 — 만들지 않았습니다\n"
+                   + "\n".join(f"• {e}" for e in derr[:5]))
+            log(msg)
+            send_telegram(cfg, msg)
+            _report_pc_result(cfg, "make_shorts", {"ok": False, "stage": "download",
+                                                   "errors": derr[:5], "source": source})
+            return {"ok": False, "error": "이미지 내려받기 실패", "errors": derr[:5]}
+        if dn:
+            log(f"쇼츠 이미지 {dn}장 내려받음")
+
     fname = _safe_media_name(args.get("filename") or "", "shorts")
     out_path = out_dir / fname
     cmd = [sys.executable, str(make_py)]
@@ -849,9 +936,8 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
             log(msg)
             send_telegram(cfg, msg)
             return {"ok": False, "error": str(e)}
-        # scenes 모드에서도 전체에 걸리는 옵션만 넘긴다
-        cmd += _shorts_cli_extra(args, skip=("title", "subtitle", "narration", "badge",
-                                            "image", "voice", "rate", "motion"))
+        # scenes 모드에서도 전체에 걸리는 옵션만 넘긴다(보이스·속도는 장면에 없을 때의 기본값)
+        cmd += _shorts_cli_extra(args, skip=("title", "subtitle", "narration", "badge", "image"))
     else:
         extra = _shorts_cli_extra(args)
         if not extra:
@@ -895,6 +981,10 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
             msg += "\n• " + "\n• ".join(t.strip()[:160] for t in tail)
         log(msg)
         send_telegram(cfg, msg)
+        _report_pc_result(cfg, "make_shorts", {"ok": False, "stage": "render", "rc": rc,
+                                               "elapsed": elapsed, "scenes": len(scenes or []),
+                                               "tail": [t.strip()[:160] for t in tail][:4],
+                                               "source": source})
         return {"ok": False, "rc": rc, "elapsed": elapsed, "error": "생성 실패"}
 
     size_mb = out_path.stat().st_size / (1024 * 1024)
@@ -935,6 +1025,15 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
             privacy = str(args.get("privacy") or "private").lower()
             if privacy not in ("public", "unlisted", "private"):
                 privacy = "private"
+            # 영상 언어 — 제목·장면 글자에 가나가 있으면 일본어(자동 자막이 한국어로 잡히지 않게)
+            yt_lang = str(args.get("yt_lang") or "").strip().lower()[:8]
+            if not yt_lang:
+                probe = [str(args.get("yt_title") or ""), str(args.get("yt_description") or "")]
+                for sc in (scenes or []):
+                    if isinstance(sc, dict):
+                        probe += [str(sc.get("title") or ""), str(sc.get("subtitle") or ""),
+                                  str(sc.get("narration") or "")]
+                yt_lang = "ja" if re.search(r"[\u3040-\u30ff]", " ".join(probe)) else "ko"
             yt_title = str(args.get("yt_title") or "").strip()
             yt_title = re.sub(r"\s+", " ", yt_title.replace("\\n", " ").replace("\n", " ")).strip()
             if not yt_title and scenes:
@@ -943,7 +1042,7 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
             if not yt_title:
                 yt_title = str(args.get("title") or "").strip() or f"쇼츠 {datetime.now():%m/%d}"
             ucmd = [sys.executable, str(upload_py), "--video", str(out_path),
-                    "--title", yt_title[:100], "--privacy", privacy]
+                    "--title", yt_title[:100], "--privacy", privacy, "--lang", yt_lang]
             if str(args.get("yt_description") or "").strip():
                 ucmd += ["--description", str(args.get("yt_description"))[:4500]]
             tags = args.get("yt_tags")
@@ -994,6 +1093,8 @@ def make_shorts(cfg: dict, args: dict, source: str = "원격") -> dict:
     msg = "\n".join(lines)
     log(msg)
     send_telegram(cfg, msg)
+    result["source"] = source
+    _report_pc_result(cfg, "make_shorts", result)
     return result
 
 
@@ -1166,6 +1267,8 @@ def self_update(cfg: dict, state: dict, args: dict, source: str = "원격") -> d
     send_telegram(cfg, msg)
 
     result = {"ok": bool(done), "updated": done, "failed": failed, "restarted": False}
+    _report_pc_result(cfg, "self_update", {"ok": bool(done), "updated": done,
+                                           "failed": failed, "restart_planned": will_restart})
     if will_restart:
         try:
             if state is not None:

@@ -677,6 +677,41 @@ def make_text_layer(scene: dict, theme: dict, out_png: Path) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# 나레이션 보이스 — 일본어 문장은 일본어 보이스로 (2026-11-28 패치)
+#
+#   증상: 일본어 나레이션에도 기본 한국어 보이스(ko-KR-SunHiNeural)가 쓰여
+#         유튜브 자동 자막이 엉뚱한 한국어로 잡히고 발음도 한국어 억양이 됐다.
+#   규칙: ①가나가 있거나(한자만으로 된) 일본어 문장 → ja-JP 보이스
+#         ②voice 에 "ja-JP-..." 를 직접 지정하면 그 보이스를 그대로
+#         ③한국어 문장 → 지정 보이스, 없으면 기본 한국어 보이스
+# ---------------------------------------------------------------------------
+DEFAULT_VOICE_KR = "ko-KR-SunHiNeural"
+DEFAULT_VOICE_JA = "ja-JP-NanamiNeural"
+_VOICE_AUTO_WORDS = ("", "auto", "default", "자동")
+
+
+def wants_japanese(text: str) -> bool:
+    """이 문장을 일본어로 읽어야 하는지(가나가 있거나, 한글 없이 한자만)."""
+    t = text or ""
+    if _KANA_RE.search(t):
+        return True
+    return bool(_HAN_RE.search(t)) and not _HANGUL_RE.search(t)
+
+
+def pick_voice(text: str, requested: str = "", ja_voice: str = DEFAULT_VOICE_JA,
+               kr_voice: str = DEFAULT_VOICE_KR) -> str:
+    """나레이션 문장에 맞는 edge-tts 보이스를 고른다."""
+    req = (requested or "").strip()
+    if req.lower() in _VOICE_AUTO_WORDS:
+        req = ""
+    if wants_japanese(text):
+        if req.lower().startswith("ja-"):
+            return req
+        return ja_voice or DEFAULT_VOICE_JA     # ko 보이스가 지정돼 있어도 일본어면 ja 로
+    return req or kr_voice or DEFAULT_VOICE_KR
+
+
 # ----------------------------------------------------------------------------
 # 음성
 # ----------------------------------------------------------------------------
@@ -714,8 +749,11 @@ def render_scene(scene: dict, idx: int, workdir: Path, theme: dict, opts: argpar
     audio: Path | None = None
     if narration:
         mp3 = workdir / f"nar_{idx:02d}.mp3"
-        if tts(narration, mp3, scene.get("voice") or opts.voice, scene.get("rate") or opts.rate):
+        voice = pick_voice(narration, scene.get("voice") or opts.voice,
+                           getattr(opts, "voice_ja", DEFAULT_VOICE_JA) or DEFAULT_VOICE_JA)
+        if tts(narration, mp3, voice, scene.get("rate") or opts.rate):
             audio = mp3
+            print(f"    [나레이션] {voice}{' (일본어 자동)' if wants_japanese(narration) else ''}")
 
     dur = float(scene.get("seconds") or opts.seconds or 12)
     if audio is not None:
@@ -833,7 +871,10 @@ def main() -> None:
     p.add_argument("--narration", default="", help="나레이션 문장(edge-tts)")
     p.add_argument("--badge", default="", help="상단 배지 문구 (예: 오늘의 핫딜)")
     p.add_argument("--brand", default="", help="우하단 워터마크")
-    p.add_argument("--voice", default="ko-KR-SunHiNeural", help="edge-tts 음성")
+    p.add_argument("--voice", default="",
+                   help="edge-tts 음성 — 비우면 자동(일본어 문장 → ja-JP-NanamiNeural, 그 외 → ko-KR-SunHiNeural)")
+    p.add_argument("--voice-ja", default=DEFAULT_VOICE_JA,
+                   help=f"일본어 나레이션 보이스 (기본 {DEFAULT_VOICE_JA})")
     p.add_argument("--rate", default="+0%", help="말 빠르기 (예: +8%%)")
     p.add_argument("--seconds", type=float, default=12, help="장면 길이(초)")
     p.add_argument("--zoom", type=float, default=1.14, help="줌 배율")
