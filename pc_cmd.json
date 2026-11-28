@@ -1,11 +1,11 @@
 {
-  "id": "selfupd_survey_v110_20261128",
+  "id": "self_update_pc3_20261128_1339",
   "action": "self_update",
   "args": {
     "files": [
       {
-        "remote": "pc_auto/survey_collector.py",
-        "local": "survey_collector.py"
+        "remote": "pc_auto/sy_auto_watch.py",
+        "local": "sy_auto_watch.py"
       }
     ],
     "restart": true
