@@ -1,8 +1,5 @@
 {
-  "id": "toss_stats_pc3_20261128_1346",
-  "action": "toss_stats",
-  "args": {
-    "from_date": "2026-11-01",
-    "to_date": "2026-11-28"
-  }
+  "id": "pushdash_pc3_20261128_1347",
+  "action": "push_dashboard",
+  "args": {}
 }
