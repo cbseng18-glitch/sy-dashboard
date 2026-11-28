@@ -2,7 +2,7 @@
  "schema": "pc_stats/1",
  "generator": "stats_checker.py",
  "version": "1.1.0",
- "generated_at": "2026-11-28T15:59:40+09:00",
+ "generated_at": "2026-11-28T18:00:36+09:00",
  "mode": "live",
  "shopee": {
   "enabled": true,
@@ -26,16 +26,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849180,
-     "hour_buckets": 15
+     "server_time": 1795856436,
+     "hour_buckets": 18
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1561,
-     "next_free_at": "2026-11-28T16:25:41+09:00",
+     "cooldown_remaining_seconds": 8710,
+     "next_free_at": "2026-11-28T20:25:46+09:00",
      "product_ids": [
       "26447109019",
       "57971534333",
@@ -62,16 +62,16 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849181,
-     "hour_buckets": 15
+     "server_time": 1795856437,
+     "hour_buckets": 18
     },
     "boost": {
      "slots_total": 5,
      "slots_used": 5,
      "slots_free": 0,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1567,
-     "next_free_at": "2026-11-28T16:25:48+09:00",
+     "cooldown_remaining_seconds": 8716,
+     "next_free_at": "2026-11-28T20:25:54+09:00",
      "product_ids": [
       "56221950415",
       "56471987779",
@@ -98,22 +98,21 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849182,
-     "hour_buckets": 15
+     "server_time": 1795856438,
+     "hour_buckets": 18
     },
     "boost": {
      "slots_total": 5,
-     "slots_used": 5,
-     "slots_free": 0,
+     "slots_used": 4,
+     "slots_free": 1,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1572,
-     "next_free_at": "2026-11-28T16:25:55+09:00",
+     "cooldown_remaining_seconds": 8719,
+     "next_free_at": "2026-11-28T20:25:58+09:00",
      "product_ids": [
       "47871640401",
       "47121595505",
       "44521752790",
-      "43736692139",
-      "43736692092"
+      "43736692139"
      ]
     },
     "warnings": []
@@ -134,22 +133,20 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849184,
-     "hour_buckets": 15
+     "server_time": 1795856440,
+     "hour_buckets": 18
     },
     "boost": {
      "slots_total": 5,
-     "slots_used": 5,
-     "slots_free": 0,
+     "slots_used": 3,
+     "slots_free": 2,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1578,
-     "next_free_at": "2026-11-28T16:26:02+09:00",
+     "cooldown_remaining_seconds": 8722,
+     "next_free_at": "2026-11-28T20:26:02+09:00",
      "product_ids": [
       "51821726804",
       "40486803664",
-      "47871640395",
-      "46621579863",
-      "46621579860"
+      "47871640395"
      ]
     },
     "warnings": []
@@ -170,23 +167,17 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849185,
-     "hour_buckets": 14
+     "server_time": 1795856441,
+     "hour_buckets": 17
     },
     "boost": {
      "slots_total": 5,
-     "slots_used": 5,
-     "slots_free": 0,
+     "slots_used": 0,
+     "slots_free": 5,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1584,
-     "next_free_at": "2026-11-28T16:26:09+09:00",
-     "product_ids": [
-      "45021595956",
-      "41536716883",
-      "40936716806",
-      "25149552050",
-      "48321630283"
-     ]
+     "cooldown_remaining_seconds": 0,
+     "next_free_at": null,
+     "product_ids": []
     },
     "warnings": []
    },
@@ -206,23 +197,17 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849186,
-     "hour_buckets": 14
+     "server_time": 1795856442,
+     "hour_buckets": 17
     },
     "boost": {
      "slots_total": 5,
-     "slots_used": 5,
-     "slots_free": 0,
+     "slots_used": 0,
+     "slots_free": 5,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1590,
-     "next_free_at": "2026-11-28T16:26:16+09:00",
-     "product_ids": [
-      "46271644365",
-      "43136730512",
-      "27947057214",
-      "48371680989",
-      "47971770151"
-     ]
+     "cooldown_remaining_seconds": 0,
+     "next_free_at": null,
+     "product_ids": []
     },
     "warnings": []
    },
@@ -242,24 +227,17 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849188,
-     "hour_buckets": 1,
-     "note": "현지 자정 직후(유입 0은 리셋 영향일 수 있음)"
+     "server_time": 1795856444,
+     "hour_buckets": 4
     },
     "boost": {
      "slots_total": 5,
-     "slots_used": 5,
-     "slots_free": 0,
+     "slots_used": 0,
+     "slots_free": 5,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1596,
-     "next_free_at": "2026-11-28T16:26:24+09:00",
-     "product_ids": [
-      "49672049494",
-      "44486736281",
-      "43786737206",
-      "43436726387",
-      "48571640570"
-     ]
+     "cooldown_remaining_seconds": 0,
+     "next_free_at": null,
+     "product_ids": []
     },
     "warnings": []
    },
@@ -279,23 +257,17 @@
      "buyers": 0,
      "sales": 0,
      "sales_currency": null,
-     "server_time": 1795849190,
-     "hour_buckets": 4
+     "server_time": 1795856446,
+     "hour_buckets": 7
     },
     "boost": {
      "slots_total": 5,
-     "slots_used": 5,
-     "slots_free": 0,
+     "slots_used": 0,
+     "slots_free": 5,
      "cooldown_seconds_total": 14400,
-     "cooldown_remaining_seconds": 1603,
-     "next_free_at": "2026-11-28T16:26:33+09:00",
-     "product_ids": [
-      "45221609311",
-      "44921615563",
-      "47171645711",
-      "43136699283",
-      "48571640503"
-     ]
+     "cooldown_remaining_seconds": 0,
+     "next_free_at": null,
+     "product_ids": []
     },
     "warnings": []
    }
@@ -311,10 +283,12 @@
    "buyers": 0,
    "sales_sum": 0.0,
    "sales_sum_note": "지역별 응답값 단순합(환산 아님)",
-   "boost_used": 40,
+   "boost_used": 17,
    "boost_total": 40
   },
-  "warnings": [],
+  "warnings": [
+   "쇼피 무료 부스트 빈 슬롯 23개 (run_boost 로 채울 수 있음)"
+  ],
   "errors": []
  },
  "qoo10": {
@@ -570,6 +544,7 @@
   "note": "개인정보 보호를 위해 상세 스니펫·대상 URL은 로컬 pc_stats.json 에만 저장"
  },
  "warnings": [
+  "쇼피 무료 부스트 빈 슬롯 23개 (run_boost 로 채울 수 있음)",
   "큐텐 전 항목 차단(Akamai) — 이 네트워크에서는 조회 불가, 집 PC에서 실행 (시도 엔진: cffi, curl, urllib)",
   "JS 렌더링이라 감시 불가: 비짓부산 홈 (브라우저 확인 필요)"
  ],
@@ -577,11 +552,25 @@
  "github": null,
  "telegram": null,
  "changes": {
-  "since": "2026-11-28T13:59:10+09:00",
+  "since": "2026-11-28T15:59:40+09:00",
   "regions": {
    "MY": {
-    "uv": 1,
-    "pv": 1
+    "boost_slots": -1
+   },
+   "PH": {
+    "boost_slots": -2
+   },
+   "VN": {
+    "boost_slots": -5
+   },
+   "TH": {
+    "boost_slots": -5
+   },
+   "MX": {
+    "boost_slots": -5
+   },
+   "BR": {
+    "boost_slots": -5
    }
   },
   "qoo10": [],
@@ -597,7 +586,7 @@
   "watch_alerts": 1,
   "watch_new_alerts": 0,
   "errors": 0,
-  "warnings": 2
+  "warnings": 3
  },
  "redacted": true,
  "snapshots": [
@@ -1708,194 +1697,74 @@
      "slots": "5/5"
     }
    }
-  }
- ],
- "merged_at": "2026-11-28T15:59:57+09:00",
- "dashboard": {
-  "schema": "pc_dashboard/1",
-  "generator": "sy_auto_watch.py",
-  "filled_at": "2026-11-28T17:50:06+09:00",
-  "filled_at_kst": "11-28 17:50",
-  "shopee": {
-   "source_at": "2026-11-28T15:59:40+09:00",
+  },
+  {
+   "generated_at": "2026-11-28T18:00:36+09:00",
    "cookie_state": "ok",
-   "regions_ok": 8,
-   "regions_total": 8,
    "uv": 3,
-   "pv": 3,
    "clicks": 0,
    "orders": 0,
-   "units": 0,
-   "sales": 0,
-   "regions": [
-    {
-     "region": "SG",
-     "ok": true,
+   "boost": "17/40",
+   "qoo10": {
+    "total": 5,
+    "ok": 0,
+    "blocked": 5,
+    "price_found": 0,
+    "price_matched": 0,
+    "price_mismatch": 0
+   },
+   "alerts": 0,
+   "regions": {
+    "SG": {
      "uv": 0,
-     "pv": 0,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "5/5"
     },
-    {
-     "region": "TW",
-     "ok": true,
+    "TW": {
      "uv": 0,
-     "pv": 0,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "5/5"
     },
-    {
-     "region": "MY",
-     "ok": true,
+    "MY": {
      "uv": 1,
-     "pv": 1,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "4/5"
     },
-    {
-     "region": "PH",
-     "ok": true,
+    "PH": {
      "uv": 1,
-     "pv": 1,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "3/5"
     },
-    {
-     "region": "VN",
-     "ok": true,
+    "VN": {
      "uv": 0,
-     "pv": 0,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "0/5"
     },
-    {
-     "region": "TH",
-     "ok": true,
+    "TH": {
      "uv": 1,
-     "pv": 1,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "0/5"
     },
-    {
-     "region": "MX",
-     "ok": true,
+    "MX": {
      "uv": 0,
-     "pv": 0,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "0/5"
     },
-    {
-     "region": "BR",
-     "ok": true,
+    "BR": {
      "uv": 0,
-     "pv": 0,
      "clicks": 0,
      "orders": 0,
-     "units": 0,
-     "sales": 0
+     "slots": "0/5"
     }
-   ]
-  },
-  "boost": {
-   "source_at": "2026-11-28T16:25:41+09:00",
-   "regions_ok": 8,
-   "regions_total": 8,
-   "boosted": 17,
-   "planned": 17,
-   "free_slots": 17,
-   "failed": 0,
-   "cost_krw": 0,
-   "next_free_at": "2026-11-28T16:26:33+09:00"
-  },
-  "survey": {
-   "source_at": "2026-11-28T16:20:30+09:00",
-   "new_candidates": 0,
-   "candidates": 0,
-   "review": 0,
-   "duplicates": 240,
-   "candidates_total": 0,
-   "sources_ok": 4,
-   "sources_failed": 0
-  },
-  "qoo10": {
-   "threshold": 50,
-   "checked_at": "11-28 17:42",
-   "checked": 26,
-   "alert_count": 7,
-   "danger": [],
-   "low": [
-    {
-     "code": "1056955",
-     "set": "3호",
-     "name": "볼륨 조임 미니 파우치(블랙) ⑥",
-     "qty": 7
-    },
-    {
-     "code": "1013422",
-     "set": "4호",
-     "name": "파스텔 형광펜 3개입 ③",
-     "qty": 8
-    },
-    {
-     "code": "1078815",
-     "set": "1호",
-     "name": "마스킹테이프 3개입 ⑤",
-     "qty": 10
-    },
-    {
-     "code": "1058005",
-     "set": "3호",
-     "name": "T형 카드 스탠드 ②",
-     "qty": 11
-    },
-    {
-     "code": "1079748",
-     "set": "4호",
-     "name": "모트모트 데일리 체크 점착 메모지 60매입 ④",
-     "qty": 16
-    },
-    {
-     "code": "1073176",
-     "set": "3호",
-     "name": "비즈 키링 리본 ③",
-     "qty": 36
-    },
-    {
-     "code": "1074817",
-     "set": "4호",
-     "name": "모트모트 스프링 스터디 플래너 브라운 ①",
-     "qty": 41
-    }
-   ]
-  },
-  "daiso": {
-   "total": 64,
-   "in_stock": 53,
-   "offline_date": "2026-11-28"
-  },
-  "toss": {
-   "source_at": "2026-11-28T13:45:17+09:00",
-   "from": "2026-11-01",
-   "to": "2026-11-28",
-   "month_clicks": 5,
-   "month_sold": 0,
-   "month_sales_krw": 0,
-   "expected_krw": 0
-  },
-  "youtube": null
- }
+   }
+  }
+ ],
+ "merged_at": "2026-11-28T18:00:53+09:00"
 }
