@@ -1339,6 +1339,23 @@
     data.pc = { filled_at: dash.filled_at_kst || dash.filled_at || '' };
     var eyebrow = document.querySelector('#overview .hero .eyebrow');
     if (eyebrow && data.pc.filled_at) { eyebrow.textContent = 'Overview · ' + data.pc.filled_at + ' KST (PC 실시간)'; }
+    var kpis = document.querySelectorAll('#overview .kpi-grid > .kpi');
+    for (i = 0; i < kpis.length; i++) {
+      var lbl = kpis[i].querySelector('.kpi-label');
+      var kv = kpis[i].querySelector('.kpi-value');
+      var ks = kpis[i].querySelector('.kpi-sub');
+      if (!lbl) continue;
+      var lt = lbl.textContent.trim();
+      if (lt === '쇼피 라이브 상품' && ks && data.shopee) {
+        var regs = (data.shopee.regions || []).filter(function(r){ return (r.uv||0)+(r.pv||0)+(r.clicks||0)+(r.orders||0) > 0; })
+          .map(function(r){ return r.region + ' ' + (r.uv||0); }).join('·');
+        var bst = data.boost ? (fmt(data.boost.boosted) + '/' + fmt(data.boost.planned)) : '—';
+        ks.innerHTML = '8개국 <b>322</b>·위반 0·심사 0 · ' + (data.pc.filled_at || '') + ' PC 갱신 방문 <b>' + fmt(data.shopee.uv) + '</b>' + (regs ? '(' + regs + ')' : '') + '·PV ' + fmt(data.shopee.pv) + '·<b>클릭 ' + fmt(data.shopee.clicks) + '</b>·주문 ' + fmt(data.shopee.orders) + ' · 부스트 <b>' + bst + '</b>';
+      }
+      if (lt === '스레드 30일 조회' && kv && data.threads && data.threads.views_30d !== null && data.threads.views_30d !== undefined && data.threads.views_30d !== '') {
+        kv.innerHTML = fmt(data.threads.views_30d) + '<small>회</small>';
+      }
+    }
     var nodes = document.querySelectorAll('[data-pc-bind]'), i, el, key, v, unit;
     for (i = 0; i < nodes.length; i++) {
       el = nodes[i];
