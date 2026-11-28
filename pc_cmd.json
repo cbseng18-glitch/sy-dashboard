@@ -1,5 +1,5 @@
 {
-  "id": "selfupdate_dash15m_20261128_2153",
+  "id": "selfupdate_stats30m_20261128_2200",
   "action": "self_update",
   "args": {
     "files": [
@@ -8,6 +8,6 @@
         "local": "sy_auto_watch.py"
       }
     ],
-    "note": "대시보드 푸시·블로그 RSS·스레드 공개수집 주기 15분 단축"
+    "note": "쇼피 등 통합 통계 수집 주기 30분 단축"
   }
 }
