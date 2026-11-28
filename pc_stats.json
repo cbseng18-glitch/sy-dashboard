@@ -1714,8 +1714,8 @@
  "dashboard": {
   "schema": "pc_dashboard/1",
   "generator": "sy_auto_watch.py",
-  "filled_at": "2026-11-28T16:49:48+09:00",
-  "filled_at_kst": "11-28 16:49",
+  "filled_at": "2026-11-28T17:50:06+09:00",
+  "filled_at_kst": "11-28 17:50",
   "shopee": {
    "source_at": "2026-11-28T15:59:40+09:00",
    "cookie_state": "ok",
@@ -1833,7 +1833,7 @@
   },
   "qoo10": {
    "threshold": 50,
-   "checked_at": "11-28 16:42",
+   "checked_at": "11-28 17:42",
    "checked": 26,
    "alert_count": 7,
    "danger": [],
@@ -1854,7 +1854,7 @@
      "code": "1078815",
      "set": "1호",
      "name": "마스킹테이프 3개입 ⑤",
-     "qty": 11
+     "qty": 10
     },
     {
      "code": "1058005",
