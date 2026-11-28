@@ -1601,8 +1601,7 @@ def build_dashboard_payload(cfg: dict, state: dict) -> dict:
         "generator": "sy_auto_watch.py",
         "filled_at": now.isoformat(timespec="seconds"),
         "filled_at_kst": now.strftime("%m-%d %H:%M"),
-        "shopee": _pc_shopee_block(stats),
-        "boost": {
+        "shopee": _pc_shopee_block(stats),        "boost": {
             "source_at": boost.get("generated_at") or "",
             "regions_ok": int(bt.get("regions_ok") or 0),
             "regions_total": int(bt.get("regions_total") or 0),
@@ -1637,7 +1636,7 @@ def build_dashboard_payload(cfg: dict, state: dict) -> dict:
             "in_stock": in_stock,
             "offline_date": state.get("last_full_offline_date") or "",
         },
-        "toss": {
+        "toss": ({
             "source_at": toss.get("fetched_at") or "",
             "from": toss.get("from") or "",
             "to": toss.get("to") or "",
@@ -1645,7 +1644,7 @@ def build_dashboard_payload(cfg: dict, state: dict) -> dict:
             "month_sold": int(toss.get("soldQuantity") or 0),
             "month_sales_krw": int(toss.get("salesAmount") or 0),
             "expected_krw": int(toss.get("expectedCommissionAmount") or 0),
-        },
+        } if toss.get("fetched_at") else None),
         "youtube": ({
             "source_at": yt.get("generated_at") or "",
             "videos": int(yt.get("videos") or 0),
