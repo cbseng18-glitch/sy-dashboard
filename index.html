@@ -1337,6 +1337,8 @@
     var data = {};
     for (var k in dash) { if (Object.prototype.hasOwnProperty.call(dash, k)) data[k] = dash[k]; }
     data.pc = { filled_at: dash.filled_at_kst || dash.filled_at || '' };
+    var eyebrow = document.querySelector('#overview .hero .eyebrow');
+    if (eyebrow && data.pc.filled_at) { eyebrow.textContent = 'Overview · ' + data.pc.filled_at + ' KST (PC 실시간)'; }
     var nodes = document.querySelectorAll('[data-pc-bind]'), i, el, key, v, unit;
     for (i = 0; i < nodes.length; i++) {
       el = nodes[i];
